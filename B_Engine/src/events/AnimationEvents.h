@@ -8,6 +8,7 @@ namespace Engine
     class Node; // Forward declaration to avoid including Node.h here
 
     /// Triggered when an animated sprite component finishes its current animation cycle.
+    /// @ingroup Events
     class AnimationFinishedEvent : public EventBase<AnimationFinishedEvent>
     {
     public:

@@ -6,6 +6,7 @@
 
 namespace Engine
 {
+    /// @ingroup Events
     class MouseButtonPressedEvent : public EventBase<MouseButtonPressedEvent>
     {
     public:
@@ -21,6 +22,7 @@ namespace Engine
         int tick;
     };
 
+    /// @ingroup Events
     class MouseButtonReleasedEvent : public EventBase<MouseButtonReleasedEvent>
     {
     public:
@@ -36,6 +38,7 @@ namespace Engine
         int tick;
     };
 
+    /// @ingroup Events
     class MouseMovedEvent : public EventBase<MouseMovedEvent>
     {
     public:
@@ -57,6 +60,7 @@ namespace Engine
         int tick;
     };
 
+    /// @ingroup Events
     class KeyPressedEvent : public EventBase<KeyPressedEvent>
     {
     public:
@@ -72,6 +76,7 @@ namespace Engine
         int tick;
     };
 
+    /// @ingroup Events
     class KeyReleasedEvent : public EventBase<KeyReleasedEvent>
     {
     public:
@@ -88,12 +93,14 @@ namespace Engine
     };
 
     /// Action categories for input logging and filtering.
+    /// @ingroup Events
     enum class ActionCategory : uint8_t
     {
         Gameplay = 0, // Recorded in normal replays
         System = 1    // Recorded only in QA/Debug modes (Pause, Menus, etc.)
     };
 
+    /// @ingroup Events
     struct ActionState
     {
         float value = 0.0f;
@@ -102,6 +109,7 @@ namespace Engine
         ActionCategory category = ActionCategory::Gameplay;
     };
 
+    /// @ingroup Events
     class ActionChangedEvent : public EventBase<ActionChangedEvent>
     {
     public:
@@ -124,6 +132,7 @@ namespace Engine
         ActionCategory category;
     };
 
+    /// @ingroup Events
     class MouseScrolledEvent : public EventBase<MouseScrolledEvent>
     {
     public:

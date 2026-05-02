@@ -4,8 +4,12 @@ namespace Engine
 {
     class Node;
 
+    /// @defgroup Scripts Scripting
+    /// @brief Base classes for custom game logic.
+    ///
     /// The base class for all user-defined scripts (similar to Unity's MonoBehaviour).
     /// Users inherit from this class to write custom game logic.
+    /// @ingroup Scripts
     class Script
     {
     public:

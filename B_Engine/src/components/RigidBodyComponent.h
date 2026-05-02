@@ -15,6 +15,7 @@ namespace Engine
     };
 
     /// Attaches Newtonian physics properties to a Node.
+    /// @ingroup Components
     class RigidBodyComponent : public Component
     {
     public:

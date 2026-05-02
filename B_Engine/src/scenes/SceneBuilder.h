@@ -14,6 +14,7 @@ namespace Engine
     /// Fluent helper for constructing scenes before they are active.
     /// Call CreateNode() to get a raw pointer you can configure immediately.
     /// All created nodes are flushed into the root scene by Application::Run().
+    /// @ingroup Scenes
     class SceneBuilder
     {
     public:

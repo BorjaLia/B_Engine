@@ -3,6 +3,7 @@
 namespace Engine
 {
     /// Static utility class to manage engine time, delta time, and time scaling.
+    /// @ingroup Core
     class Time
     {
     public:

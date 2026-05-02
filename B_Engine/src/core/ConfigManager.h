@@ -38,6 +38,7 @@ namespace Engine
 #pragma endregion
 
     /// Manages loading and saving configuration files (.ini) for both engine and user settings.
+    /// @ingroup Core
     class ConfigManager
     {
     public:

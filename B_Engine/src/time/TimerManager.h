@@ -9,6 +9,7 @@ namespace Engine
     using TimerID = uint32_t;
 
     /// Manages delayed execution callbacks and recurring timers.
+    /// @ingroup Core
     class TimerManager
     {
     public:

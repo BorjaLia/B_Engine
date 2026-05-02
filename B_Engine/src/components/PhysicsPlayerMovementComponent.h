@@ -10,6 +10,7 @@ namespace Engine
     class AnimatedSpriteComponent;
 
     /// Specialized controller component that handles physics-based player movement.
+    /// @ingroup Components
     class PhysicsPlayerController : public Component, public ICollisionListener
     {
     public:

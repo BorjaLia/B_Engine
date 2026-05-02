@@ -11,6 +11,7 @@ namespace Engine
     class ResourceManager;
 
     /// Interface for the rendering backend.
+    /// @ingroup Core
     class IRenderer
     {
     public:

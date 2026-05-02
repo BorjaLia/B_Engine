@@ -11,6 +11,7 @@
 namespace Engine
 {
     /// Internal structure binding an action to an analog scale.
+    /// @ingroup Inputs
     struct ActionBinding
     {
         uint32_t actionHash;
@@ -18,6 +19,7 @@ namespace Engine
     };
 
     /// Translates raw hardware input keys into semantic game actions.
+    /// @ingroup Inputs
     class InputMapper
     {
     public:

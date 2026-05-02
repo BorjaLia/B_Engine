@@ -10,6 +10,7 @@
 namespace Engine
 {
     /// Defines a viewpoint through which the game world is rendered.
+    /// @ingroup Components
     class CameraComponent : public Component
     {
     public:

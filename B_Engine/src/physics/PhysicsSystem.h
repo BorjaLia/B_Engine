@@ -9,7 +9,11 @@ namespace Engine
     class ColliderComponent;
     class TriggerAreaComponent;
 
+    /// @defgroup Physics Physics System
+    /// @brief Collisions, resolving manifolds, and spatial triggers.
+    ///
     /// Orchestrates the physics pipeline, spatial queries, and collision resolution.
+    /// @ingroup Physics
     class PhysicsSystem
     {
     public:

@@ -3,6 +3,7 @@
 #include "events/Event.h"
 
 /// Triggered when the player collects a coin in the world.
+/// @ingroup GameScripts
 class CoinCollectedEvent : public Engine::EventBase<CoinCollectedEvent>
 {
 public:

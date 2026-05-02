@@ -6,6 +6,7 @@
 namespace Engine
 {
     /// Handles the lifecycle and transition of game scenes.
+    /// @ingroup Scenes
     class SceneManager
     {
     public:

@@ -1,3 +1,9 @@
+///
+/// B_Engine v 1.0
+/// Borja Lia (https://www.github.com/BorjaLia)
+///
+/// 
+
 #pragma once
 
 #include <memory>
@@ -34,8 +40,12 @@ namespace Engine
 
     class PhysicsSystem;
 
+    /// @defgroup Core Core Systems
+    /// @brief The heart of the engine (Application, Window, Time, Config, etc.).
+    ///
     /// The core orchestrator of the engine.
     /// Manages systems initialization, the main game loop, and fixed-timestep physics.
+    /// @ingroup Core
     class Application
     {
     public:

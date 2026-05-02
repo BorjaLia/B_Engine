@@ -12,6 +12,7 @@
 namespace Engine
 {
     /// Interface for the operating system window manager.
+    /// @ingroup Core
     class IWindow
     {
     public:

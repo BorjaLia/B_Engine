@@ -12,7 +12,11 @@
 
 namespace Engine
 {
+    /// @defgroup Resources Resource Management
+    /// @brief Texture, Font, and Audio caching.
+    ///
     /// Centralized cache and factory for loading game assets (textures, fonts, audio).
+    /// @ingroup Resources
     class ResourceManager
     {
     public:

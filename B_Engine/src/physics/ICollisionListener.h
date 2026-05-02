@@ -5,6 +5,7 @@
 namespace Engine
 {
     /// Interface for components that need to respond to physics collisions.
+    /// @ingroup Physics
     class ICollisionListener
     {
     public:

@@ -11,6 +11,7 @@
 namespace Engine
 {
     /// Minimal struct for a replay frame event (Only 12 bytes!)
+    /// @ingroup Inputs
     struct ReplayEntry
     {
         int tick;
@@ -19,6 +20,7 @@ namespace Engine
     };
 
     /// Captures input events and stores them sequentially for later replay or debugging.
+    /// @ingroup Inputs
     class InputLogger
     {
     public:

@@ -12,6 +12,7 @@ namespace Engine
 
     /// Defines a physical boundary for an entity.
     /// Used by the PhysicsSystem to detect overlaps and resolve forces.
+    /// @ingroup Components
     class ColliderComponent : public Component
     {
     public:

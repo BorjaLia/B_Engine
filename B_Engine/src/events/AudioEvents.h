@@ -8,6 +8,7 @@ namespace Engine
 {
     /// Fired to request that a specific AudioComponent plays its clip.
     /// The target is identified by the name of its owner node.
+    /// @ingroup Events
     class AudioPlayEvent : public EventBase<AudioPlayEvent>
     {
     public:
@@ -27,6 +28,7 @@ namespace Engine
     };
 
     /// Fired to request that a specific AudioComponent stops playback.
+    /// @ingroup Events
     class AudioStopEvent : public EventBase<AudioStopEvent>
     {
     public:
@@ -40,6 +42,7 @@ namespace Engine
     };
 
     /// Fired to globally mute or unmute all audio outputs.
+    /// @ingroup Events
     class AudioMuteEvent : public EventBase<AudioMuteEvent>
     {
     public:
@@ -53,6 +56,7 @@ namespace Engine
     };
 
     /// Fired to change the master volume globally.
+    /// @ingroup Events
     class AudioVolumeEvent : public EventBase<AudioVolumeEvent>
     {
     public:

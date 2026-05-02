@@ -24,6 +24,7 @@ namespace Engine
     };
 
     /// UI Element that responds to mouse interactions and hover states.
+    /// @ingroup Components
     class ButtonComponent : public Component
     {
     public:

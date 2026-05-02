@@ -40,6 +40,9 @@ struct std::formatter<T>
 
 namespace Engine
 {
+    /// @defgroup Debug Debugging
+    /// @brief Memory tracking, visual logging, and in-game overlays.
+
 #pragma region ANSI Colors
     constexpr const char* COLOR_RESET = "\033[0m";
     constexpr const char* COLOR_RED = "\033[31m";
@@ -51,6 +54,7 @@ namespace Engine
 #pragma endregion
 
     /// Defines the severity and filtering category of a log message.
+    /// @ingroup Debug
     enum class LogLevel : uint16_t
     {
         None = 0,
@@ -82,6 +86,7 @@ namespace Engine
     inline LogLevel operator~(LogLevel a) { return static_cast<LogLevel>(~static_cast<uint16_t>(a)); }
 
     /// Static logging system that handles console output, formatting, and writing to file.
+    /// @ingroup Debug
     class Logger
     {
     public:

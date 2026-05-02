@@ -10,6 +10,7 @@ namespace Engine::Physics
 
 #pragma region Data Structures
     /// AAA structure to resolve dynamic physics collisions.
+    /// @ingroup Physics
     struct CollisionManifold
     {
         bool isColliding = false;

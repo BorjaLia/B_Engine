@@ -9,6 +9,7 @@
 namespace Engine
 {
     /// Reads recorded input logs and physically injects them back into the InputMapper.
+    /// @ingroup Inputs
     class InputInjector
     {
     public:

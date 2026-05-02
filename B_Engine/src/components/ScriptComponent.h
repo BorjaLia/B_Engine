@@ -8,6 +8,7 @@
 namespace Engine
 {
     /// Bridges custom user logic (Scripts) into the engine's Component/Node system.
+    /// @ingroup Components
     class ScriptComponent : public Component
     {
     public:

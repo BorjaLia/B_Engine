@@ -11,6 +11,7 @@ namespace Engine
 
     /// Defines the position, rotation, and scale of a Node in 2D space.
     /// Calculates global matrices hierarchically based on parent transforms.
+    /// @ingroup Components
     class TransformComponent : public Component
     {
     public:

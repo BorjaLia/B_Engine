@@ -5,6 +5,7 @@
 namespace Engine
 {
     /// Interface representing a distinct game state or level (e.g. MainMenu, Gameplay).
+    /// @ingroup Scenes
     class IScene
     {
     public:

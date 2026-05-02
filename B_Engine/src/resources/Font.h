@@ -8,14 +8,16 @@
 namespace Engine
 {
     /// Mathematical information for a single character glyph.
+    /// @ingroup Resources
     struct Glyph
     {
         Rect sourceRect; // Where the letter is inside the atlas (in pixels)
         Vector2f offset; // How much to offset it when drawing
-        float advanceX = 1;  // Space until the next letter starts
+        float advanceX;  // Space until the next letter starts
     };
 
     /// Represents a loaded font, managing its glyph data and texture atlas.
+    /// @ingroup Resources
     class Font
     {
     public:

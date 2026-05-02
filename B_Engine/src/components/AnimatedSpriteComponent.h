@@ -19,6 +19,7 @@ namespace Engine
     };
 
     /// Handles spritesheet animations and playback controls.
+    /// @ingroup Components
     class AnimatedSpriteComponent : public Component
     {
     public:

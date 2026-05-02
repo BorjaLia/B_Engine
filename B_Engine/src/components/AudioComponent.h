@@ -8,6 +8,7 @@ namespace Engine
 {
     /// Plays a sound either globally or attenuated by distance from an AudioListenerComponent.
     /// Subscribe to AudioPlayEvent / AudioStopEvent to trigger playback via the event bus.
+    /// @ingroup Components
     class AudioComponent : public Component
     {
     public:

@@ -6,6 +6,7 @@ namespace Engine
 {
     /// Global memory tracking utility.
     /// Overrides global new/delete operators to detect memory leaks.
+    /// @ingroup Debug
     class MemoryTracker
     {
     public:

@@ -11,6 +11,7 @@ namespace Engine
 {
     /// A robust random number generator using the Mersenne Twister engine.
     /// Supports deterministic seeding, state serialization for replays, and spatial hashing.
+    /// @ingroup Utils
     class Random
     {
     public:

@@ -7,7 +7,11 @@
 namespace Engine
 {
 #pragma region Vector2
+    /// @defgroup Utils Utilities & Math
+    /// @brief Core mathematical structures, hashing, and system utilities.
+    ///
     /// A templated 2D vector representing coordinates or directions.
+    /// @ingroup Utils
     template <typename T>
     struct Vector2
     {
@@ -130,6 +134,7 @@ namespace Engine
 
 #pragma region Matrix3x3
     /// A 3x3 Matrix for 2D transformations (Position, Rotation, Scale).
+    /// @ingroup Utils
     struct Matrix3x3
     {
         /// Stored as a 2D array [row][column]

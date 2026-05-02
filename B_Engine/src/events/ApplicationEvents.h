@@ -7,6 +7,7 @@
 namespace Engine
 {
     /// Triggered when the OS window is resized. Contains the new dimensions.
+    /// @ingroup Events
     class WindowResizeEvent : public EventBase<WindowResizeEvent>
     {
     public:
@@ -22,6 +23,7 @@ namespace Engine
     };
 
     /// Triggered when the application window is requested to close by the OS.
+    /// @ingroup Events
     class WindowCloseEvent : public EventBase<WindowCloseEvent>
     {
     public:
@@ -31,6 +33,7 @@ namespace Engine
     };
 
     /// Triggered when user settings (like volume, resolution) are applied and saved.
+    /// @ingroup Events
     class SettingsChangedEvent : public EventBase<SettingsChangedEvent>
     {
     public:

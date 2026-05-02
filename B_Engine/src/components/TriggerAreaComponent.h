@@ -12,6 +12,7 @@ namespace Engine
     class IRenderer;
 
     /// Defines an intangible physical boundary that emits events when other colliders enter it.
+    /// @ingroup Components
     class TriggerAreaComponent : public Component
     {
     public:

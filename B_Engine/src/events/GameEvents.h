@@ -6,6 +6,7 @@
 namespace Engine
 {
     /// Triggered when the player changes its logical position.
+    /// @ingroup Events
     class PlayerMovedEvent : public EventBase<PlayerMovedEvent>
     {
     public:

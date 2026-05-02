@@ -7,6 +7,7 @@ namespace Engine
 {
     /// Pure interface for the audio backend.
     /// Mirrors the pattern used by IRenderer: one interface, one backend implementation.
+    /// @ingroup Core
     class IAudio
     {
     public:

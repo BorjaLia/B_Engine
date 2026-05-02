@@ -40,6 +40,7 @@ namespace Engine
 
     /// Component that forces the owning node to track or follow a set of targets.
     /// Perfect for dynamic cameras with deadzones and lookahead mechanics.
+    /// @ingroup Components
     class FollowComponent : public Component
     {
     public:

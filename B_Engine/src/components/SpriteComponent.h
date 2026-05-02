@@ -11,6 +11,7 @@ namespace Engine
     class IRenderer;
 
     /// Renders a static 2D texture at the node's transform position.
+    /// @ingroup Components
     class SpriteComponent : public Component
     {
     public:

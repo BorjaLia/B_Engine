@@ -6,7 +6,11 @@ namespace Engine
 {
     using EventType = uint32_t;
 
+    /// @defgroup Events Event System
+    /// @brief The EventBus, CRTP event generation, and system events.
+
     /// 1. AUTOMATIC ID GENERATOR
+    /// @ingroup Events
     class EventTypeGenerator
     {
     public:
@@ -24,6 +28,7 @@ namespace Engine
     };
 
     /// 2. BASE EVENT CLASS
+    /// @ingroup Events
     class Event
     {
     public:
@@ -35,9 +40,10 @@ namespace Engine
         bool handled = false;
     };
 
-    /// 3. THE MAGIC: CRTP (Curiously Recurring Template Pattern)
+    /// 3. CRTP (Curiously Recurring Template Pattern)
     /// Any new event inherits from here, passing itself as the template argument.
     /// This automatically injects the GetType() function with a unique runtime ID.
+    /// @ingroup Events
     template <typename T>
     class EventBase : public Event
     {

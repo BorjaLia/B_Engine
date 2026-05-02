@@ -10,7 +10,11 @@
 
 namespace Engine
 {
+    /// @defgroup Inputs Input System
+    /// @brief Action mapping, hardware polling, and the deterministic Replay Injector.
+    ///
     /// High-level facade that coordinates the InputMapper, InputLogger, and InputInjector.
+    /// @ingroup Inputs
     class InputManager
     {
     public:

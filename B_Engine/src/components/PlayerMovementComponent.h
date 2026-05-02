@@ -19,6 +19,7 @@ namespace Engine
     };
 
     /// Simple kinematic movement component (Non-Physics).
+    /// @ingroup Components
     class PlayerMovementComponent : public Component
     {
     public:

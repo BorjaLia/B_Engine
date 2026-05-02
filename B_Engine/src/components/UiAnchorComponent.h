@@ -19,6 +19,7 @@ namespace Engine
     };
 
     /// Locks a Node's screen position relative to the window or a parent UI element.
+    /// @ingroup Components
     class UIAnchorComponent : public Component
     {
     public:

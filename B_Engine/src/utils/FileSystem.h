@@ -7,6 +7,7 @@
 namespace Engine
 {
     /// Provides static utility functions for reading and writing files.
+    /// @ingroup Utils
     class FileSystem
     {
     public:

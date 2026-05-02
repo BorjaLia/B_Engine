@@ -18,6 +18,7 @@ namespace Engine
     };
 
     /// Renders text using a custom loaded Font atlas.
+    /// @ingroup Components
     class TextComponent : public Component
     {
     public:

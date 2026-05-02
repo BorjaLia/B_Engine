@@ -9,6 +9,7 @@ namespace Engine
     class EventBus;
 
     /// Interface for hardware input handling and event polling.
+    /// @ingroup Core
     class IInput
     {
     public:

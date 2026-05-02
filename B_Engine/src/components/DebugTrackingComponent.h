@@ -9,6 +9,7 @@ namespace Engine
 {
     /// Utility component that logs its owner's position whenever it changes.
     /// Useful for tracking entity movement issues during development.
+    /// @ingroup Components
     class DebugTrackingComponent : public Component
     {
     public:

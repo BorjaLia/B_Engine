@@ -19,8 +19,12 @@ namespace Engine
 {
     class IRenderer;
 
+    /// @defgroup Scenes Scene Management
+    /// @brief The Node graph, Scene Builder, and scene transitions.
+    ///
     /// Represents an entity in the scene graph.
     /// Handles component lifecycle, parent-child hierarchy, and persistence.
+    /// @ingroup Scenes
     class Node
     {
     public:

@@ -6,6 +6,7 @@
 namespace Engine
 {
     /// The base interface that every user game must inherit from.
+    /// @ingroup Core
     class IGame
     {
     public:

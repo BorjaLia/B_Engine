@@ -7,6 +7,7 @@
 namespace Engine
 {
 #pragma region Graphics & UI
+    /// @ingroup Utils
     struct Color
     {
         unsigned char r, g, b, a;

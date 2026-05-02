@@ -12,6 +12,7 @@ namespace Engine
     using EventListenerID = uint32_t;
 
     /// Central hub for dispatching and subscribing to system-wide events.
+    /// @ingroup Events
     class EventBus
     {
     public:

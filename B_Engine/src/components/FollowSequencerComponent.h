@@ -19,6 +19,7 @@ namespace Engine
 
     /// Orchestrates a sequence of targets for a FollowComponent over time.
     /// Ideal for cinematic camera sweeps or boss intros.
+    /// @ingroup Components
     class FollowSequencerComponent : public Component
     {
     public:

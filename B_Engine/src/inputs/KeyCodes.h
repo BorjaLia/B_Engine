@@ -3,6 +3,7 @@
 namespace Engine
 {
     /// Represents physical keyboard keys.
+    /// @ingroup Inputs
     enum class Key
     {
         Unknown = 0,
