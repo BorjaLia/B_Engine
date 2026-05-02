@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{5bfc0c51-f9f4-41a8-af4e-e4ea4e3435e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{17be181a-25fb-4075-b3f8-d03b9de9571f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities">
+      <UniqueIdentifier>{1e5c5e4a-7b89-4d50-bdf7-730dc71f428c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities\Player">
+      <UniqueIdentifier>{eef51e31-4622-4261-b7ae-c2042b901242}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities\Enemies">
+      <UniqueIdentifier>{fd44a80f-bbba-4d1b-abda-ca105afab45d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities\Environment">
+      <UniqueIdentifier>{232f6d7b-aecf-4413-973f-a42db2ef5e08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{ca7e6a1b-9e30-4deb-b83a-3bd5272bffbc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Main.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlatformerGame.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripts\GameManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripts\EnemyScript.cpp">
+      <Filter>Entities\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="src\prefabs\EnvironmentPrefabs.cpp">
+      <Filter>Entities\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripts\CoinScript.cpp">
+      <Filter>Entities\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripts\FinishLineScript.cpp">
+      <Filter>Entities\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripts\PlatformScript.cpp">
+      <Filter>Entities\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\prefabs\PlayerPrefab.cpp">
+      <Filter>Entities\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripts\PlayerScript.cpp">
+      <Filter>Entities\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scenes\GameplayScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scenes\MainMenuScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\prefabs\UiPrefabs.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripts\MouseScript.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scripts\ScoreUIScript.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\PlatformerGame.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\events\GameEvents.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripts\GameManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripts\EnemyScript.h">
+      <Filter>Entities\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="src\prefabs\EnvironmentPrefabs.h">
+      <Filter>Entities\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripts\CoinScript.h">
+      <Filter>Entities\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripts\FinishLineScript.h">
+      <Filter>Entities\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripts\PlatformScript.h">
+      <Filter>Entities\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\prefabs\PlayerPrefab.h">
+      <Filter>Entities\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripts\PlayerScript.h">
+      <Filter>Entities\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\GameplayScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\MainMenuScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\prefabs\UiPrefabs.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripts\MouseScript.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripts\ScoreUIScript.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

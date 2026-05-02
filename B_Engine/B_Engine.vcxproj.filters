@@ -1,0 +1,405 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{f915531b-9893-4e3a-bf18-3fa5ab4497fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Application">
+      <UniqueIdentifier>{532fee55-6309-4632-bebb-ce4d7ca3fbb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Interfaces">
+      <UniqueIdentifier>{295caad3-a9cf-433c-b347-d5d9b1fa5a91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Time">
+      <UniqueIdentifier>{8947652d-6f02-4549-8da6-db2bcec0220d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Utils">
+      <UniqueIdentifier>{92fd677f-9b64-4d0f-a3bd-45101b292996}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneGraph">
+      <UniqueIdentifier>{5af36ae2-693e-4f46-9243-c2df487ff447}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneGraph\Nodes">
+      <UniqueIdentifier>{9aef5675-2b31-402a-b914-3a86a938793f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneGraph\Components">
+      <UniqueIdentifier>{47127eed-3d11-4eae-ae94-78ef95e222c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems">
+      <UniqueIdentifier>{dbd8c986-5a60-4e8f-b7a2-70a688549f9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Events">
+      <UniqueIdentifier>{cda1c7ed-a107-47df-9a19-160d7de4c1df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Inputs">
+      <UniqueIdentifier>{4e35afe1-3702-4c80-ad0a-fbf680feb5ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Physics">
+      <UniqueIdentifier>{59fbec70-7d39-4485-98a9-6f96300f8588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Resources">
+      <UniqueIdentifier>{75164dfb-0c52-4828-a7fb-25e2f17e00a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Debug">
+      <UniqueIdentifier>{083348d2-c1b0-4afb-aacf-57085ff9f5a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{ffd1a7dc-fbf3-4d33-a9c2-62e56df6d038}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Raylib">
+      <UniqueIdentifier>{29729d95-e822-4332-ad99-45417bf2878e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\WindowsConsole">
+      <UniqueIdentifier>{586a0347-40a8-4059-b1cd-5e530437b557}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Random">
+      <UniqueIdentifier>{f35acc0f-02bb-4b6f-a188-e15847380be0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneGraph\Scripts">
+      <UniqueIdentifier>{28d188b6-9b30-445f-bad3-d46f8428943b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\core\Application.cpp">
+      <Filter>Core\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\ConfigManager.cpp">
+      <Filter>Core\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\FileSystem.cpp">
+      <Filter>Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\time\Time.cpp">
+      <Filter>Core\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\AnimatedSpriteComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\AudioComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ButtonComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\CameraComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ColliderComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\Component.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\DebugTrackingComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\FollowComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\FollowSequencerComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\PhysicsPlayerMovementComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\PlayerMovementComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\RigidBodyComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ScriptComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\SpriteComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\TextComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\TransformComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\TriggerAreaComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\UiAnchorComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scenes\Node.cpp">
+      <Filter>SceneGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scenes\SceneBuilder.cpp">
+      <Filter>SceneGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scenes\SceneManager.cpp">
+      <Filter>SceneGraph\Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\debug\Debug.cpp">
+      <Filter>Systems\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="src\debug\DebugNode.cpp">
+      <Filter>Systems\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="src\debug\MemoryTracker.cpp">
+      <Filter>Systems\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="src\inputs\InputInjector.cpp">
+      <Filter>Systems\Inputs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\inputs\InputLogger.cpp">
+      <Filter>Systems\Inputs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\inputs\InputManager.cpp">
+      <Filter>Systems\Inputs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\inputs\InputMapper.cpp">
+      <Filter>Systems\Inputs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\inputs\KeyCodes.cpp">
+      <Filter>Systems\Inputs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Physics.cpp">
+      <Filter>Systems\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsSystem.cpp">
+      <Filter>Systems\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\random\Random.cpp">
+      <Filter>Systems\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\Font.cpp">
+      <Filter>Systems\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\ResourceManager.cpp">
+      <Filter>Systems\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\raylib\RaylibAudio.cpp">
+      <Filter>Platform\Raylib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\raylib\RaylibInput.cpp">
+      <Filter>Platform\Raylib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\raylib\RaylibRenderer.cpp">
+      <Filter>Platform\Raylib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\raylib\RaylibWindow.cpp">
+      <Filter>Platform\Raylib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\windowsConsole\ConsoleInput.cpp">
+      <Filter>Platform\WindowsConsole</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\windowsConsole\ConsoleRenderer.cpp">
+      <Filter>Platform\WindowsConsole</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\windowsConsole\ConsoleWindow.cpp">
+      <Filter>Platform\WindowsConsole</Filter>
+    </ClCompile>
+    <ClCompile Include="src\time\TimerManager.cpp">
+      <Filter>Core\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\interfaces\IInput.cpp">
+      <Filter>Core\Interfaces</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\core\Application.h">
+      <Filter>Core\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\ConfigManager.h">
+      <Filter>Core\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\ReplayModes.h">
+      <Filter>Core\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\interfaces\IAudio.h">
+      <Filter>Core\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\interfaces\IGame.h">
+      <Filter>Core\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\interfaces\IInput.h">
+      <Filter>Core\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\interfaces\IRenderer.h">
+      <Filter>Core\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\interfaces\IWindow.h">
+      <Filter>Core\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\FileSystem.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Math.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\StringHash.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Types.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\time\Time.h">
+      <Filter>Core\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="src\time\TimerManager.h">
+      <Filter>Core\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\AnimatedSpriteComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\AudioComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\AudioListenerComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\ButtonComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\CameraComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\ColliderComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\Component.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\DebugTrackingComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\FollowComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\FollowSequencerComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\PhysicsPlayerMovementComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\PlayerMovementComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\RigidBodyComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\ScriptComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\SpriteComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\TextComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\TransformComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\TriggerAreaComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\UiAnchorComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\Node.h">
+      <Filter>SceneGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\Scene.h">
+      <Filter>SceneGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\SceneBuilder.h">
+      <Filter>SceneGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\SceneManager.h">
+      <Filter>SceneGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\debug\Debug.h">
+      <Filter>Systems\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="src\debug\DebugNode.h">
+      <Filter>Systems\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="src\debug\MemoryTracker.h">
+      <Filter>Systems\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="src\events\AnimationEvents.h">
+      <Filter>Systems\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\events\ApplicationEvents.h">
+      <Filter>Systems\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\events\AudioEvents.h">
+      <Filter>Systems\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\events\Event.h">
+      <Filter>Systems\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\events\EventBus.h">
+      <Filter>Systems\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\events\GameEvents.h">
+      <Filter>Systems\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\events\InputEvents.h">
+      <Filter>Systems\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inputs\InputInjector.h">
+      <Filter>Systems\Inputs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inputs\InputLogger.h">
+      <Filter>Systems\Inputs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inputs\InputManager.h">
+      <Filter>Systems\Inputs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inputs\InputMapper.h">
+      <Filter>Systems\Inputs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inputs\KeyCodes.h">
+      <Filter>Systems\Inputs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\physics\ICollisionListener.h">
+      <Filter>Systems\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\physics\Physics.h">
+      <Filter>Systems\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\physics\PhysicsSystem.h">
+      <Filter>Systems\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\random\Random.h">
+      <Filter>Systems\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\Font.h">
+      <Filter>Systems\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\ResourceManager.h">
+      <Filter>Systems\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\raylib\RaylibAudio.h">
+      <Filter>Platform\Raylib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\raylib\RaylibInput.h">
+      <Filter>Platform\Raylib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\raylib\RaylibRenderer.h">
+      <Filter>Platform\Raylib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\raylib\RaylibWindow.h">
+      <Filter>Platform\Raylib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\windowsConsole\ConsoleInput.h">
+      <Filter>Platform\WindowsConsole</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\windowsConsole\ConsoleRenderer.h">
+      <Filter>Platform\WindowsConsole</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\windowsConsole\ConsoleWindow.h">
+      <Filter>Platform\WindowsConsole</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripts\Script.h">
+      <Filter>SceneGraph\Scripts</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
