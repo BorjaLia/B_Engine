@@ -150,6 +150,13 @@ namespace Engine
         void ProcessPendingScene();
         void RenderFrame(class RendererBase* renderer, const Color& bgColor);
 
+        // Loop Refactoring Methods
+        void CalculateTime(float& accumulator, int& frameCount, float& fpsTimer, int& currentFPS, RendererBase* renderer);
+        void UpdateFixed(float fixedTimestep, float& accumulator);
+        void UpdateVariable();
+        void HandleSystemHotkeys(InputBase* input);
+        void RenderAndCleanup(RendererBase* renderer, const Color& bgColor);
+
         void OnSettingsChanged(SettingsChangedEvent& e);
         bool OnWindowClose(WindowCloseEvent& e);
 

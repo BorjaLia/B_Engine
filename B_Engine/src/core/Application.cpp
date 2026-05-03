@@ -206,6 +206,117 @@ namespace Engine
         renderer->EndFrame();
     }
 
+    void Application::CalculateTime(float& accumulator, int& frameCount, float& fpsTimer, int& currentFPS, RendererBase* renderer)
+    {
+        float rawDt = renderer->GetDeltaTime();
+        if (rawDt > 0.25f) rawDt = 0.25f;
+        Time::Update(rawDt);
+        timerManager.Update(Time::GetDeltaTime());
+
+        fpsTimer += Time::GetUnscaledDeltaTime();
+        if (++frameCount, fpsTimer >= 1.0f)
+        {
+            currentFPS = frameCount;
+            frameCount = 0;
+            fpsTimer -= 1.0f;
+            if (debugMode) UpdateDebugNode(debugNode.get(), currentFPS);
+        }
+
+        accumulator += Time::GetUnscaledDeltaTime();
+    }
+
+    void Application::UpdateFixed(float fixedTimestep, float& accumulator)
+    {
+        while (accumulator >= fixedTimestep)
+        {
+            inputManager.FixedUpdate();
+            float scaledTimestep = fixedTimestep * Time::GetTimeScale();
+
+            rootScene->FixedUpdate(scaledTimestep);
+            if (physicsSystem) physicsSystem->Update(rootScene.get(), scaledTimestep);
+
+            inputManager.PostFixedUpdate();
+            accumulator -= fixedTimestep;
+            Time::AdvanceTick();
+        }
+    }
+
+    void Application::UpdateVariable()
+    {
+        rootScene->Update(Time::GetDeltaTime());
+    }
+
+    void Application::HandleSystemHotkeys(InputBase* input)
+    {
+        if (input->IsKeyReleased(Key::F3)) ToggleDebugMode();
+        if (input->IsKeyReleased(Key::F4)) rootScene->DumpTree();
+
+        if (input->IsKeyReleased(Key::F5))
+        {
+            if (!GetInputManager().GetLogger().IsRecording())
+            {
+                GetInputManager().GetLogger().StartRecording(true);
+            }
+            else
+            {
+                ENGINE_INPUT("Already recording! Use F6 to stop & save");
+            }
+        }
+
+        if (input->IsKeyReleased(Key::F6))
+        {
+            GetInputManager().GetLogger().StopRecording();
+            GetInputManager().GetLogger().SaveToFile("replay_01.rep");
+
+            const auto& data = GetInputManager().GetLogger().GetRecordedData();
+            ENGINE_INFO("--- SAVED REPLAY SUMMARY (F6) ---");
+            for (const auto& entry : data)
+            {
+                ENGINE_INFO("Tick: {} | Hash: {} | Val: {}", entry.tick, entry.actionHash, entry.value);
+            }
+        }
+
+        if (input->IsKeyReleased(Key::F7))
+        {
+            if (GetInputManager().GetInjector().LoadFromFile("replay_01.rep"))
+            {
+                const auto& data = GetInputManager().GetInjector().GetPlaybackData();
+                ENGINE_INFO("--- LOADED REPLAY SUMMARY (F7) ---");
+                for (const auto& entry : data)
+                {
+                    ENGINE_INFO("Tick: {} | Hash: {} | Val: {}", entry.tick, entry.actionHash, entry.value);
+                }
+                ENGINE_INFO("--- REPLAY PLAYBACK: STARTED ---");
+                GetInputManager().GetInjector().Play();
+            }
+            else
+            {
+                ENGINE_ERROR("Failed to start replay: File not found.");
+            }
+        }
+    }
+
+    void Application::RenderAndCleanup(RendererBase* renderer, const Color& bgColor)
+    {
+        if (debugMode)
+        {
+            debugNode->Update(Time::GetDeltaTime());
+            rootScene->DebugDraw(renderer);
+        }
+
+        rootScene->Draw(renderer);
+        if (debugMode) debugNode->Draw(renderer);
+
+        RenderFrame(renderer, bgColor);
+
+        if (isSceneDirty)
+        {
+            rootScene->CleanUp();
+            UpdateEngineCaches();
+            isSceneDirty = false;
+        }
+    }
+
     void Application::Run()
     {
         sceneBuilder.FlushToScene(rootScene.get());
@@ -250,22 +361,6 @@ namespace Engine
 
             sceneBuilder.FlushToScene(rootScene.get());
 
-            float rawDt = renderer->GetDeltaTime();
-            if (rawDt > 0.25f) rawDt = 0.25f;
-            Time::Update(rawDt);
-            timerManager.Update(Time::GetDeltaTime());
-
-            fpsTimer += Time::GetUnscaledDeltaTime();
-            if (++frameCount, fpsTimer >= 1.0f)
-            {
-                currentFPS = frameCount;
-                frameCount = 0;
-                fpsTimer -= 1.0f;
-                if (debugMode) UpdateDebugNode(debugNode.get(), currentFPS);
-            }
-
-            accumulator += Time::GetUnscaledDeltaTime();
-
             if (isScenePendingStart)
             {
                 rootScene->Start();
@@ -273,85 +368,11 @@ namespace Engine
                 isScenePendingStart = false;
             }
 
-            while (accumulator >= FIXED_TIMESTEP)
-            {
-                inputManager.FixedUpdate();
-                float scaledTimestep = FIXED_TIMESTEP * Time::GetTimeScale();
-
-                rootScene->FixedUpdate(scaledTimestep);
-                if (physicsSystem) physicsSystem->Update(rootScene.get(), scaledTimestep);
-
-                inputManager.PostFixedUpdate();
-                accumulator -= FIXED_TIMESTEP;
-                Time::AdvanceTick();
-            }
-
-            rootScene->Update(Time::GetDeltaTime());
-
-            if (input->IsKeyReleased(Key::F3)) ToggleDebugMode();
-            if (input->IsKeyReleased(Key::F4)) rootScene->DumpTree();
-
-            if (input->IsKeyReleased(Key::F5))
-            {
-                if (!GetInputManager().GetLogger().IsRecording())
-                {
-                    GetInputManager().GetLogger().StartRecording(true);
-                }
-                else
-                {
-                    ENGINE_INPUT("Already recording! Use F6 to stop & save");
-                }
-            }
-
-            if (input->IsKeyReleased(Key::F6))
-            {
-                GetInputManager().GetLogger().StopRecording();
-                GetInputManager().GetLogger().SaveToFile("replay_01.rep");
-
-                const auto& data = GetInputManager().GetLogger().GetRecordedData();
-                ENGINE_INFO("--- SAVED REPLAY SUMMARY (F6) ---");
-                for (const auto& entry : data)
-                {
-                    ENGINE_INFO("Tick: {} | Hash: {} | Val: {}", entry.tick, entry.actionHash, entry.value);
-                }
-            }
-
-            if (input->IsKeyReleased(Key::F7))
-            {
-                if (GetInputManager().GetInjector().LoadFromFile("replay_01.rep"))
-                {
-                    const auto& data = GetInputManager().GetInjector().GetPlaybackData();
-                    ENGINE_INFO("--- LOADED REPLAY SUMMARY (F7) ---");
-                    for (const auto& entry : data)
-                    {
-                        ENGINE_INFO("Tick: {} | Hash: {} | Val: {}", entry.tick, entry.actionHash, entry.value);
-                    }
-                    ENGINE_INFO("--- REPLAY PLAYBACK: STARTED ---");
-                    GetInputManager().GetInjector().Play();
-                }
-                else
-                {
-                    ENGINE_ERROR("Failed to start replay: File not found.");
-                }
-            }
-
-            if (debugMode)
-            {
-                debugNode->Update(Time::GetDeltaTime());
-                rootScene->DebugDraw(renderer);
-            }
-
-            rootScene->Draw(renderer);
-            if (debugMode) debugNode->Draw(renderer);
-
-            RenderFrame(renderer, bgColor);
-
-            if (isSceneDirty)
-            {
-                rootScene->CleanUp();
-                UpdateEngineCaches();
-                isSceneDirty = false;
-            }
+            CalculateTime(accumulator, frameCount, fpsTimer, currentFPS, renderer);
+            UpdateFixed(FIXED_TIMESTEP, accumulator);
+            UpdateVariable();
+            HandleSystemHotkeys(input);
+            RenderAndCleanup(renderer, bgColor);
         }
     }
 
