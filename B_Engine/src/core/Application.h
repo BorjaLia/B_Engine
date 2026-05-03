@@ -87,6 +87,18 @@ namespace Engine
         void MarkSceneDirty() { isSceneDirty = true; }
         void MarkScenePendingStart() { isScenePendingStart = true; }
 
+        /// Registers a camera to be rendered by the engine.
+        void RegisterCamera(class CameraComponent* camera);
+
+        /// Unregisters a camera.
+        void UnregisterCamera(class CameraComponent* camera);
+
+        /// Sets the active audio listener for positional audio.
+        void RegisterAudioListener(class AudioListenerComponent* listener);
+
+        /// Removes the active audio listener.
+        void UnregisterAudioListener(class AudioListenerComponent* listener);
+
         /// Requests a transition to a new scene type.
         /// @tparam T The class of the new scene to be loaded.
         template<typename T>
@@ -146,7 +158,6 @@ namespace Engine
         std::vector<class CameraComponent*> activeCameras;
         class AudioListenerComponent* activeAudioListener = nullptr;
 
-        void UpdateEngineCaches();
         void ProcessPendingScene();
         void RenderFrame(class RendererBase* renderer, const Color& bgColor);
 
@@ -159,7 +170,5 @@ namespace Engine
 
         void OnSettingsChanged(SettingsChangedEvent& e);
         bool OnWindowClose(WindowCloseEvent& e);
-
-        static Node* FindListenerInTree(Node* node);
     };
 }

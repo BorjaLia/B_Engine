@@ -142,25 +142,6 @@ namespace Engine
         return true;
     }
 
-    void Application::UpdateEngineCaches()
-    {
-        activeCameras.clear();
-        activeAudioListener = nullptr;
-
-        if (rootScene)
-        {
-            rootScene->GetAllCameras(activeCameras);
-
-            Node* listenerNode = FindListenerInTree(rootScene.get());
-            if (listenerNode)
-            {
-                activeAudioListener = listenerNode->GetComponent<AudioListenerComponent>();
-            }
-        }
-
-        ENGINE_LOG("Engine caches updated. Cameras found: {}", activeCameras.size());
-    }
-
     void Application::ProcessPendingScene()
     {
         rootScene->ClearChildren();
@@ -180,6 +161,8 @@ namespace Engine
 
         for (CameraComponent* cam : activeCameras)
         {
+            if (!cam->GetOwner()->IsActive()) continue;
+
             if (cam->HasRenderTarget())
             {
                 renderer->BeginRenderToTexture(cam->GetRenderTarget());
@@ -312,7 +295,6 @@ namespace Engine
         if (isSceneDirty)
         {
             rootScene->CleanUp();
-            UpdateEngineCaches();
             isSceneDirty = false;
         }
     }
@@ -364,7 +346,6 @@ namespace Engine
             if (isScenePendingStart)
             {
                 rootScene->Start();
-                UpdateEngineCaches();
                 isScenePendingStart = false;
             }
 
@@ -381,6 +362,9 @@ namespace Engine
         eventBus.Unsubscribe(SettingsChangedEvent::GetStaticType(), settingsEventId);
         eventBus.Unsubscribe(AudioMuteEvent::GetStaticType(), muteEventId);
         eventBus.Unsubscribe(AudioVolumeEvent::GetStaticType(), volumeEventId);
+
+        rootScene.reset();
+        debugNode.reset();
 
         if (audio)  audio->Shutdown();
         if (window) window->Shutdown();
@@ -399,21 +383,36 @@ namespace Engine
         ENGINE_LOG("Debug mode: {}", (debugMode ? "ON" : "OFF"));
     }
 
-    Node* Application::FindAudioListener() const
+    void Application::RegisterCamera(CameraComponent* camera)
     {
-        return activeAudioListener ? activeAudioListener->GetOwner() : nullptr;
+        if (std::find(activeCameras.begin(), activeCameras.end(), camera) == activeCameras.end())
+        {
+            activeCameras.push_back(camera);
+        }
     }
 
-    Node* Application::FindListenerInTree(Node* node)
+    void Application::UnregisterCamera(CameraComponent* camera)
     {
-        if (!node) return nullptr;
-        if (node->GetComponent<AudioListenerComponent>()) return node;
-        for (const auto& child : node->GetChildren())
+        activeCameras.erase(std::remove(activeCameras.begin(), activeCameras.end(), camera), activeCameras.end());
+    }
+
+    void Application::RegisterAudioListener(AudioListenerComponent* listener)
+    {
+        activeAudioListener = listener;
+    }
+
+    void Application::UnregisterAudioListener(AudioListenerComponent* listener)
+    {
+        if (activeAudioListener == listener)
         {
-            Node* found = FindListenerInTree(child.get());
-            if (found) return found;
+            activeAudioListener = nullptr;
         }
-        return nullptr;
+    }
+
+    Node* Application::FindAudioListener() const
+    {
+        if (!activeAudioListener) return nullptr;
+        return activeAudioListener->GetOwner()->IsActive() ? activeAudioListener->GetOwner() : nullptr;
     }
 
     static BackendAPI StringToBackendAPI(std::string backendStr)

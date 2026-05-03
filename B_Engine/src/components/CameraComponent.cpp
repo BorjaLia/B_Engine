@@ -2,6 +2,7 @@
 
 #include <sstream>
 
+#include "../core/Application.h"
 #include "../scenes/Node.h"
 #include "TransformComponent.h"
 
@@ -10,6 +11,16 @@ namespace Engine
     CameraComponent::CameraComponent(IWindow* window, float startZoom)
         : window(window), zoom(startZoom)
     {
+    }
+
+    CameraComponent::~CameraComponent()
+    {
+        Application::Get().UnregisterCamera(this);
+    }
+
+    void CameraComponent::Start()
+    {
+        Application::Get().RegisterCamera(this);
     }
 
     std::string CameraComponent::ToString() const

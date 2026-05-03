@@ -15,8 +15,9 @@ namespace Engine
     {
     public:
         CameraComponent(IWindow* window = nullptr, float startZoom = 1.0f);
-        ~CameraComponent() override = default;
+        ~CameraComponent();
 
+        void Start() override;
         std::string ToString() const override;
 
         float GetZoom() const;

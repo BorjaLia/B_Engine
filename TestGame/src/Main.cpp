@@ -2,7 +2,7 @@
 #include "core/Application.h"
 #include "debug/MemoryTracker.h"
 
-int main()
+int game()
 {
     PlatformerGame game;
 
@@ -19,7 +19,14 @@ int main()
     app.Run();
     app.Shutdown();
 
+    return 0;
+}
+
+int main()
+{
+    int ret = game();
+
     Engine::MemoryTracker::Print();
 
-    return 0;
+    return ret;
 }

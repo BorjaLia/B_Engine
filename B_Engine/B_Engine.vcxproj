@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClCompile Include="src\components\AnimatedSpriteComponent.cpp" />
     <ClCompile Include="src\components\AudioComponent.cpp" />
+    <ClCompile Include="src\components\AudioListenerComponent.cpp" />
     <ClCompile Include="src\components\ButtonComponent.cpp" />
     <ClCompile Include="src\components\CameraComponent.cpp" />
     <ClCompile Include="src\components\ColliderComponent.cpp" />

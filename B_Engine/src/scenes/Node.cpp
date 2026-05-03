@@ -244,20 +244,6 @@ namespace Engine
         return transform->GetGlobalPosition();
     }
 
-    void Node::GetAllCameras(std::vector<CameraComponent*>& outCameras)
-    {
-        CameraComponent* cam = GetComponent<CameraComponent>();
-        if (cam != nullptr)
-        {
-            outCameras.push_back(cam);
-        }
-
-        for (auto& child : children)
-        {
-            child->GetAllCameras(outCameras);
-        }
-    }
-
     void Node::GetAllColliders(std::vector<ColliderComponent*>& outColliders)
     {
         if (!isActive) return;

@@ -205,6 +205,9 @@
       <Filter>Systems\Inputs</Filter>
     </ClCompile>
     <ClCompile Include="src\core\interfaces\.cpp" />
+    <ClCompile Include="src\components\AudioListenerComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\Application.h">

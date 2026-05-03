@@ -12,6 +12,8 @@ namespace Engine
     {
     public:
         AudioListenerComponent() = default;
-        ~AudioListenerComponent() override = default;
+        ~AudioListenerComponent() override;
+
+        void Start() override;
     };
 }
