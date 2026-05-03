@@ -7,11 +7,6 @@
 
 namespace Engine
 {
-    namespace
-    {
-        constexpr float DEG2RAD = 3.14159265f / 180.0f;
-    }
-
     TransformComponent::TransformComponent()
         : localPosition(0.0f, 0.0f), localRotation(0.0f), localScale(1.0f, 1.0f), isDirty(true)
     {

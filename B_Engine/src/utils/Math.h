@@ -3,9 +3,14 @@
 #include <cmath>
 #include <type_traits>
 #include <iostream>
+#include <numbers>
+
 
 namespace Engine
 {
+    constexpr float PI = std::numbers::pi_v<float>;
+    constexpr float DEG2RAD = PI / 180.0f;
+    constexpr float RAD2DEG = 180.0f / PI;
 #pragma region Vector2
     /// @defgroup Utils Utilities & Math
     /// @brief Core mathematical structures, hashing, and system utilities.

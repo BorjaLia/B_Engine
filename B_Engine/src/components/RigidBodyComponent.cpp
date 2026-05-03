@@ -8,13 +8,6 @@
 
 namespace Engine
 {
-    // Anonymous namespace to keep math constants private to this file
-    namespace
-    {
-        constexpr float DEG2RAD = 3.14159265f / 180.0f;
-        constexpr float RAD2DEG = 180.0f / 3.14159265f;
-    }
-
     RigidBodyComponent::RigidBodyComponent(BodyType initialType, bool lockRotation)
         : type(initialType), lockRotation(lockRotation)
     {
