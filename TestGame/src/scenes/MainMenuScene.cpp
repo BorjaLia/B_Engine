@@ -16,8 +16,6 @@
 
 void MainMenuScene::Build(Engine::SceneBuilder& builder)
 {
-    Engine::Logger::SetLevel(Engine::LogLevel::All);
-
     auto& app = Engine::Application::Get();
     auto& rm = *app.GetResourceManager();
 

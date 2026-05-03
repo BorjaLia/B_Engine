@@ -96,6 +96,7 @@ namespace Engine
         static void Init();
 
         static void SetLevel(LogLevel level) { currentLevel = level; }
+        static LogLevel GetLevel() { return currentLevel; }
         static void Enable(LogLevel level) { currentLevel = currentLevel | level; }
         static void Disable(LogLevel level) { currentLevel = currentLevel & ~level; }
         static bool Has(LogLevel level) { return static_cast<uint8_t>(currentLevel & level) != 0; }
