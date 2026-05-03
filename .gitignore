@@ -26,3 +26,7 @@ latex/
 
 engine.log
 *.log
+
+# Replays
+
+*.rep
