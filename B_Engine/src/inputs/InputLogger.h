@@ -46,6 +46,9 @@ namespace Engine
 
         /// Injects a custom string payload (e.g. RNG seed) into the replay file header.
         void SetMetadataProvider(std::function<std::string()> provider) { metadataProvider = provider; }
+       
+        /// Dumps the recorded events to the console (Debug only)
+        void DumpReplaySummary() const;
 
     private:
         std::vector<ReplayEntry> recordedEvents;

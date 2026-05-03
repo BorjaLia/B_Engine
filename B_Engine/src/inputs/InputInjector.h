@@ -35,6 +35,9 @@ namespace Engine
         /// Subscribes a callback to receive metadata contained within a replay file.
         void SetMetadataConsumer(std::function<void(const std::string&)> consumer);
 
+        /// Dumps the loaded events to the console (Debug only)
+        void DumpReplaySummary() const;
+
     private:
         std::vector<ReplayEntry> playbackData;
         size_t currentPlaybackIndex = 0;

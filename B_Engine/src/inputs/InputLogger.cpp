@@ -100,4 +100,17 @@ namespace Engine
             ENGINE_ERROR("InputLogger: Error while saving replay: {}", filename);
         }
     }
+
+    void InputLogger::DumpReplaySummary() const
+    {
+#ifdef _DEBUG
+        if (recordedEvents.empty()) return;
+
+        ENGINE_INFO("--- SAVED REPLAY SUMMARY (F6) ---");
+        for (const auto& entry : recordedEvents)
+        {
+            ENGINE_INFO("Tick: {} | Hash: {} | Val: {}", entry.tick, entry.actionHash, entry.value);
+        }
+#endif
+    }
 }

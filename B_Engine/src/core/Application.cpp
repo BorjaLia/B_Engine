@@ -234,11 +234,13 @@ namespace Engine
         if (input->IsKeyReleased(Key::F3)) ToggleDebugMode();
         if (input->IsKeyReleased(Key::F4)) rootScene->DumpTree();
 
+        InputLogger& logger = GetInputManager().GetLogger();
+
         if (input->IsKeyReleased(Key::F5))
         {
-            if (!GetInputManager().GetLogger().IsRecording())
+            if (!logger.IsRecording())
             {
-                GetInputManager().GetLogger().StartRecording(true);
+                logger.StartRecording(true);
             }
             else
             {
@@ -248,29 +250,21 @@ namespace Engine
 
         if (input->IsKeyReleased(Key::F6))
         {
-            GetInputManager().GetLogger().StopRecording();
-            GetInputManager().GetLogger().SaveToFile("replay_01.rep");
+            logger.StopRecording();
+            logger.SaveToFile("replay_01.rep");
 
-            const auto& data = GetInputManager().GetLogger().GetRecordedData();
-            ENGINE_INFO("--- SAVED REPLAY SUMMARY (F6) ---");
-            for (const auto& entry : data)
-            {
-                ENGINE_INFO("Tick: {} | Hash: {} | Val: {}", entry.tick, entry.actionHash, entry.value);
-            }
+            logger.DumpReplaySummary();
         }
+
+        InputInjector& injector = GetInputManager().GetInjector();
 
         if (input->IsKeyReleased(Key::F7))
         {
-            if (GetInputManager().GetInjector().LoadFromFile("replay_01.rep"))
+            if (injector.LoadFromFile("replay_01.rep"))
             {
-                const auto& data = GetInputManager().GetInjector().GetPlaybackData();
-                ENGINE_INFO("--- LOADED REPLAY SUMMARY (F7) ---");
-                for (const auto& entry : data)
-                {
-                    ENGINE_INFO("Tick: {} | Hash: {} | Val: {}", entry.tick, entry.actionHash, entry.value);
-                }
+                injector.DumpReplaySummary();
                 ENGINE_INFO("--- REPLAY PLAYBACK: STARTED ---");
-                GetInputManager().GetInjector().Play();
+                injector.Play();
             }
             else
             {

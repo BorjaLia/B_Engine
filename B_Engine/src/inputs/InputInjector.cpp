@@ -133,4 +133,17 @@ namespace Engine
             pendingMetadata.clear();
         }
     }
+
+    void InputInjector::DumpReplaySummary() const
+    {
+#ifdef _DEBUG
+        if (playbackData.empty()) return;
+
+        ENGINE_INFO("--- LOADED REPLAY SUMMARY (F7) ---");
+        for (const auto& entry : playbackData)
+        {
+            ENGINE_INFO("Tick: {} | Hash: {} | Val: {}", entry.tick, entry.actionHash, entry.value);
+        }
+#endif
+    }
 }
