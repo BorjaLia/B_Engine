@@ -85,6 +85,9 @@ namespace Engine
         bool IsDebugMode() const { return debugMode; }
         void ToggleDebugMode();
 
+        bool IsDebugNodeActive() const { return showDebugNode; }
+        void ToggleDebugNode();
+
         void MarkSceneDirty() { isSceneDirty = true; }
         void MarkScenePendingStart() { isScenePendingStart = true; }
 
@@ -150,7 +153,9 @@ namespace Engine
         bool isRunning = false;
         bool isSceneDirty = false;
         bool isScenePendingStart = true;
+
         bool debugMode = false;
+        bool showDebugNode = false;
 
         uint32_t settingsEventId = 0;
         uint32_t muteEventId = 0;

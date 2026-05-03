@@ -202,7 +202,7 @@ namespace Engine
             currentFPS = frameCount;
             frameCount = 0;
             fpsTimer -= 1.0f;
-            if (debugMode) UpdateDebugNode(debugNode.get(), currentFPS);
+            if (showDebugNode) UpdateDebugNode(debugNode.get(), currentFPS);
         }
 
         accumulator += Time::GetUnscaledDeltaTime();
@@ -231,8 +231,9 @@ namespace Engine
 
     void Application::HandleSystemHotkeys(InputBase* input)
     {
-        if (input->IsKeyReleased(Key::F3)) ToggleDebugMode();
-        if (input->IsKeyReleased(Key::F4)) rootScene->DumpTree();
+        if (input->IsKeyReleased(Key::F2)) rootScene->DumpTree();
+        if (input->IsKeyReleased(Key::F3)) ToggleDebugNode();
+        if (input->IsKeyReleased(Key::F4)) ToggleDebugMode();
 
         InputLogger& logger = GetInputManager().GetLogger();
 
@@ -275,14 +276,12 @@ namespace Engine
 
     void Application::RenderAndCleanup(RendererBase* renderer, const Color& bgColor)
     {
-        if (debugMode)
-        {
-            debugNode->Update(Time::GetDeltaTime());
-            rootScene->DebugDraw(renderer);
-        }
+        if (showDebugNode) debugNode->Update(Time::GetDeltaTime());
+        if (debugMode) rootScene->DebugDraw(renderer);
 
         rootScene->Draw(renderer);
-        if (debugMode) debugNode->Draw(renderer);
+
+        if (showDebugNode) debugNode->Draw(renderer);
 
         RenderFrame(renderer, bgColor);
 
@@ -368,13 +367,20 @@ namespace Engine
     void Application::ToggleDebugMode()
     {
         debugMode = !debugMode;
-        debugNode->SetActive(debugMode);
 
         if (window && window->GetRenderer())
         {
             window->GetRenderer()->SetDebugRenderEnabled(debugMode);
         }
-        ENGINE_LOG("Debug mode: {}", (debugMode ? "ON" : "OFF"));
+        ENGINE_LOG("Debug Shapes (Collisions): {}", (debugMode ? "ON" : "OFF"));
+    }
+
+    void Application::ToggleDebugNode()
+    {
+        showDebugNode = !showDebugNode;
+        debugNode->SetActive(showDebugNode);
+
+        ENGINE_LOG("Debug Node (FPS): {}", (showDebugNode ? "ON" : "OFF"));
     }
 
     void Application::RegisterCamera(CameraComponent* camera)
