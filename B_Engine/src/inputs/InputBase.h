@@ -1,19 +1,19 @@
 #pragma once
 
 #include <optional>
-#include "../../inputs/KeyCodes.h"
-#include "../../utils/Math.h"
+#include "KeyCodes.h"
+#include "../utils/Math.h"
 
 namespace Engine
 {
     class EventBus;
 
-    /// Interface for hardware input handling and event polling.
+    /// Base class for hardware input handling and event polling.
     /// @ingroup Core
-    class IInput
+    class InputBase
     {
     public:
-        virtual ~IInput() = default;
+        virtual ~InputBase() = default;
 
         /// Reads hardware state and pushes events to the EventBus.
         virtual void Update(EventBus& eventBus);
@@ -31,7 +31,7 @@ namespace Engine
         virtual float GetMouseWheel() = 0;
 
     protected:
-        bool previousMouseStates[5] = { false };
+        bool previousMouseStates[static_cast<int>(MouseButton::Count)] = { false };
         bool previousKeyStates[static_cast<int>(Key::Count)] = { false };
         Vector2f previousMousePos;
         float accumulatedScroll = 0.0f;

@@ -45,7 +45,8 @@ namespace Engine
         Right,
         Middle,
         SideForward, // Extra lateral mouse buttons
-        SideBack
+        SideBack,
+        Count
     };
 
     /// Converts a Key enum to its user-friendly string representation.

@@ -5,8 +5,8 @@
 #include <functional>
 
 #include "../../events/Event.h"
-#include "IRenderer.h"
-#include "IInput.h"
+#include "../../graphics/RendererBase.h"
+#include "../../inputs/InputBase.h"
 #include "../../utils/Math.h"
 
 namespace Engine
@@ -40,7 +40,7 @@ namespace Engine
         /// Injects the callback function used to pipe window events to the EventBus.
         virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 
-        virtual IRenderer* GetRenderer() const = 0;
-        virtual IInput* GetInput() const = 0;
+        virtual RendererBase* GetRenderer() const = 0;
+        virtual InputBase* GetInput() const = 0;
     };
 }

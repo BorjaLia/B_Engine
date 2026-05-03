@@ -13,7 +13,7 @@
 
 #include "interfaces/IWindow.h"
 #include "interfaces/IAudio.h"
-#include "interfaces/IRenderer.h"
+#include "../graphics/RendererBase.h"
 #include "ReplayModes.h"
 #include "../utils/Math.h"
 #include "../utils/Types.h"
@@ -76,7 +76,7 @@ namespace Engine
         EventBus& GetEventBus() { return eventBus; }
         Node* GetRootScene() const { return rootScene.get(); }
         IWindow* GetWindow() const { return window.get(); }
-        IRenderer* GetRenderer() const { return window->GetRenderer(); }
+        RendererBase* GetRenderer() const { return window->GetRenderer(); }
         IAudio* GetAudio() const { return audio.get(); }
 #pragma endregion
 
@@ -148,7 +148,7 @@ namespace Engine
 
         void UpdateEngineCaches();
         void ProcessPendingScene();
-        void RenderFrame(class IRenderer* renderer, const Color& bgColor);
+        void RenderFrame(class RendererBase* renderer, const Color& bgColor);
 
         void OnSettingsChanged(SettingsChangedEvent& e);
         bool OnWindowClose(WindowCloseEvent& e);

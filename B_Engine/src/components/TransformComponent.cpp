@@ -3,7 +3,7 @@
 #include <sstream>
 
 #include "../scenes/Node.h"
-#include "../core/interfaces/IRenderer.h"
+#include "../graphics/RendererBase.h"
 
 namespace Engine
 {
@@ -33,7 +33,7 @@ namespace Engine
         UpdateTransform();
     }
 
-    void TransformComponent::DebugDraw(IRenderer* renderer)
+    void TransformComponent::DebugDraw(RendererBase* renderer)
     {
         if (renderer == nullptr) return;
 

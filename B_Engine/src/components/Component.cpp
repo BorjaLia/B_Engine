@@ -8,7 +8,7 @@ namespace Engine
     void Component::Destroy()
     {
         pendingDestruction = true;
-        isActive = false; // Turn it off instantly
+        isActive = false;
 
         Application::Get().MarkSceneDirty();
 

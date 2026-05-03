@@ -2,20 +2,21 @@
 
 #include <string>
 #include <vector>
-#include "../../utils/Types.h"
-#include "../../utils/Math.h"
-#include "../../resources/Font.h"
+
+#include "../utils/Types.h"
+#include "../utils/Math.h"
+#include "../resources/Font.h"
 
 namespace Engine
 {
     class ResourceManager;
 
-    /// Interface for the rendering backend.
+    /// Base class for the rendering backend.
     /// @ingroup Core
-    class IRenderer
+    class RendererBase
     {
     public:
-        virtual ~IRenderer() = default;
+        virtual ~RendererBase() = default;
 
         virtual bool Initialize() = 0;
         virtual void Shutdown() = 0;

@@ -48,7 +48,7 @@ namespace Engine
         ~FollowComponent() override = default;
 
         void FixedUpdate(float fixedDeltaTime) override;
-        void DebugDraw(class IRenderer* renderer) override;
+        void DebugDraw(class RendererBase* renderer) override;
 
         std::string ToString() const override;
 

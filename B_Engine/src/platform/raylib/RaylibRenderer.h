@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../../core/interfaces/IRenderer.h"
+#include "../../graphics/RendererBase.h"
 #include "../../utils/Types.h"
 
 namespace Engine
 {
-    /// Raylib implementation of the IRenderer interface.
+    /// Raylib implementation of the RendererBase class.
     /// Wraps Raylib's drawing API and manages hardware texture loading.
-    class RaylibRenderer : public IRenderer
+    class RaylibRenderer : public RendererBase
     {
     public:
         RaylibRenderer() = default;

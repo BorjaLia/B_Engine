@@ -34,12 +34,12 @@ namespace Engine
 
         inline void SetEventCallback(const EventCallbackFn& callback) override { eventCallback = callback; }
 
-        inline IRenderer* GetRenderer() const override { return renderer.get(); }
-        inline IInput* GetInput() const override { return input.get(); }
+        inline RendererBase* GetRenderer() const override { return renderer.get(); }
+        inline InputBase* GetInput() const override { return input.get(); }
 
     private:
-        std::unique_ptr<IRenderer> renderer;
-        std::unique_ptr<IInput> input;
+        std::unique_ptr<RendererBase> renderer;
+        std::unique_ptr<InputBase> input;
         EventCallbackFn eventCallback;
 
         struct WindowData

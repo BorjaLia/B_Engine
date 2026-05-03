@@ -58,6 +58,9 @@
     <Filter Include="SceneGraph\Scripts">
       <UniqueIdentifier>{28d188b6-9b30-445f-bad3-d46f8428943b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Systems\Graphics">
+      <UniqueIdentifier>{84b6893b-ab41-4605-89f3-b048e8919113}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">
@@ -198,9 +201,10 @@
     <ClCompile Include="src\time\TimerManager.cpp">
       <Filter>Core\Time</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\interfaces\IInput.cpp">
-      <Filter>Core\Interfaces</Filter>
+    <ClCompile Include="src\inputs\InputBase.cpp">
+      <Filter>Systems\Inputs</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\interfaces\.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\Application.h">
@@ -216,12 +220,6 @@
       <Filter>Core\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="src\core\interfaces\IGame.h">
-      <Filter>Core\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\interfaces\IInput.h">
-      <Filter>Core\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\interfaces\IRenderer.h">
       <Filter>Core\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="src\core\interfaces\IWindow.h">
@@ -400,6 +398,12 @@
     </ClInclude>
     <ClInclude Include="src\scripts\Script.h">
       <Filter>SceneGraph\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inputs\InputBase.h">
+      <Filter>Systems\Inputs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\RendererBase.h">
+      <Filter>Systems\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -12,7 +12,7 @@
 #include "components/FollowComponent.h"
 #include "components/FollowSequencerComponent.h"
 #include "components/CameraComponent.h"
-#include "core/interfaces/IInput.h"
+#include "inputs/InputBase.h"
 #include "events/InputEvents.h"
 #include "debug/Debug.h"
 #include "utils/StringHash.h"

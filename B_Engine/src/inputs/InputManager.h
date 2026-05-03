@@ -5,7 +5,7 @@
 #include "InputInjector.h"
 
 #include "../events/EventBus.h"
-#include "../core/interfaces/IInput.h"
+#include "../inputs/InputBase.h"
 #include "../utils/StringHash.h"
 
 namespace Engine
@@ -24,7 +24,7 @@ namespace Engine
         InputManager& operator=(InputManager&&) = delete;
 
         /// Orchestrates the lifecycle of the input subsystems.
-        void Initialize(IInput* inputWindow);
+        void Initialize(InputBase* inputWindow);
 
         /// Polls raw hardware updates (Visual Loop).
         void Update(EventBus& eventBus);
@@ -69,7 +69,7 @@ namespace Engine
         InputManager() = default;
         ~InputManager() = default;
 
-        IInput* rawInput = nullptr;
+        InputBase* rawInput = nullptr;
 
         InputMapper mapper;
         InputLogger logger;

@@ -17,7 +17,7 @@
 
 namespace Engine
 {
-    class IRenderer;
+    class RendererBase;
 
     /// @defgroup Scenes Scene Management
     /// @brief The Node graph, Scene Builder, and scene transitions.
@@ -61,8 +61,8 @@ namespace Engine
         void Start();
         void Update(float deltaTime);
         void FixedUpdate(float fixedDeltaTime);
-        void Draw(IRenderer* renderer);
-        void DebugDraw(IRenderer* renderer);
+        void Draw(RendererBase* renderer);
+        void DebugDraw(RendererBase* renderer);
 #pragma endregion
 
 #pragma region Hierarchy & Position

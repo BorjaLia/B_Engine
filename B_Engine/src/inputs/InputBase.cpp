@@ -1,13 +1,13 @@
-#include "IInput.h"
+#include "InputBase.h"
 
 #include <cmath>
 
-#include "../../events/EventBus.h"
-#include "../../events/InputEvents.h"
+#include "../events/EventBus.h"
+#include "../events/InputEvents.h"
 
 namespace Engine
 {
-    void IInput::Update(EventBus& eventBus)
+    void InputBase::Update(EventBus& eventBus)
     {
         // 1. --- KEYBOARD ---
         for (int i = 1; i < static_cast<int>(Key::Count); ++i)

@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../core/interfaces/IRenderer.h"
+#include "../graphics/RendererBase.h"
 #include "../core/interfaces/IAudio.h"
 #include "../utils/Types.h"
 #include "Font.h"
@@ -25,7 +25,7 @@ namespace Engine
 
         /// @param renderer Renderer interface used to load GPU-side resources.
         /// @param audio Audio interface used to load sound data (may be null if audio is disabled).
-        ResourceManager(IRenderer* renderer, IAudio* audio = nullptr);
+        ResourceManager(RendererBase* renderer, IAudio* audio = nullptr);
         ~ResourceManager();
 
         /// Returns a cached texture, loading it on first request. Falls back to a default texture if not found.
@@ -48,7 +48,7 @@ namespace Engine
         void Clear();
 
     private:
-        IRenderer* renderer;
+        RendererBase* renderer;
         IAudio* audio;
 
         std::unordered_map<std::string, Texture2D> textures;

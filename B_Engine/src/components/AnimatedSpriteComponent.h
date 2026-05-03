@@ -34,7 +34,7 @@ namespace Engine
         ~AnimatedSpriteComponent() override = default;
 
         void Update(float deltaTime) override;
-        void Draw(class IRenderer* renderer) override;
+        void Draw(class RendererBase* renderer) override;
 
 #pragma region Animation Management
         /// Adds an animation by manually providing the source rectangles.

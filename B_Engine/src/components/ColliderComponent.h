@@ -29,7 +29,7 @@ namespace Engine
         void Start() override;
 
         /// Overridden to send the collision shape to the debug render queue.
-        void DebugDraw(class IRenderer* renderer) override;
+        void DebugDraw(class RendererBase* renderer) override;
 
         Shape GetShape() const { return shape; }
         void SetShape(const Shape& newShape) { shape = newShape; }

@@ -63,7 +63,6 @@ namespace Engine
 
     Vector2f Random::GetDirection2D()
     {
-        const float PI = 3.14159265359f;
         float angle = GetFloat(0.0f, 2.0f * PI);
         return { std::cos(angle), std::sin(angle) };
     }

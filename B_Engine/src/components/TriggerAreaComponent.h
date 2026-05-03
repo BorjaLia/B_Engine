@@ -8,8 +8,6 @@
 
 namespace Engine
 {
-    class Node;
-    class IRenderer;
 
     /// Defines an intangible physical boundary that emits events when other colliders enter it.
     /// @ingroup Components
@@ -30,7 +28,7 @@ namespace Engine
         ~TriggerAreaComponent() override = default;
 
         void Start() override;
-        void DebugDraw(IRenderer* renderer) override;
+        void DebugDraw(RendererBase* renderer) override;
 
         Shape GetShape() const { return shape; }
         Vector2f GetOffset() const { return offset; }

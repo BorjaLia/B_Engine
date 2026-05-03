@@ -42,7 +42,7 @@ namespace Engine
 
         void Start() override;
         void Update(float deltaTime) override;
-        void DebugDraw(class IRenderer* renderer) override;
+        void DebugDraw(class RendererBase* renderer) override;
 
         void SetOnClick(std::function<void()> callback) { onClickCallback = callback; }
 

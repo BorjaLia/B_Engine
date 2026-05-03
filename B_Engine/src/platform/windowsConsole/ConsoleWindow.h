@@ -34,12 +34,12 @@ namespace Engine
 
         void SetEventCallback(const EventCallbackFn& callback) override { eventCallback = callback; }
 
-        IRenderer* GetRenderer() const override { return renderer.get(); }
-        IInput* GetInput() const override { return input.get(); }
+        RendererBase* GetRenderer() const override { return renderer.get(); }
+        InputBase* GetInput() const override { return input.get(); }
 
     private:
-        std::unique_ptr<IRenderer> renderer;
-        std::unique_ptr<IInput> input;
+        std::unique_ptr<RendererBase> renderer;
+        std::unique_ptr<InputBase> input;
         EventCallbackFn eventCallback;
 
         Vector2i windowSize;

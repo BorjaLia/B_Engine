@@ -5,7 +5,7 @@
 
 namespace Engine
 {
-    ResourceManager::ResourceManager(IRenderer* renderer, IAudio* audio)
+    ResourceManager::ResourceManager(RendererBase* renderer, IAudio* audio)
         : renderer(renderer), audio(audio)
     {
     }

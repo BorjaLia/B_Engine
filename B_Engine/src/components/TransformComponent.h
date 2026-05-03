@@ -19,7 +19,7 @@ namespace Engine
         ~TransformComponent() override = default;
 
         void Start() override;
-        void DebugDraw(IRenderer* renderer) override;
+        void DebugDraw(RendererBase* renderer) override;
 
         std::string ToString() const override;
 

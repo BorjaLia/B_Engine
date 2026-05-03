@@ -4,7 +4,7 @@
 #include <algorithm>
 
 #include "../scenes/Node.h"
-#include "../core/interfaces/IRenderer.h"
+#include "../graphics/RendererBase.h"
 #include "SpriteComponent.h"
 #include "AnimatedSpriteComponent.h"
 
@@ -73,7 +73,7 @@ namespace Engine
         offset.y = (0.5f - pivotMult.y) * finalHeight;
     }
 
-    void ColliderComponent::DebugDraw(IRenderer* renderer)
+    void ColliderComponent::DebugDraw(RendererBase* renderer)
     {
         if (owner == nullptr || renderer == nullptr) return;
 

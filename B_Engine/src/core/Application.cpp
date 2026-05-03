@@ -173,7 +173,7 @@ namespace Engine
         timerManager.ClearAll();
     }
 
-    void Application::RenderFrame(IRenderer* renderer, const Color& bgColor)
+    void Application::RenderFrame(RendererBase* renderer, const Color& bgColor)
     {
         renderer->BeginFrame();
         renderer->ClearScreen(bgColor);
@@ -211,8 +211,8 @@ namespace Engine
         sceneBuilder.FlushToScene(rootScene.get());
 
         Color bgColor(50, 50, 60, 255);
-        IRenderer* renderer = window->GetRenderer();
-        IInput* input = window->GetInput();
+        RendererBase* renderer = window->GetRenderer();
+        InputBase* input = window->GetInput();
 
         const float FIXED_TIMESTEP = 1.0f / 60.0f;
         float accumulator = 0.0f;

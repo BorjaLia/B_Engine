@@ -2,13 +2,13 @@
 
 #include <windows.h>
 #include <optional>
-#include "../../core/interfaces/IInput.h"
+#include "../../inputs/InputBase.h"
 
 namespace Engine
 {
-    /// Windows Console implementation of the IInput interface.
+    /// Windows Console implementation of the InputsBase class.
     /// Handles Win32 API calls for keyboard and mouse capture.
-    class ConsoleInput : public IInput
+    class ConsoleInput : public InputBase
     {
     public:
         ConsoleInput();

@@ -6,7 +6,7 @@
 #include "../core/Application.h"
 #include "SpriteComponent.h"
 #include "ButtonComponent.h"
-#include "../core/interfaces/IRenderer.h" 
+#include "../graphics/RendererBase.h" 
 
 namespace Engine
 {

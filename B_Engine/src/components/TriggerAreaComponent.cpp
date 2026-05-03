@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "../scenes/Node.h"
-#include "../core/interfaces/IRenderer.h"
+#include "../graphics/RendererBase.h"
 #include "SpriteComponent.h"
 #include "AnimatedSpriteComponent.h"
 
@@ -67,7 +67,7 @@ namespace Engine
         }
     }
 
-    void TriggerAreaComponent::DebugDraw(IRenderer* renderer)
+    void TriggerAreaComponent::DebugDraw(RendererBase* renderer)
     {
         if (owner == nullptr || renderer == nullptr) return;
 

@@ -6,7 +6,7 @@ namespace Engine
 {
 	// Forward declarations to avoid heavy includes in the base component
 	class Node;
-	class IRenderer;
+	class RendererBase;
 
 	/// @defgroup Components ECS Components
 	/// @brief All attachable components that define entity behavior and data.
@@ -32,8 +32,8 @@ namespace Engine
 		virtual void Start() {}
 		virtual void FixedUpdate(float fixedDeltaTime) { (void)fixedDeltaTime; }
 		virtual void Update(float deltaTime) { (void)deltaTime; }
-		virtual void Draw(IRenderer* renderer) { (void)renderer; }
-		virtual void DebugDraw(IRenderer* renderer) { (void)renderer; }
+		virtual void Draw(RendererBase* renderer) { (void)renderer; }
+		virtual void DebugDraw(RendererBase* renderer) { (void)renderer; }
 
 		virtual std::string ToString() const { return "Component"; }
 

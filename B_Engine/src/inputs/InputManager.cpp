@@ -4,7 +4,7 @@
 
 namespace Engine
 {
-    void InputManager::Initialize(IInput* inputWindow)
+    void InputManager::Initialize(InputBase* inputWindow)
     {
         rawInput = inputWindow;
 

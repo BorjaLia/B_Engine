@@ -4,13 +4,13 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../../core/interfaces/IRenderer.h"
+#include "../../graphics/RendererBase.h"
 
 namespace Engine
 {
-    /// Windows Console implementation of the IRenderer interface.
+    /// Windows Console implementation of the RendererBase class.
     /// Rasterizes sprites into colored ASCII blocks using the Win32 Console API.
-    class ConsoleRenderer : public IRenderer
+    class ConsoleRenderer : public RendererBase
     {
     public:
         ConsoleRenderer() = default;

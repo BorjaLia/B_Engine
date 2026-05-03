@@ -7,7 +7,7 @@
 #include "../scenes/Node.h"
 #include "TransformComponent.h"
 #include "RigidBodyComponent.h"
-#include "../core/interfaces/IRenderer.h"
+#include "../graphics/RendererBase.h"
 
 namespace Engine
 {
@@ -198,7 +198,7 @@ namespace Engine
         MoveCamera(owner->transform->GetPosition(), fixedDeltaTime);
     }
 
-    void FollowComponent::DebugDraw(IRenderer* renderer)
+    void FollowComponent::DebugDraw(RendererBase* renderer)
     {
         if (!renderer || !owner || targets.empty()) return;
 

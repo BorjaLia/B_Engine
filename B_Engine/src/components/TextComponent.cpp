@@ -5,7 +5,7 @@
 
 #include "../scenes/Node.h"
 #include "TransformComponent.h"
-#include "../core/interfaces/IRenderer.h"
+#include "../graphics/RendererBase.h"
 
 namespace Engine
 {
@@ -36,7 +36,7 @@ namespace Engine
         );
     }
 
-    void TextComponent::Draw(IRenderer* renderer)
+    void TextComponent::Draw(RendererBase* renderer)
     {
         if (!font || text.empty() || owner == nullptr || owner->transform == nullptr || renderer == nullptr) return;
 

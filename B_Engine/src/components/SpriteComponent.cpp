@@ -4,7 +4,7 @@
 
 #include "../scenes/Node.h"
 #include "TransformComponent.h"
-#include "../core/interfaces/IRenderer.h"
+#include "../graphics/RendererBase.h"
 
 namespace Engine
 {
@@ -17,7 +17,7 @@ namespace Engine
     {
     }
 
-    void SpriteComponent::Draw(IRenderer* renderer)
+    void SpriteComponent::Draw(RendererBase* renderer)
     {
         if (owner == nullptr || owner->transform == nullptr || renderer == nullptr) return;
 

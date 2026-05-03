@@ -149,7 +149,7 @@ namespace Engine
         }
     }
 
-    void Node::Draw(IRenderer* renderer)
+    void Node::Draw(RendererBase* renderer)
     {
         if (!isActive) return;
 
@@ -167,7 +167,7 @@ namespace Engine
         }
     }
 
-    void Node::DebugDraw(IRenderer* renderer)
+    void Node::DebugDraw(RendererBase* renderer)
     {
         if (!isActive) return;
 

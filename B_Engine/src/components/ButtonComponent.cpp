@@ -5,7 +5,7 @@
 #include "../scenes/Node.h"
 #include "../core/Application.h"
 #include "SpriteComponent.h" 
-#include "../core/interfaces/IRenderer.h" 
+#include "../graphics/RendererBase.h" 
 #include "../utils/StringHash.h"
 #include "../debug/Debug.h"
 
@@ -110,7 +110,7 @@ namespace Engine
         }
     }
 
-    void ButtonComponent::DebugDraw(IRenderer* renderer)
+    void ButtonComponent::DebugDraw(RendererBase* renderer)
     {
         if (owner == nullptr || renderer == nullptr) return;
 

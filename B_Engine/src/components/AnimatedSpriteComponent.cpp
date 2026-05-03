@@ -4,7 +4,7 @@
 
 #include "../scenes/Node.h"
 #include "TransformComponent.h"
-#include "../core/interfaces/IRenderer.h"
+#include "../graphics/RendererBase.h"
 #include "../core/Application.h"
 #include "../events/AnimationEvents.h"
 #include "../debug/Debug.h"
@@ -120,7 +120,7 @@ namespace Engine
         }
     }
 
-    void AnimatedSpriteComponent::Draw(IRenderer* renderer)
+    void AnimatedSpriteComponent::Draw(RendererBase* renderer)
     {
         if (owner == nullptr || owner->transform == nullptr || renderer == nullptr) return;
         if (currentAnimation.empty() || animations.find(currentAnimation) == animations.end()) return;

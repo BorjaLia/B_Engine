@@ -1,12 +1,12 @@
 #pragma once
 
 #include <optional>
-#include "../../core/interfaces/IInput.h"
+#include "../../inputs/InputBase.h"
 
 namespace Engine
 {
-    /// Raylib implementation of the IInput interface.
-    class RaylibInput : public IInput
+    /// Raylib implementation of the InputBase class.
+    class RaylibInput : public InputBase
     {
     public:
         RaylibInput() = default;

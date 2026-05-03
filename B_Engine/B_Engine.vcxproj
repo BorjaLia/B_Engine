@@ -176,10 +176,10 @@
     <ClCompile Include="src\components\UiAnchorComponent.cpp" />
     <ClCompile Include="src\core\Application.cpp" />
     <ClCompile Include="src\core\ConfigManager.cpp" />
-    <ClCompile Include="src\core\interfaces\IInput.cpp" />
     <ClCompile Include="src\debug\Debug.cpp" />
     <ClCompile Include="src\debug\DebugNode.cpp" />
     <ClCompile Include="src\debug\MemoryTracker.cpp" />
+    <ClCompile Include="src\inputs\InputBase.cpp" />
     <ClCompile Include="src\inputs\InputInjector.cpp" />
     <ClCompile Include="src\inputs\InputLogger.cpp" />
     <ClCompile Include="src\inputs\InputManager.cpp" />
@@ -228,8 +228,6 @@
     <ClInclude Include="src\core\ConfigManager.h" />
     <ClInclude Include="src\core\interfaces\IAudio.h" />
     <ClInclude Include="src\core\interfaces\IGame.h" />
-    <ClInclude Include="src\core\interfaces\IInput.h" />
-    <ClInclude Include="src\core\interfaces\IRenderer.h" />
     <ClInclude Include="src\core\interfaces\IWindow.h" />
     <ClInclude Include="src\core\ReplayModes.h" />
     <ClInclude Include="src\debug\Debug.h" />
@@ -242,6 +240,8 @@
     <ClInclude Include="src\events\EventBus.h" />
     <ClInclude Include="src\events\GameEvents.h" />
     <ClInclude Include="src\events\InputEvents.h" />
+    <ClInclude Include="src\graphics\RendererBase.h" />
+    <ClInclude Include="src\inputs\InputBase.h" />
     <ClInclude Include="src\inputs\InputInjector.h" />
     <ClInclude Include="src\inputs\InputLogger.h" />
     <ClInclude Include="src\inputs\InputManager.h" />

@@ -44,7 +44,7 @@ namespace Engine
         ~TextComponent() override = default;
 
         void Update(float deltaTime) override;
-        void Draw(IRenderer* renderer) override;
+        void Draw(RendererBase* renderer) override;
 
         std::string ToString() const override;
 
