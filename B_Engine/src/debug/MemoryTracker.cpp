@@ -10,20 +10,35 @@
 namespace
 {
     size_t printAmount = 0;
+
     size_t allocCount = 0;
     size_t deleteCount = 0;
     size_t sizeAllocCount = 0;
     size_t sizeDeleteCount = 0;
+
+    size_t baseAllocCount = 0;
+    size_t baseSizeAllocCount = 0;
 }
 #endif // _DEBUG
 
 namespace Engine
 {
+    void MemoryTracker::RecordBaseline()
+    {
+#ifdef _DEBUG
+        baseAllocCount = allocCount;
+        baseSizeAllocCount = sizeAllocCount;
+#endif
+    }
+
     void MemoryTracker::Print()
     {
 #ifdef _DEBUG
-        size_t totalCount = allocCount - deleteCount;
-        size_t sizeDifference = sizeAllocCount - sizeDeleteCount;
+        size_t gameAllocCount = allocCount - baseAllocCount;
+        size_t gameSizeAllocCount = sizeAllocCount - baseSizeAllocCount;
+
+        size_t totalCount = gameAllocCount - deleteCount;
+        size_t sizeDifference = gameSizeAllocCount - sizeDeleteCount;
 
         std::cout << "\n=== [ Memory track calls: " << printAmount << " ] ===\n";
         std::cout << "Difference (Leaks): " << totalCount << '\n';
@@ -78,6 +93,18 @@ void operator delete(void* memory, size_t size) noexcept
 void operator delete[](void* memory, size_t size) noexcept
 {
     sizeDeleteCount += size;
+    deleteCount++;
+    free(memory);
+}
+
+void operator delete(void* memory) noexcept
+{
+    deleteCount++;
+    free(memory);
+}
+
+void operator delete[](void* memory) noexcept
+{
     deleteCount++;
     free(memory);
 }

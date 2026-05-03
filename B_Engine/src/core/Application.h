@@ -2,7 +2,6 @@
 /// B_Engine v 1.0
 /// Borja Lia (https://www.github.com/BorjaLia)
 ///
-/// 
 
 #pragma once
 

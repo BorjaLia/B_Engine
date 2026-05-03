@@ -5,7 +5,6 @@
 int game()
 {
     PlatformerGame game;
-
     Engine::Application app;
 
     if (!app.Initialize("Platformer!"))
@@ -24,6 +23,8 @@ int game()
 
 int main()
 {
+    Engine::MemoryTracker::RecordBaseline();
+
     int ret = game();
 
     Engine::MemoryTracker::Print();
