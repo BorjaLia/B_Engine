@@ -210,23 +210,51 @@ namespace Engine
         (void)fixedDeltaTime;
         if (!rootScene) return;
 
-        PrePass(rootScene);
+        //PrePass(rootScene);
+        PrePass();
         SolveCollisions();
         DetectTriggers();
     }
 
-    void PhysicsSystem::PrePass(Node* rootScene)
+    void PhysicsSystem::RegisterCollider(ColliderComponent* collider)
     {
-        activeColliders.clear();
-        activeTriggers.clear();
-        obbCache.clear();
+        if (std::find(activeColliders.begin(), activeColliders.end(), collider) == activeColliders.end())
+        {
+            activeColliders.push_back(collider);
+        }
+    }
 
-        rootScene->GetAllColliders(activeColliders);
-        rootScene->GetAllTriggerAreas(activeTriggers);
+    void PhysicsSystem::UnregisterCollider(ColliderComponent* collider)
+    {
+        activeColliders.erase(std::remove(activeColliders.begin(), activeColliders.end(), collider), activeColliders.end());
+    }
+
+    void PhysicsSystem::RegisterTrigger(TriggerAreaComponent* trigger)
+    {
+        if (std::find(activeTriggers.begin(), activeTriggers.end(), trigger) == activeTriggers.end())
+        {
+            activeTriggers.push_back(trigger);
+        }
+    }
+
+    void PhysicsSystem::UnregisterTrigger(TriggerAreaComponent* trigger)
+    {
+        activeTriggers.erase(std::remove(activeTriggers.begin(), activeTriggers.end(), trigger), activeTriggers.end());
+    }
+
+    void PhysicsSystem::PrePass()
+    {
+        obbCache.clear();
 
         for (auto* col : activeColliders)
         {
             col->SetDebugColor({ 0, 255, 0, 255 });
+
+            if (!col->GetOwner()->IsActive() || !col->IsActive())
+            {
+                obbCache.push_back(Physics::OBB{});
+                continue;
+            }
 
             if (std::holds_alternative<RectangleShape>(col->GetShape()))
             {
@@ -252,10 +280,13 @@ namespace Engine
         size_t count = activeColliders.size();
         for (size_t i = 0; i < count; ++i)
         {
+            auto* colA = activeColliders[i];
+            if (!colA->GetOwner()->IsActive() || !colA->IsActive()) continue;
+        
             for (size_t j = i + 1; j < count; ++j)
             {
-                auto* colA = activeColliders[i];
                 auto* colB = activeColliders[j];
+                if (!colB->GetOwner()->IsActive() || !colB->IsActive()) continue;
 
                 Shape shapeA = colA->GetShape();
                 Shape shapeB = colB->GetShape();
@@ -312,6 +343,8 @@ namespace Engine
     {
         for (auto* trigger : activeTriggers)
         {
+            if (!trigger->GetOwner()->IsActive() || !trigger->IsActive()) continue;
+
             trigger->SetDebugColor({ 255, 255, 0, 150 });
 
             bool isRectT = std::holds_alternative<RectangleShape>(trigger->GetShape());
@@ -324,6 +357,8 @@ namespace Engine
             for (size_t i = 0; i < activeColliders.size(); ++i)
             {
                 auto* col = activeColliders[i];
+                if (!col->GetOwner()->IsActive() || !col->IsActive()) continue;
+
                 bool isRectC = std::holds_alternative<RectangleShape>(col->GetShape());
                 float rotC = col->GetOwner()->transform->GetRotation() * (3.14159f / 180.0f);
                 Vector2f posC = col->GetOwner()->GetGlobalPosition() + (Matrix3x3::Rotation(rotC) * col->GetOffset());

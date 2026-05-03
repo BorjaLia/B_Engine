@@ -243,40 +243,4 @@ namespace Engine
     {
         return transform->GetGlobalPosition();
     }
-
-    void Node::GetAllColliders(std::vector<ColliderComponent*>& outColliders)
-    {
-        if (!isActive) return;
-
-        if (auto* col = GetComponent<ColliderComponent>())
-        {
-            if (col->IsActive())
-            {
-                outColliders.push_back(col);
-            }
-        }
-
-        for (auto& child : children)
-        {
-            child->GetAllColliders(outColliders);
-        }
-    }
-
-    void Node::GetAllTriggerAreas(std::vector<TriggerAreaComponent*>& outTriggerAreas)
-    {
-        if (!isActive) return;
-
-        if (auto* col = GetComponent<TriggerAreaComponent>())
-        {
-            if (col->IsActive())
-            {
-                outTriggerAreas.push_back(col);
-            }
-        }
-
-        for (auto& child : children)
-        {
-            child->GetAllTriggerAreas(outTriggerAreas);
-        }
-    }
 }

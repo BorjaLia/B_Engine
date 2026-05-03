@@ -3,6 +3,8 @@
 #include <cmath>
 #include <algorithm>
 
+#include "../core/Application.h"
+#include "../physics/PhysicsSystem.h"
 #include "../scenes/Node.h"
 #include "../graphics/RendererBase.h"
 #include "SpriteComponent.h"
@@ -15,8 +17,15 @@ namespace Engine
     {
     }
 
+    ColliderComponent::~ColliderComponent()
+    {
+        if (Application::Get().GetPhysicsSystem()) Application::Get().GetPhysicsSystem()->UnregisterCollider(this);
+    }
+
     void ColliderComponent::Start()
     {
+        if (Application::Get().GetPhysicsSystem()) Application::Get().GetPhysicsSystem()->RegisterCollider(this);
+
         if (!autoFitToSprite || owner == nullptr) return;
 
         auto* sprite = owner->GetComponent<SpriteComponent>();

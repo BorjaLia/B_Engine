@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "../core/Application.h"
+#include "../physics/PhysicsSystem.h"
 #include "../scenes/Node.h"
 #include "../graphics/RendererBase.h"
 #include "SpriteComponent.h"
@@ -15,9 +17,15 @@ namespace Engine
     {
     }
 
+    TriggerAreaComponent::~TriggerAreaComponent()
+    {
+        if (Application::Get().GetPhysicsSystem()) Application::Get().GetPhysicsSystem()->UnregisterTrigger(this);
+    }
+
     void TriggerAreaComponent::Start()
     {
-        // Early Exit! If autofit is disabled or there is no owner, do nothing.
+        if (Application::Get().GetPhysicsSystem()) Application::Get().GetPhysicsSystem()->RegisterTrigger(this);
+
         if (!autoFitToSprite || owner == nullptr) return;
 
         if (autoFitToSprite && owner)

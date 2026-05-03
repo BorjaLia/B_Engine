@@ -24,7 +24,7 @@ namespace Engine
             const Color& color = { 255, 0, 0, 255 }
         );
 
-        ~ColliderComponent() override = default;
+        ~ColliderComponent() override;
 
         void Start() override;
 

@@ -25,7 +25,7 @@ namespace Engine
             const Color& color = { 255, 255, 0, 255 }
         );
 
-        ~TriggerAreaComponent() override = default;
+        ~TriggerAreaComponent() override;
 
         void Start() override;
         void DebugDraw(RendererBase* renderer) override;

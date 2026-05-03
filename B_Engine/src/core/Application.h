@@ -77,6 +77,8 @@ namespace Engine
         IWindow* GetWindow() const { return window.get(); }
         RendererBase* GetRenderer() const { return window->GetRenderer(); }
         IAudio* GetAudio() const { return audio.get(); }
+        PhysicsSystem* GetPhysicsSystem() const { return physicsSystem.get(); }
+
 #pragma endregion
 
 #pragma region Engine State

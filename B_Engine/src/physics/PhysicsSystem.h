@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+
 #include "Physics.h" 
 
 namespace Engine
@@ -28,6 +29,15 @@ namespace Engine
         void SetSolverIterations(int iterations) { solverIterations = iterations; }
         int GetSolverIterations() const { return solverIterations; }
 
+        // ==========================================
+        // COMPONENT REGISTRATION API
+        // ==========================================
+        void RegisterCollider(ColliderComponent* collider);
+        void UnregisterCollider(ColliderComponent* collider);
+
+        void RegisterTrigger(TriggerAreaComponent* trigger);
+        void UnregisterTrigger(TriggerAreaComponent* trigger);
+
     private:
         int solverIterations = 8;
 
@@ -44,7 +54,7 @@ namespace Engine
         // ==========================================
 
         /// Fills lists and bakes user geometric data into pure OBBs.
-        void PrePass(Node* rootScene);
+        void PrePass();
 
         /// The double loop that evaluates collisions and applies the Iterative Solver.
         void SolveCollisions();

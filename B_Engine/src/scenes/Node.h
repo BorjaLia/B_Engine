@@ -106,9 +106,6 @@ namespace Engine
             return nullptr;
         }
 
-        void GetAllCameras(std::vector<CameraComponent*>& outCameras);
-        void GetAllColliders(std::vector<ColliderComponent*>& outColliders);
-        void GetAllTriggerAreas(std::vector<TriggerAreaComponent*>& outTriggerAreas);
         const std::vector<std::unique_ptr<Component>>& GetAllComponents() const { return components; }
 #pragma endregion
 
