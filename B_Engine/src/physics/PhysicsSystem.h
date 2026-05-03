@@ -8,7 +8,18 @@ namespace Engine
 {
     class Node;
     class ColliderComponent;
+    class RigidBodyComponent;
     class TriggerAreaComponent;
+
+    /// Internal structure to map a Collider with its RigidBody (O(1) access).
+    struct PhysicsBody
+    {
+        ColliderComponent* collider = nullptr;
+        RigidBodyComponent* rigidBody = nullptr;
+
+        bool isStatic = false;
+        bool needsObbUpdate = true;
+    };
 
     /// @defgroup Physics Physics System
     /// @brief Collisions, resolving manifolds, and spatial triggers.
@@ -38,6 +49,12 @@ namespace Engine
         void RegisterTrigger(TriggerAreaComponent* trigger);
         void UnregisterTrigger(TriggerAreaComponent* trigger);
 
+        void OnRigidBodyAdded(RigidBodyComponent* rigidBody);
+        void OnRigidBodyRemoved(RigidBodyComponent* rigidBody);
+
+        /// Forces the system to recalculate the OBB for a static collider.
+        void MarkObbDirty(ColliderComponent* collider);
+
     private:
         int solverIterations = 8;
 
@@ -45,9 +62,9 @@ namespace Engine
         // MEMORY CACHE (Data-Oriented Design)
         // ==========================================
         // Kept alive between frames to reuse the reserved memory capacity
-        std::vector<ColliderComponent*> activeColliders;
-        std::vector<TriggerAreaComponent*> activeTriggers;
+        std::vector<PhysicsBody> activeBodies;
         std::vector<Physics::OBB> obbCache;
+        std::vector<TriggerAreaComponent*> activeTriggers;
 
         // ==========================================
         // PHYSICS PIPELINE STEPS

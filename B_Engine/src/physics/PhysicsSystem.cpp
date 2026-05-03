@@ -15,15 +15,15 @@ namespace Engine
     {
         struct CollisionPair
         {
-            ColliderComponent* colA;
-            ColliderComponent* colB;
+            PhysicsBody* bodyA;
+            PhysicsBody* bodyB;
             Physics::CollisionManifold manifold;
         };
 
         void ResolveVelocity(CollisionPair& pair)
         {
-            auto* bodyA = pair.colA->GetOwner()->GetComponent<RigidBodyComponent>();
-            auto* bodyB = pair.colB->GetOwner()->GetComponent<RigidBodyComponent>();
+            auto* bodyA = pair.bodyA->rigidBody;
+            auto* bodyB = pair.bodyB->rigidBody;
 
             // Only Dynamic bodies receive impulses (invMass > 0).
             // Kinematic bodies contribute their velocity to relVel so they push Dynamic bodies,
@@ -39,8 +39,8 @@ namespace Engine
             float restitution = std::min(bodyA ? bodyA->GetRestitution() : 0.0f, bodyB ? bodyB->GetRestitution() : 0.0f);
             float friction = std::sqrt((bodyA ? bodyA->GetFriction() : 0.5f) * (bodyB ? bodyB->GetFriction() : 0.5f));
 
-            Vector2f centerOfMassA = pair.colA->GetOwner()->GetGlobalPosition();
-            Vector2f centerOfMassB = pair.colB->GetOwner()->GetGlobalPosition();
+            Vector2f centerOfMassA = pair.bodyA->collider->GetOwner()->GetGlobalPosition();
+            Vector2f centerOfMassB = pair.bodyB->collider->GetOwner()->GetGlobalPosition();
 
             Vector2f totalLinearImpulseA(0, 0);
             float totalAngularImpulseA = 0.0f;
@@ -149,8 +149,8 @@ namespace Engine
 
         void ApplyPositionalCorrection(CollisionPair& pair)
         {
-            auto* bodyA = pair.colA->GetOwner()->GetComponent<RigidBodyComponent>();
-            auto* bodyB = pair.colB->GetOwner()->GetComponent<RigidBodyComponent>();
+            auto* bodyA = pair.bodyA->rigidBody;
+            auto* bodyB = pair.bodyB->rigidBody;
 
             // Only Dynamic bodies get nudged — Static and Kinematic stay put
             float invMassA = (bodyA && bodyA->GetType() == BodyType::Dynamic) ? 1.0f / bodyA->GetMass() : 0.0f;
@@ -167,17 +167,17 @@ namespace Engine
                 (std::max(pair.manifold.depth - slop, 0.0f) / (invMassA + invMassB)) * percent;
 
             if (invMassA > 0.0f)
-                pair.colA->GetOwner()->transform->SetPosition(
-                    pair.colA->GetOwner()->transform->GetPosition() + (correction * invMassA));
+                pair.bodyA->collider->GetOwner()->transform->SetPosition(
+                    pair.bodyA->collider->GetOwner()->transform->GetPosition() + (correction * invMassA));
 
             if (invMassB > 0.0f)
-                pair.colB->GetOwner()->transform->SetPosition(
-                    pair.colB->GetOwner()->transform->GetPosition() - (correction * invMassB));
+                pair.bodyB->collider->GetOwner()->transform->SetPosition(
+                    pair.bodyB->collider->GetOwner()->transform->GetPosition() - (correction * invMassB));
         }
 
         void DispatchCollisionEvents(CollisionPair& pair)
         {
-            for (const auto& comp : pair.colA->GetOwner()->GetAllComponents())
+            for (const auto& comp : pair.bodyA->collider->GetOwner()->GetAllComponents())
             {
                 if (auto* listener = dynamic_cast<ICollisionListener*>(comp.get()))
                 {
@@ -188,7 +188,7 @@ namespace Engine
             Physics::CollisionManifold invertedHit = pair.manifold;
             invertedHit.normal = -pair.manifold.normal;
 
-            for (const auto& comp : pair.colB->GetOwner()->GetAllComponents())
+            for (const auto& comp : pair.bodyB->collider->GetOwner()->GetAllComponents())
             {
                 if (auto* listener = dynamic_cast<ICollisionListener*>(comp.get()))
                 {
@@ -200,9 +200,9 @@ namespace Engine
 
     PhysicsSystem::PhysicsSystem()
     {
-        activeColliders.reserve(1000);
-        activeTriggers.reserve(100);
+        activeBodies.reserve(1000);
         obbCache.reserve(1000);
+        activeTriggers.reserve(100);
     }
 
     void PhysicsSystem::Update(Node* rootScene, float fixedDeltaTime)
@@ -210,7 +210,6 @@ namespace Engine
         (void)fixedDeltaTime;
         if (!rootScene) return;
 
-        //PrePass(rootScene);
         PrePass();
         SolveCollisions();
         DetectTriggers();
@@ -218,15 +217,32 @@ namespace Engine
 
     void PhysicsSystem::RegisterCollider(ColliderComponent* collider)
     {
-        if (std::find(activeColliders.begin(), activeColliders.end(), collider) == activeColliders.end())
-        {
-            activeColliders.push_back(collider);
-        }
+        PhysicsBody body;
+        body.collider = collider;
+        body.rigidBody = collider->GetOwner()->GetComponent<RigidBodyComponent>();
+
+        body.isStatic = (body.rigidBody == nullptr || body.rigidBody->GetType() == BodyType::Static);
+        body.needsObbUpdate = true;
+
+        activeBodies.push_back(body);
+        obbCache.push_back(Physics::OBB{});
     }
 
     void PhysicsSystem::UnregisterCollider(ColliderComponent* collider)
     {
-        activeColliders.erase(std::remove(activeColliders.begin(), activeColliders.end(), collider), activeColliders.end());
+        // Swap and Pop O(1) to maintain activeBodies and obbCache perfectly synchronized
+        for (size_t i = 0; i < activeBodies.size(); ++i)
+        {
+            if (activeBodies[i].collider == collider)
+            {
+                activeBodies[i] = activeBodies.back();
+                activeBodies.pop_back();
+
+                obbCache[i] = obbCache.back();
+                obbCache.pop_back();
+                return;
+            }
+        }
     }
 
     void PhysicsSystem::RegisterTrigger(TriggerAreaComponent* trigger)
@@ -242,32 +258,72 @@ namespace Engine
         activeTriggers.erase(std::remove(activeTriggers.begin(), activeTriggers.end(), trigger), activeTriggers.end());
     }
 
+    void PhysicsSystem::OnRigidBodyAdded(RigidBodyComponent* rigidBody)
+    {
+        for (auto& body : activeBodies)
+        {
+            if (body.collider->GetOwner() == rigidBody->GetOwner())
+            {
+                body.rigidBody = rigidBody;
+                body.isStatic = (rigidBody->GetType() == BodyType::Static);
+                body.needsObbUpdate = true;
+            }
+        }
+    }
+
+    void PhysicsSystem::OnRigidBodyRemoved(RigidBodyComponent* rigidBody)
+    {
+        for (auto& body : activeBodies)
+        {
+            if (body.rigidBody == rigidBody)
+            {
+                body.rigidBody = nullptr;
+                body.isStatic = true;
+                body.needsObbUpdate = true;
+            }
+        }
+    }
+
+    void PhysicsSystem::MarkObbDirty(ColliderComponent* collider)
+    {
+        for (auto& body : activeBodies)
+        {
+            if (body.collider == collider)
+            {
+                body.needsObbUpdate = true;
+                return;
+            }
+        }
+    }
+
     void PhysicsSystem::PrePass()
     {
-        obbCache.clear();
-
-        for (auto* col : activeColliders)
+        for (size_t i = 0; i < activeBodies.size(); ++i)
         {
+            auto& body = activeBodies[i];
+            auto* col = body.collider;
+
+            if (!col->IsActive() || !col->GetOwner()->IsActive()) continue;
+
             col->SetDebugColor({ 0, 255, 0, 255 });
 
-            if (!col->GetOwner()->IsActive() || !col->IsActive())
+            // Data-Oriented optimization: Skip heavy math if static and cached
+            if (!body.isStatic || body.needsObbUpdate)
             {
-                obbCache.push_back(Physics::OBB{});
-                continue;
-            }
+                if (std::holds_alternative<RectangleShape>(col->GetShape()))
+                {
+                    const auto rect = std::get<RectangleShape>(col->GetShape());
+                    float rot = col->GetOwner()->transform->GetRotation() * (3.14159f / 180.0f);
+                    Vector2f rotatedOffset = Matrix3x3::Rotation(rot) * col->GetOffset();
+                    Vector2f pos = col->GetOwner()->GetGlobalPosition() + rotatedOffset;
 
-            if (std::holds_alternative<RectangleShape>(col->GetShape()))
-            {
-                const auto rect = std::get<RectangleShape>(col->GetShape());
-                float rot = col->GetOwner()->transform->GetRotation() * (3.14159f / 180.0f);
-                Vector2f rotatedOffset = Matrix3x3::Rotation(rot) * col->GetOffset();
-                Vector2f pos = col->GetOwner()->GetGlobalPosition() + rotatedOffset;
-
-                obbCache.push_back(Physics::GetOBB(pos, rect.size, rot));
-            }
-            else
-            {
-                obbCache.push_back(Physics::OBB{});
+                    obbCache[i] = Physics::GetOBB(pos, rect.size, rot);
+                }
+                else
+                {
+                    obbCache[i] = Physics::OBB{};
+                }
+                body.needsObbUpdate = false;
             }
         }
     }
@@ -277,28 +333,28 @@ namespace Engine
         std::vector<CollisionPair> contacts;
         contacts.reserve(100);
 
-        size_t count = activeColliders.size();
+        size_t count = activeBodies.size();
         for (size_t i = 0; i < count; ++i)
         {
-            auto* colA = activeColliders[i];
-            if (!colA->GetOwner()->IsActive() || !colA->IsActive()) continue;
+            auto& bodyA = activeBodies[i];
+            if (!bodyA.collider->IsActive() || !bodyA.collider->GetOwner()->IsActive()) continue;
         
             for (size_t j = i + 1; j < count; ++j)
             {
-                auto* colB = activeColliders[j];
-                if (!colB->GetOwner()->IsActive() || !colB->IsActive()) continue;
+                auto& bodyB = activeBodies[j];
+                if (!bodyB.collider->IsActive() || !bodyB.collider->GetOwner()->IsActive()) continue;
 
-                Shape shapeA = colA->GetShape();
-                Shape shapeB = colB->GetShape();
+                Shape shapeA = bodyA.collider->GetShape();
+                Shape shapeB = bodyB.collider->GetShape();
 
                 bool isRectA = std::holds_alternative<RectangleShape>(shapeA);
                 bool isRectB = std::holds_alternative<RectangleShape>(shapeB);
 
-                float rotA = colA->GetOwner()->transform->GetRotation() * (3.14159f / 180.0f);
-                float rotB = colB->GetOwner()->transform->GetRotation() * (3.14159f / 180.0f);
+                float rotA = bodyA.collider->GetOwner()->transform->GetRotation() * DEG2RAD;
+                float rotB = bodyB.collider->GetOwner()->transform->GetRotation() * DEG2RAD;
 
-                Vector2f posA = colA->GetOwner()->GetGlobalPosition() + (Matrix3x3::Rotation(rotA) * colA->GetOffset());
-                Vector2f posB = colB->GetOwner()->GetGlobalPosition() + (Matrix3x3::Rotation(rotB) * colB->GetOffset());
+                Vector2f posA = bodyA.collider->GetOwner()->GetGlobalPosition() + (Matrix3x3::Rotation(rotA) * bodyA.collider->GetOffset());
+                Vector2f posB = bodyB.collider->GetOwner()->GetGlobalPosition() + (Matrix3x3::Rotation(rotB) * bodyB.collider->GetOffset());
 
                 Physics::CollisionManifold manifold;
 
@@ -316,9 +372,9 @@ namespace Engine
 
                 if (manifold.isColliding)
                 {
-                    contacts.push_back({ colA, colB, manifold });
-                    colA->SetDebugColor({ 255, 0, 0, 255 });
-                    colB->SetDebugColor({ 255, 0, 0, 255 });
+                    contacts.push_back({ &bodyA, &bodyB, manifold });
+                    bodyA.collider->SetDebugColor({ 255, 0, 0, 255 });
+                    bodyB.collider->SetDebugColor({ 255, 0, 0, 255 });
                 }
             }
         }
@@ -343,7 +399,7 @@ namespace Engine
     {
         for (auto* trigger : activeTriggers)
         {
-            if (!trigger->GetOwner()->IsActive() || !trigger->IsActive()) continue;
+            if (!trigger->IsActive() || !trigger->GetOwner()->IsActive()) continue;
 
             trigger->SetDebugColor({ 255, 255, 0, 150 });
 
@@ -354,30 +410,30 @@ namespace Engine
             Physics::OBB obbT;
             if (isRectT) obbT = Physics::GetOBB(posT, std::get<RectangleShape>(trigger->GetShape()).size, rotT);
 
-            for (size_t i = 0; i < activeColliders.size(); ++i)
+            for (size_t i = 0; i < activeBodies.size(); ++i)
             {
-                auto* col = activeColliders[i];
-                if (!col->GetOwner()->IsActive() || !col->IsActive()) continue;
+                auto& body = activeBodies[i];
+                if (!body.collider->IsActive() || !body.collider->GetOwner()->IsActive()) continue;
 
-                bool isRectC = std::holds_alternative<RectangleShape>(col->GetShape());
-                float rotC = col->GetOwner()->transform->GetRotation() * (3.14159f / 180.0f);
-                Vector2f posC = col->GetOwner()->GetGlobalPosition() + (Matrix3x3::Rotation(rotC) * col->GetOffset());
+                bool isRectC = std::holds_alternative<RectangleShape>(body.collider->GetShape());
+                float rotC = body.collider->GetOwner()->transform->GetRotation() * (3.14159f / 180.0f);
+                Vector2f posC = body.collider->GetOwner()->GetGlobalPosition() + (Matrix3x3::Rotation(rotC) * body.collider->GetOffset());
 
                 Physics::CollisionManifold manifold;
 
                 if (isRectT && isRectC)        manifold = Physics::CheckCollision(obbT, obbCache[i]);
-                else if (!isRectT && !isRectC) manifold = Physics::CheckCollision(posT, std::get<CircleShape>(trigger->GetShape()).radius, posC, std::get<CircleShape>(col->GetShape()).radius);
+                else if (!isRectT && !isRectC) manifold = Physics::CheckCollision(posT, std::get<CircleShape>(trigger->GetShape()).radius, posC, std::get<CircleShape>(body.collider->GetShape()).radius);
                 else if (!isRectT && isRectC)  manifold = Physics::CheckCollision(posT, std::get<CircleShape>(trigger->GetShape()).radius, obbCache[i]);
                 else
                 {
-                    manifold = Physics::CheckCollision(posC, std::get<CircleShape>(col->GetShape()).radius, obbT);
+                    manifold = Physics::CheckCollision(posC, std::get<CircleShape>(body.collider->GetShape()).radius, obbT);
                     if (manifold.isColliding) manifold.normal = -manifold.normal;
                 }
 
                 if (manifold.isColliding)
                 {
                     trigger->SetDebugColor({ 255, 165, 0, 255 });
-                    trigger->EmitTriggerEnter(col->GetOwner());
+                    trigger->EmitTriggerEnter(body.collider->GetOwner());
                 }
             }
         }

@@ -39,6 +39,8 @@ namespace Engine
 
         void SetDebugColor(const Color& color) { debugColor = color; }
 
+        void MarkObbDirty();
+
     private:
         Shape shape;
         Vector2f offset;

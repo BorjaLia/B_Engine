@@ -93,6 +93,12 @@ void MouseScript::OnActionChanged(Engine::ActionChangedEvent& e)
         rb->SetGravityScale(0.0f);
 
         node->transform->SetPosition(worldMousePos);
+
+        Engine::Application::Get().GetTimerManager().SetTimeout(10.0f, [node]
+            {
+                ENGINE_INFO("Time out!");
+                node->Destroy();
+            });
     }
     else if (e.GetHash() == Engine::Hash::GetHash("UI_Interact"))
     {
@@ -111,5 +117,11 @@ void MouseScript::OnActionChanged(Engine::ActionChangedEvent& e)
         rb->SetMassAndBoxInertia(5.0f, { realWidth, realHeight });
 
         node->transform->SetPosition(worldMousePos);
+
+        Engine::Application::Get().GetTimerManager().SetTimeout(10.0f, [node]
+            {
+                ENGINE_INFO("Time out!");
+                node->Destroy();
+            });
     }
 }

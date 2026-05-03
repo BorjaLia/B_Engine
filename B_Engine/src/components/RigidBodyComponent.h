@@ -20,7 +20,9 @@ namespace Engine
     {
     public:
         RigidBodyComponent(BodyType initialType = BodyType::Dynamic, bool lockRotation = false);
-        ~RigidBodyComponent() override = default;
+        ~RigidBodyComponent() override;
+
+        void Start() override;
 
         void FixedUpdate(float fixedDeltaTime) override;
 

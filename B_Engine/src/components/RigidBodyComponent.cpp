@@ -3,6 +3,8 @@
 #include <cmath>
 #include <algorithm>
 
+#include "../core/Application.h"
+#include "../physics/PhysicsSystem.h"
 #include "../scenes/Node.h"
 #include "TransformComponent.h"
 
@@ -11,6 +13,16 @@ namespace Engine
     RigidBodyComponent::RigidBodyComponent(BodyType initialType, bool lockRotation)
         : type(initialType), lockRotation(lockRotation)
     {
+    }
+
+    RigidBodyComponent::~RigidBodyComponent()
+    {
+        if (Application::Get().GetPhysicsSystem()) Application::Get().GetPhysicsSystem()->OnRigidBodyRemoved(this);
+    }
+
+    void RigidBodyComponent::Start()
+    {
+        if (Application::Get().GetPhysicsSystem()) Application::Get().GetPhysicsSystem()->OnRigidBodyAdded(this);
     }
 
     void RigidBodyComponent::FixedUpdate(float fixedDeltaTime)

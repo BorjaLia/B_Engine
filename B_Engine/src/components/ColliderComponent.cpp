@@ -108,4 +108,10 @@ namespace Engine
 
         renderer->SubmitDebugShape(RenderLayer::World, pointerShape, pointerPos, rot, pointerColor);
     }
+
+    void ColliderComponent::MarkObbDirty()
+    {
+        if (Application::Get().GetPhysicsSystem()) Application::Get().GetPhysicsSystem()->MarkObbDirty(this);
+        
+    }
 }
