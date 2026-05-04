@@ -14,7 +14,7 @@ namespace Engine
     class CameraComponent : public Component
     {
     public:
-        CameraComponent(IWindow* window = nullptr, float startZoom = 1.0f);
+        CameraComponent(float startZoom = 1.0f);
         ~CameraComponent() override;
 
         void Start() override;
@@ -40,7 +40,6 @@ namespace Engine
     private:
         bool showDebug = true;
 
-        IWindow* window;
         float zoom;
         std::optional<RenderTexture2D> renderTarget;
     };

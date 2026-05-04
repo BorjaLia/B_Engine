@@ -204,9 +204,11 @@
     <ClCompile Include="src\inputs\InputBase.cpp">
       <Filter>Systems\Inputs</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\interfaces\.cpp" />
     <ClCompile Include="src\components\AudioListenerComponent.cpp">
       <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\RendererBase.cpp">
+      <Filter>Systems\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

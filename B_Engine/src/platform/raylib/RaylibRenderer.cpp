@@ -11,16 +11,17 @@ namespace Engine
         return ::Color{ color.r, color.g, color.b, color.a };
     }
 
-    bool RaylibRenderer::Initialize()
+    bool RaylibRenderer::OnInit()
     {
         // Window initialization is handled by RaylibWindow.
         // We just return true to validate the renderer is ready.
         return true;
     }
 
-    void RaylibRenderer::Shutdown()
+    void RaylibRenderer::OnShutdown()
     {
-        ::CloseWindow();
+        // Nothing to handle here, window closing happens in window
+        return;
     }
 
     float RaylibRenderer::GetDeltaTime() const
@@ -98,7 +99,7 @@ namespace Engine
         currentTextureSize = { 0.0f, 0.0f };
     }
 
-    void RaylibRenderer::DrawRenderTexture(Engine::RenderTexture2D target, const Vector2f& position, const Color& tint)
+    void RaylibRenderer::DrawRenderTexture(Engine::RenderTexture2D target, const Vector2f& position, const Vector2f& scale, const Color& tint)
     {
         // We use a negative height to prevent the texture from rendering upside down
         ::Rectangle sourceRec = {
@@ -111,8 +112,8 @@ namespace Engine
         ::Rectangle destRec = {
             position.x,
             position.y,
-            static_cast<float>(target.texture.size.x),
-            static_cast<float>(target.texture.size.y)
+            static_cast<float>(target.texture.size.x) * scale.x,
+            static_cast<float>(target.texture.size.y) * scale.y
         };
 
         ::Vector2 origin = { 0.0f, 0.0f };

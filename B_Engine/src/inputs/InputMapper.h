@@ -77,6 +77,10 @@ namespace Engine
         uint32_t mouseMovedSubId = 0;
         uint32_t mouseScrolledSubId = 0;
 
+        uint32_t replayStateSubId = 0;
+
+        bool isReplaying = false;
+
         void OnKeyPressed(KeyPressedEvent& e);
         void OnKeyReleased(KeyReleasedEvent& e);
         void OnMousePressed(MouseButtonPressedEvent& e);

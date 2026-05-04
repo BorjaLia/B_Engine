@@ -50,8 +50,9 @@ namespace Engine
     {
         if (owner == nullptr || owner->transform == nullptr) return;
 
-        float refWidth = static_cast<float>(Application::Get().GetWindow()->GetSize().x);
-        float refHeight = static_cast<float>(Application::Get().GetWindow()->GetSize().y);
+        Vector2i logicalRes = Application::Get().GetRenderer()->GetLogicalResolution();
+        float refWidth = static_cast<float>(logicalRes.x);
+        float refHeight = static_cast<float>(logicalRes.y);
         Vector2f refGlobalPos(0.0f, 0.0f);
 
         if (owner->GetParent() != nullptr)

@@ -55,6 +55,7 @@ namespace Engine
         if (::IsWindowReady())
         {
             if (renderer) renderer->Shutdown();
+            ::CloseWindow();
         }
     }
 

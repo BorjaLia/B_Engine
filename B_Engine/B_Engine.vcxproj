@@ -180,6 +180,7 @@
     <ClCompile Include="src\debug\Debug.cpp" />
     <ClCompile Include="src\debug\DebugNode.cpp" />
     <ClCompile Include="src\debug\MemoryTracker.cpp" />
+    <ClCompile Include="src\graphics\RendererBase.cpp" />
     <ClCompile Include="src\inputs\InputBase.cpp" />
     <ClCompile Include="src\inputs\InputInjector.cpp" />
     <ClCompile Include="src\inputs\InputLogger.cpp" />

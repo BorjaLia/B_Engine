@@ -21,8 +21,7 @@
 
 Engine::Node* PlayerPrefab::Create(Engine::SceneBuilder& builder, Engine::Vector2f position)
 {
-    auto& app = Engine::Application::Get();
-    auto& rm = *app.GetResourceManager();
+    auto& rm = *Engine::Application::Get().GetResourceManager();
 
     Engine::Texture2D animPlayer = rm.GetTexture("res/sprites/CharacterSheet.png");
     Engine::Font* font = rm.GetFont("res/fonts/ReemKufiFunRegular.ttf", 48);
@@ -58,7 +57,7 @@ Engine::Node* PlayerPrefab::Create(Engine::SceneBuilder& builder, Engine::Vector
 
     // 4. Camera System (As an independent sibling node)
     Engine::Node* camNode = builder.CreateNode("Camera");
-    auto* camComp = camNode->AddComponent<Engine::CameraComponent>(app.GetWindow(), 0.5f);
+    auto* camComp = camNode->AddComponent<Engine::CameraComponent>(0.5f);
     camNode->transform->SetPosition(position);
 
     auto* follow = camNode->AddComponent<Engine::FollowComponent>(Engine::FollowMode::Lerp, 5.0f);

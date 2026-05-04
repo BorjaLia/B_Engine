@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "../core/Application.h"
 #include "../events/EventBus.h"
 #include "../events/InputEvents.h"
 
@@ -52,7 +53,8 @@ namespace Engine
         }
 
         // 3. --- MOUSE MOVEMENT ---
-        Vector2f currentMousePos = GetMousePosition();
+        Vector2f rawMouse = GetMousePosition();
+        Vector2f currentMousePos = Application::Get().GetRenderer()->ScreenToLogical(rawMouse);
         if (currentMousePos.x != previousMousePos.x || currentMousePos.y != previousMousePos.y)
         {
             MouseMovedEvent e(currentMousePos.x, currentMousePos.y);

@@ -30,3 +30,7 @@ engine.log
 # Replays
 
 *.rep
+
+# Temp folder
+
+Temp/

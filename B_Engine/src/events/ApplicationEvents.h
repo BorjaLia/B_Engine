@@ -46,4 +46,16 @@ namespace Engine
     private:
         UserSettings newSettings;
     };
+
+    class ReplayStateEvent : public EventBase<ReplayStateEvent>
+    {
+    public:
+        ReplayStateEvent(bool isPlaying) : playing(isPlaying) {}
+        bool IsPlaying() const { return playing; }
+        const char* GetName() const override { return "ReplayStateEvent"; }
+
+    private:
+        bool playing;
+    };
+
 }

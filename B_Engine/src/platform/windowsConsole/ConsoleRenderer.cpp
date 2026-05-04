@@ -9,7 +9,7 @@ namespace Engine
 {
     ConsoleRenderer::~ConsoleRenderer() { Shutdown(); }
 
-    bool ConsoleRenderer::Initialize()
+    bool ConsoleRenderer::OnInit()
     {
         hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -46,7 +46,7 @@ namespace Engine
         return true;
     }
 
-    void ConsoleRenderer::Shutdown()
+    void ConsoleRenderer::OnShutdown()
     {
         for (auto& pair : textureData)
         {

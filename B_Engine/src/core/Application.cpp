@@ -78,6 +78,8 @@ namespace Engine
         window->SetFullscreen(userSettings.fullscreen);
         window->SetVSync(userSettings.vSync);
 
+        window->GetRenderer()->SetLogicalResolution(windowSize);
+
         settingsEventId = eventBus.Subscribe<SettingsChangedEvent>(
             [this](SettingsChangedEvent& e) { this->OnSettingsChanged(e); }
         );
@@ -127,8 +129,13 @@ namespace Engine
             window->SetSize({ settings.windowWidth, settings.windowHeight });
             window->SetFullscreen(settings.fullscreen);
             window->SetVSync(settings.vSync);
+        
+            if (!GetInputManager().GetInjector().IsPlaying())
+            {
+                window->GetRenderer()->SetLogicalResolution({ settings.windowWidth, settings.windowHeight });
+            }
         }
-
+        
         if (audio)
         {
             audio->SetMasterVolume(settings.masterVolume);
@@ -156,14 +163,35 @@ namespace Engine
 
     void Application::RenderFrame(RendererBase* renderer, const Color& bgColor)
     {
+        const bool useGlobalCanvas = renderer->IsUsingGlobalCanvas();
+
+        RenderTexture2D globalCanvas;
+        Vector2f lbOffset;
+        float lbScale = 1.0f;
+
+        if (useGlobalCanvas)
+        {
+            globalCanvas = renderer->GetGlobalCanvas();
+            lbOffset = renderer->GetLetterboxOffset();
+            lbScale = renderer->GetLetterboxScale();
+        }
+
         renderer->BeginFrame();
+
+        if (useGlobalCanvas)
+        {
+            renderer->ClearScreen({ 0, 0, 0, 255 });
+            renderer->BeginRenderToTexture(globalCanvas);
+        }
         renderer->ClearScreen(bgColor);
 
         for (CameraComponent* cam : activeCameras)
         {
             if (!cam->GetOwner()->IsActive()) continue;
 
-            if (cam->HasRenderTarget())
+            const bool isCameraRT = cam->HasRenderTarget();
+
+            if (isCameraRT)
             {
                 renderer->BeginRenderToTexture(cam->GetRenderTarget());
                 renderer->ClearScreen(bgColor);
@@ -180,11 +208,30 @@ namespace Engine
 
             renderer->EndCamera();
 
-            if (cam->HasRenderTarget()) renderer->EndRenderToTexture();
+            if (isCameraRT)
+            {
+                renderer->EndRenderToTexture();
+
+                if (useGlobalCanvas)
+                {
+                    renderer->BeginRenderToTexture(globalCanvas);
+                }
+            }
         }
 
         renderer->Flush(RenderLayer::UI);
         if (debugMode) renderer->FlushDebug(RenderLayer::UI);
+
+        if (useGlobalCanvas)
+        {
+            renderer->EndRenderToTexture();
+            renderer->DrawRenderTexture(
+                renderer->GetGlobalCanvas(),
+                renderer->GetLetterboxOffset(),
+                { renderer->GetLetterboxScale(), renderer->GetLetterboxScale() },
+                { 255, 255, 255, 255 }
+            );
+        }
 
         renderer->EndFrame();
     }

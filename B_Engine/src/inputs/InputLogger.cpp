@@ -1,10 +1,11 @@
 #include "InputLogger.h"
 
+#include <cstring> 
+
 #include "../core/Application.h"
 #include "../debug/Debug.h"
 #include "../utils/FileSystem.h" 
 #include "../utils/StringHash.h"
-#include <cstring> 
 
 namespace Engine
 {
@@ -61,8 +62,11 @@ namespace Engine
     {
         if (recordedEvents.empty()) return;
 
+        Vector2i res = Application::Get().GetRenderer()->GetLogicalResolution();
+        std::string devMeta = metadataProvider ? metadataProvider() : "";
+
         // 1. Check if the game provided any custom metadata (like an RNG seed)
-        std::string metadata = metadataProvider ? metadataProvider() : "";
+        std::string metadata = std::format("RES:{}x{}|{}", res.x, res.y, devMeta);
         size_t metaSize = metadata.size();
 
         size_t count = recordedEvents.size();

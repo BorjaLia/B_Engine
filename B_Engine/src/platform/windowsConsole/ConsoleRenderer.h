@@ -16,8 +16,8 @@ namespace Engine
         ConsoleRenderer() = default;
         ~ConsoleRenderer() override;
 
-        bool Initialize() override;
-        void Shutdown() override;
+        bool OnInit() override;
+        void OnShutdown() override;
 
         float GetDeltaTime() const override { return 0.0016f; }
 
@@ -30,7 +30,7 @@ namespace Engine
 
         void BeginRenderToTexture(RenderTexture2D ) override {}
         void EndRenderToTexture() override {}
-        void DrawRenderTexture(RenderTexture2D , const Vector2f& , const Color& ) override {}
+        void DrawRenderTexture(RenderTexture2D , const Vector2f&, const Vector2f&, const Color& ) override {}
 
         void Flush(RenderLayer layer) override;
         void FlushDebug(RenderLayer layer) override;

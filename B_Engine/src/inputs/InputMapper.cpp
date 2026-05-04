@@ -15,6 +15,7 @@ namespace Engine
         bus.Unsubscribe(MouseButtonReleasedEvent::GetStaticType(), mouseReleasedSubId);
         bus.Unsubscribe(MouseMovedEvent::GetStaticType(), mouseMovedSubId);
         bus.Unsubscribe(MouseScrolledEvent::GetStaticType(), mouseScrolledSubId);
+        bus.Unsubscribe(ReplayStateEvent::GetStaticType(), replayStateSubId);
     }
 
     void InputMapper::Initialize()
@@ -39,6 +40,10 @@ namespace Engine
         );
         mouseScrolledSubId = bus.Subscribe<MouseScrolledEvent>(
             [this](MouseScrolledEvent& e) { this->OnMouseScrolled(e); }
+        );
+
+        replayStateSubId = bus.Subscribe<ReplayStateEvent>(
+            [this](ReplayStateEvent& e) { this->isReplaying = e.IsPlaying(); }
         );
     }
 
@@ -69,7 +74,7 @@ namespace Engine
 
     void InputMapper::OnKeyPressed(KeyPressedEvent& e)
     {
-        if (Application::Get().GetInputManager().GetInjector().IsPlaying()) return;
+        if (isReplaying) return;
 
         Key key = e.GetKey();
         if (rawKeyStates[key]) return;
@@ -86,7 +91,7 @@ namespace Engine
 
     void InputMapper::OnKeyReleased(KeyReleasedEvent& e)
     {
-        if (Application::Get().GetInputManager().GetInjector().IsPlaying()) return;
+        if (isReplaying) return;
 
         Key key = e.GetKey();
         if (!rawKeyStates[key]) return;
@@ -103,7 +108,7 @@ namespace Engine
 
     void InputMapper::OnMousePressed(MouseButtonPressedEvent& e)
     {
-        if (Application::Get().GetInputManager().GetInjector().IsPlaying()) return;
+        if (isReplaying) return;
 
         MouseButton button = e.GetButton();
         if (rawMouseStates[button]) return;
@@ -120,7 +125,7 @@ namespace Engine
 
     void InputMapper::OnMouseReleased(MouseButtonReleasedEvent& e)
     {
-        if (Application::Get().GetInputManager().GetInjector().IsPlaying()) return;
+        if (isReplaying) return;
 
         MouseButton button = e.GetButton();
         if (!rawMouseStates[button]) return;
@@ -137,7 +142,7 @@ namespace Engine
 
     void InputMapper::OnMouseMoved(MouseMovedEvent& e)
     {
-        if (Application::Get().GetInputManager().GetInjector().IsPlaying()) return;
+        if (isReplaying) return;
 
         SetAbsoluteAxis(Hash::GetHash("Pointer_X"), e.GetX(), ActionCategory::Gameplay);
         SetAbsoluteAxis(Hash::GetHash("Pointer_Y"), e.GetY(), ActionCategory::Gameplay);
@@ -145,7 +150,7 @@ namespace Engine
 
     void InputMapper::OnMouseScrolled(MouseScrolledEvent& e)
     {
-        if (Application::Get().GetInputManager().GetInjector().IsPlaying()) return;
+        if (isReplaying) return;
 
         SetAbsoluteAxis(Hash::GetHash("Pointer_Scroll"), e.GetAbsolute(), ActionCategory::Gameplay);
     }

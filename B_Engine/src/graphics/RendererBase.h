@@ -18,8 +18,18 @@ namespace Engine
     public:
         virtual ~RendererBase() = default;
 
-        virtual bool Initialize() = 0;
-        virtual void Shutdown() = 0;
+        bool Initialize();
+        void Shutdown();
+
+        Vector2f ScreenToLogical(const Vector2f& screenPos) const;
+        void SetLogicalResolution(const Vector2i& size);
+        Vector2i GetLogicalResolution() const { return logicalSize; }
+
+        RenderTexture2D GetGlobalCanvas() const { return globalCanvas; }
+        Vector2f GetLetterboxOffset() const { return lbOffset; }
+        float GetLetterboxScale() const { return lbScale; }
+
+        bool IsUsingGlobalCanvas() const { return useGlobalCanvas; }
 
         virtual float GetDeltaTime() const = 0;
 
@@ -30,9 +40,10 @@ namespace Engine
         virtual void BeginCamera(const Vector2f& targetPosition, float zoom = 1.0f) = 0;
         virtual void EndCamera() = 0;
 
+
         virtual void BeginRenderToTexture(RenderTexture2D target) = 0;
         virtual void EndRenderToTexture() = 0;
-        virtual void DrawRenderTexture(RenderTexture2D target, const Vector2f& position, const Color& tint = { 255, 255, 255, 255 }) = 0;
+        virtual void DrawRenderTexture(RenderTexture2D target, const Vector2f& position, const Vector2f& scale = { 1.0f, 1.0f }, const Color& tint = { 255, 255, 255, 255 }) = 0;
 
         /// Queues a full sprite for rendering in the specified layer.
         virtual void SubmitSprite(RenderLayer layer, const Texture2D& texture, const Vector2f& position, float rotation, const Vector2f& scale, Pivot pivot, const Color& tint = { 255, 255, 255, 255 }, bool flipX = false, bool flipY = false)
@@ -82,6 +93,23 @@ namespace Engine
         bool isRenderingToTexture = false;
         Vector2f currentTextureSize = { 0.0f, 0.0f };
 
+        RenderTexture2D globalCanvas = { 0 };
+        Vector2i logicalSize = { 1920, 1080 };
+        Vector2i windowSize = { 1920, 1080 };
+
+        bool useGlobalCanvas = false;
+
+        float lbScale = 1.0f;
+        Vector2f lbOffset = { 0.0f, 0.0f };
+        uint32_t resizeEventId = 0;
+
+        bool isReplaying = false;
+        uint32_t replayEventId = 0;
+
+        void CalculateLetterbox();
+        void OnWindowResize(class WindowResizeEvent& e);
+        void OnReplayStateChanged(class ReplayStateEvent& e);
+
         virtual void ClearQueues()
         {
             worldQueue.clear();
@@ -89,6 +117,9 @@ namespace Engine
             debugWorldQueue.clear();
             debugUIQueue.clear();
         }
+
+        virtual bool OnInit() = 0;
+        virtual void OnShutdown() = 0;
 
         virtual Texture2D LoadTexture(const char* filepath) = 0;
         virtual void UnloadTexture(Texture2D texture) = 0;

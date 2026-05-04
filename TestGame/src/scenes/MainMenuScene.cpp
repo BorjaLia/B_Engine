@@ -16,15 +16,14 @@
 
 void MainMenuScene::Build(Engine::SceneBuilder& builder)
 {
-    auto& app = Engine::Application::Get();
-    auto& rm = *app.GetResourceManager();
+    auto& rm = *Engine::Application::Get().GetResourceManager();
 
     Engine::Texture2D texButton = rm.GetTexture("res/sprites/NoTexture.png");
     Engine::Font* font = rm.GetFont("res/fonts/ReemKufiFunRegular.ttf", 48);
 
     // 1. Camera (Needed for rendering and Mouse Script logic)
     Engine::Node* camNode = builder.CreateNode("MenuCamera");
-    auto* camComp = camNode->AddComponent<Engine::CameraComponent>(app.GetWindow(), 0.5f);
+    auto* camComp = camNode->AddComponent<Engine::CameraComponent>(0.5f);
 
     // 2. Game Title
     {

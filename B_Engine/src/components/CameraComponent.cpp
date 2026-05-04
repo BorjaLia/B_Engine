@@ -8,8 +8,8 @@
 
 namespace Engine
 {
-    CameraComponent::CameraComponent(IWindow* window, float startZoom)
-        : window(window), zoom(startZoom)
+    CameraComponent::CameraComponent(float startZoom)
+        : zoom(startZoom)
     {
     }
 
@@ -73,13 +73,13 @@ namespace Engine
 
     Vector2f CameraComponent::ScreenToWorld(const Vector2f& screenPos) const
     {
-        if (!owner || !owner->transform || !window) return screenPos; // Fallback
+        if (!owner || !owner->transform) return screenPos; // Fallback
 
         // 1. Get the camera's position in the world
         Vector2f cameraPos = owner->transform->GetPosition();
 
-        // 2. Get the real screen size
-        Vector2i screenSize = window->GetSize();
+        // 2. Get the logic screen size
+        Vector2i screenSize = Application::Get().GetRenderer()->GetLogicalResolution();
         Vector2f screenCenter = { screenSize.x / 2.0f, screenSize.y / 2.0f };
 
         // 3. Calculate position considering the zoom and center
@@ -95,10 +95,10 @@ namespace Engine
 
     Vector2f CameraComponent::WorldToScreen(const Vector2f& worldPos) const
     {
-        if (!owner || !owner->transform || !window) return worldPos;
+        if (!owner || !owner->transform) return worldPos;
 
         Vector2f cameraPos = owner->transform->GetPosition();
-        Vector2i screenSize = window->GetSize();
+        Vector2i screenSize = Application::Get().GetRenderer()->GetLogicalResolution();
         Vector2f screenCenter = { screenSize.x / 2.0f, screenSize.y / 2.0f };
 
         Vector2f screenPos;

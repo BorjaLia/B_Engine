@@ -1,6 +1,8 @@
 #include "InputInjector.h"
 
 #include <cstring>
+#include <sstream>
+
 #include "../core/Application.h"
 #include "../debug/Debug.h"
 #include "../utils/FileSystem.h"
@@ -32,6 +34,21 @@ namespace Engine
 			metadata.resize(metaSize);
 			std::memcpy(metadata.data(), buffer.data() + offset, metaSize);
 			offset += metaSize;
+
+			size_t pipePos = metadata.find('|');
+			if (pipePos != std::string::npos)
+			{
+				std::string resStr = metadata.substr(4, pipePos - 4);
+				std::string devMeta = metadata.substr(pipePos + 1);
+
+				int w = 1920, h = 1080; char x;
+				std::stringstream ss(resStr);
+				ss >> w >> x >> h;
+
+				Application::Get().GetRenderer()->SetLogicalResolution({ w, h });
+
+				metadata = devMeta;
+			}
 		}
 
 		// 3. Read event count
@@ -69,6 +86,8 @@ namespace Engine
 		if (playbackData.empty()) return;
 
 		isPlaying = true;
+		ReplayStateEvent e(true);
+		Application::Get().GetEventBus().Publish(e);
 		currentPlaybackIndex = 0;
 
 		if (reset) Time::ResetTicks();
@@ -79,6 +98,11 @@ namespace Engine
 	void InputInjector::Stop()
 	{
 		isPlaying = false;
+		ReplayStateEvent e(false);
+		Application::Get().GetEventBus().Publish(e);
+
+		Vector2i realWindowSize = Application::Get().GetWindow()->GetSize();
+		Application::Get().GetRenderer()->SetLogicalResolution(realWindowSize);
 		ENGINE_INFO("InputInjector: replay stopped...");
 
 #ifdef _DEBUG

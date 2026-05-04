@@ -13,8 +13,8 @@ namespace Engine
         RaylibRenderer() = default;
         ~RaylibRenderer() override = default;
 
-        bool Initialize() override;
-        void Shutdown() override;
+        bool OnInit() override;
+        void OnShutdown() override;
 
         float GetDeltaTime() const override;
 
@@ -27,7 +27,7 @@ namespace Engine
 
         virtual void BeginRenderToTexture(RenderTexture2D target) override;
         virtual void EndRenderToTexture() override;
-        virtual void DrawRenderTexture(RenderTexture2D target, const Vector2f& position, const Color& tint) override;
+        virtual void DrawRenderTexture(RenderTexture2D target, const Vector2f& position, const Vector2f& scale, const Color& tint) override;
 
         virtual void Flush(RenderLayer layer) override;
         virtual void FlushDebug(RenderLayer layer) override;
