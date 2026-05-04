@@ -13,7 +13,7 @@ namespace Engine
     {
         Rect sourceRect; // Where the letter is inside the atlas (in pixels)
         Vector2f offset; // How much to offset it when drawing
-        float advanceX;  // Space until the next letter starts
+        float advanceX = 0;  // Space until the next letter starts
     };
 
     /// Represents a loaded font, managing its glyph data and texture atlas.

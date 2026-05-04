@@ -227,6 +227,7 @@ namespace Engine
     void Application::UpdateVariable()
     {
         rootScene->Update(Time::GetDeltaTime());
+        if (showDebugNode) debugNode->Update(Time::GetDeltaTime());
     }
 
     void Application::HandleSystemHotkeys(InputBase* input)
@@ -276,7 +277,6 @@ namespace Engine
 
     void Application::RenderAndCleanup(RendererBase* renderer, const Color& bgColor)
     {
-        if (showDebugNode) debugNode->Update(Time::GetDeltaTime());
         if (debugMode) rootScene->DebugDraw(renderer);
 
         rootScene->Draw(renderer);
