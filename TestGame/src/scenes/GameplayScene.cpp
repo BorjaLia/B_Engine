@@ -50,4 +50,5 @@ void PlatformerScene::Build(Engine::SceneBuilder& builder)
     // 5. UI and Mouse
     UIPrefabs::CreateLevelHUD(builder, font, texButton);
     UIPrefabs::CreateMouse(builder, font, texButton);
+    UIPrefabs::CreateMinimap(builder);
 }

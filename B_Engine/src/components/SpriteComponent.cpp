@@ -12,13 +12,14 @@ namespace Engine
     SpriteComponent::SpriteComponent(const Texture2D& texture, Pivot pivot, Color tint, RenderLayer layer)
         : texture(texture), pivot(pivot), tint(tint), layer(layer)
     {
+        targetSize = texture.size;
     }
 
     SpriteComponent::SpriteComponent(Pivot pivot, Color tint, RenderLayer layer)
         : pivot(pivot), tint(tint), layer(layer)
     {
-        ENGINE_WARN("Loading sprite component with no texture");
-        Engine::Application::Get().GetResourceManager()->GetTexture("");
+        ENGINE_WARN("Loading sprite component with no texture! - May cause issues with GetTargetSize()");
+        texture = Engine::Application::Get().GetResourceManager()->GetTexture("");
     }
 
     void SpriteComponent::Update(float /*deltaTime*/)

@@ -135,6 +135,13 @@ namespace Engine
     {
         return Vector2<T>(-scalar * vec.y, scalar * vec.x);
     }
+    
+    template <typename T>
+    constexpr Vector2<T> Abs(const Vector2<T>& vec)
+    {
+        return Vector2<T>(std::abs(vec.x), std::abs(vec.y));
+    }
+
 #pragma endregion
 
 #pragma region Matrix3x3

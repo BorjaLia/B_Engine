@@ -41,8 +41,8 @@ namespace Engine
             Vector2f scale = owner->transform->GetScale();
 
             // 2. Calculate the real scaled size
-            float finalWidth = sprite->texture.size.x * std::abs(scale.x);
-            float finalHeight = sprite->texture.size.y * std::abs(scale.y);
+            float finalWidth = sprite->GetTargetSize().x * std::abs(scale.x);
+            float finalHeight = sprite->GetTargetSize().y * std::abs(scale.y);
 
             // 3. Bake the final size into the shape
             shape = RectangleShape{ {finalWidth, finalHeight} };
@@ -54,6 +54,29 @@ namespace Engine
             offset.x = (0.5f - pivotMult.x) * finalWidth;
             offset.y = (0.5f - pivotMult.y) * finalHeight;
         }
+
+        //if (auto* sprite = owner->GetComponent<SpriteComponent>())
+        //{
+        //    layer = sprite->GetLayer();
+
+        //    if (!autoFitToSprite) return;
+
+        //    // 1. Get the final transform scale
+        //    Vector2f scale = Engine::Abs(owner->transform->GetScale());
+
+        //    // 2. Calculate the real scaled size
+        //    Vector2f finalSize = sprite->GetTargetSize() * scale;
+
+        //    // 3. Bake the final size into the shape
+        //    shape = RectangleShape{ finalSize };
+
+        //    // 4. THE PIVOT MAGIC
+        //    // Calculate the offset so that the mathematical center matches the drawing origin
+        //    Vector2f pivotMult = GetPivotMultiplier(sprite->pivot);
+
+        //    offset.x = (0.5f - pivotMult.x) * finalSize.x;
+        //    offset.y = (0.5f - pivotMult.y) * finalSize.y;
+        //}
     }
 
     void ButtonComponent::Update(float /*deltaTime*/)

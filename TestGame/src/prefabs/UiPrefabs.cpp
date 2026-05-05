@@ -30,11 +30,12 @@ void UIPrefabs::CreateLevelHUD(Engine::SceneBuilder& builder, Engine::Font* font
 
     // 2. PAUSE BUTTON
     Engine::Node* nodePause = builder.CreateNode("PauseButton");
-    nodePause->AddComponent<Engine::UIAnchorComponent>(Engine::AnchorPreset::TopRight);
-    nodePause->AddComponent<Engine::SpriteComponent>(btnTex, Engine::Pivot::TopLeft, Engine::Color{ 80, 80, 80, 200 });
+    nodePause->AddComponent<Engine::UIAnchorComponent>(Engine::AnchorPreset::TopCenter);
+    Engine::SpriteComponent* sprite = nodePause->AddComponent<Engine::SpriteComponent>(btnTex, Engine::Pivot::TopCenter, Engine::Color{ 80, 80, 80, 200 });
+    sprite->SetTargetSize({125,50});
 
     auto* txtPause = nodePause->AddComponent<Engine::TextComponent>(font, "  PAUSE", 36.0f, Engine::Color{ 255, 255, 255, 255 }, Engine::RenderLayer::UI);
-    txtPause->pivot = Engine::Pivot::TopLeft;
+    txtPause->pivot = Engine::Pivot::TopCenter;
 
     auto* btn = nodePause->AddComponent<Engine::ButtonComponent>();
     btn->SetOnClick([]()
@@ -55,19 +56,20 @@ void UIPrefabs::CreateMinimap(Engine::SceneBuilder& builder)
 {
     Engine::Node* nodeMinimap = builder.CreateNode("MinimapNode");
 
+    Engine::Node* camNode = builder.CreateChildNode(nodeMinimap,"MinimapCam");
+
+    Engine::CameraComponent* camComp = camNode->AddComponent<Engine::CameraComponent>(1.0f);
+
     Engine::Node* borderNode = builder.CreateChildNode(nodeMinimap,"MinimapBorder");
-    Engine::SpriteComponent* miniMapBorder = borderNode->AddComponent<Engine::SpriteComponent>();
+    Engine::SpriteComponent* miniMapBorder = borderNode->AddComponent<Engine::SpriteComponent>(Engine::Pivot::TopLeft,Engine::Color(64,64,64,255),Engine::RenderLayer::UI);
     miniMapBorder->SetTargetSize({220,220});
 
     Engine::Node* spriteNode = builder.CreateChildNode(nodeMinimap,"MinimapSprite");
-    Engine::SpriteComponent* miniMapSprite = spriteNode->AddComponent<Engine::SpriteComponent>();
+    spriteNode->transform->SetPosition(spriteNode->transform->GetPosition() + Engine::Vector2(10.0f, 10.0f));
+    Engine::SpriteComponent* miniMapSprite = spriteNode->AddComponent<Engine::SpriteComponent>(Engine::Pivot::TopLeft,Engine::Color(255,255,255,255),Engine::RenderLayer::UI);
     miniMapSprite->SetTargetSize({200,200});
 
-    nodeMinimap->AddComponent<Engine::ScriptComponent>(new MiniMapScript(miniMapSprite));
-
-    Engine::Node* camNode = builder.CreateChildNode(nodeMinimap,"MinimapCam");
-
-    /*Engine::CameraComponent* camComp = */camNode->AddComponent<Engine::CameraComponent>(1.0f);
+    nodeMinimap->AddComponent<Engine::ScriptComponent>(new MiniMapScript(camComp, miniMapSprite));
 
     nodeMinimap->AddComponent<Engine::UIAnchorComponent>(Engine::AnchorPreset::TopLeft);
 }
