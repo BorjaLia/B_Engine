@@ -21,6 +21,7 @@ namespace Engine
         RenderLayer layer;
 
         SpriteComponent(const Texture2D& texture, Pivot pivot = Pivot::TopLeft, Color tint = { 255, 255, 255, 255 }, RenderLayer layer = RenderLayer::World);
+        SpriteComponent(Pivot pivot = Pivot::TopLeft, Color tint = { 255, 255, 255, 255 }, RenderLayer layer = RenderLayer::World);
         ~SpriteComponent() override = default;
 
         void Update(float deltaTime) override;

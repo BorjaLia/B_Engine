@@ -28,8 +28,7 @@ namespace Engine
         void BeginCamera(const Vector2f& targetPosition, float zoom) override;
         void EndCamera() override;
 
-        void BeginRenderToTexture(RenderTexture2D ) override {}
-        void EndRenderToTexture() override {}
+        virtual void SetRenderTarget(std::optional<RenderTexture2D>) override {};
         void DrawRenderTexture(RenderTexture2D , const Vector2f&, const Vector2f&, const Color& ) override {}
 
         void Flush(RenderLayer layer) override;

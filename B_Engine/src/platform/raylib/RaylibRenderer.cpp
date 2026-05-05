@@ -47,9 +47,13 @@ namespace Engine
 
     void RaylibRenderer::BeginCamera(const Vector2f& targetPosition, float zoom)
     {
-        float screenW = isRenderingToTexture ? currentTextureSize.x : static_cast<float>(::GetScreenWidth());
-        float screenH = isRenderingToTexture ? currentTextureSize.y : static_cast<float>(::GetScreenHeight());
+        float screenW = activeRenderTarget.has_value()
+            ? static_cast<float>(activeRenderTarget->texture.size.x)
+            : static_cast<float>(::GetScreenWidth());
 
+        float screenH = activeRenderTarget.has_value()
+            ? static_cast<float>(activeRenderTarget->texture.size.y)
+            : static_cast<float>(::GetScreenHeight());
         // Configure Raylib's internal camera
         ::Camera2D cam = { 0 };
 
@@ -70,33 +74,35 @@ namespace Engine
         ::EndMode2D();
     }
 
-    void RaylibRenderer::BeginRenderToTexture(Engine::RenderTexture2D target)
+    void RaylibRenderer::SetRenderTarget(std::optional<Engine::RenderTexture2D> target)
     {
-        // 1. Tell Raylib to reconstruct its structure using our IDs
-        ::RenderTexture2D raylibRT = { 0 };
-        raylibRT.id = target.id;
-        raylibRT.texture.id = target.texture.id;
-        raylibRT.texture.width = target.texture.size.x;
-        raylibRT.texture.height = target.texture.size.y;
+        if (activeRenderTarget.has_value() && target.has_value())
+        {
+            if (activeRenderTarget->texture.id == target->texture.id) return;
+        }
+        else if (!activeRenderTarget.has_value() && !target.has_value())
+        {
+            return;
+        }
 
-        // 2. Activate the virtual canvas and clear it
-        ::BeginTextureMode(raylibRT);
-        ::ClearBackground({ 0, 0, 0, 0 });
+        if (activeRenderTarget.has_value())
+        {
+            ::EndTextureMode();
+        }
 
-        isRenderingToTexture = true;
-        currentTextureSize = {
-            static_cast<float>(target.texture.size.x),
-            static_cast<float>(target.texture.size.y)
-        };
-    }
+        if (target.has_value())
+        {
+            ::RenderTexture2D raylibRT = { 0 };
+            raylibRT.id = target->id;
+            raylibRT.texture.id = target->texture.id;
+            raylibRT.texture.width = target->texture.size.x;
+            raylibRT.texture.height = target->texture.size.y;
 
-    void RaylibRenderer::EndRenderToTexture()
-    {
-        // Release the virtual canvas so Raylib points back to the screen
-        ::EndTextureMode();
+            ::BeginTextureMode(raylibRT);
+            ::ClearBackground({ 0,0,0,0 });
+        }
 
-        isRenderingToTexture = false;
-        currentTextureSize = { 0.0f, 0.0f };
+        activeRenderTarget = target;
     }
 
     void RaylibRenderer::DrawRenderTexture(Engine::RenderTexture2D target, const Vector2f& position, const Vector2f& scale, const Color& tint)

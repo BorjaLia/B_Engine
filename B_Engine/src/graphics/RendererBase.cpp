@@ -24,19 +24,7 @@ namespace Engine
         OnShutdown();
 
         Application::Get().GetEventBus().Unsubscribe(WindowResizeEvent::GetStaticType(), resizeEventId);
-    }
-
-    Vector2f RendererBase::ScreenToLogical(const Vector2f& screenPos) const
-    {
-        if (!useGlobalCanvas) return Vector2f(screenPos.x, -screenPos.y);
-
-        float realX = screenPos.x;
-        float realY = -screenPos.y;
-
-        float logX = (realX - lbOffset.x) / lbScale;
-        float logY = (realY - lbOffset.y) / lbScale;
-
-        return Vector2f(logX, -logY);
+        Application::Get().GetEventBus().Unsubscribe(ReplayStateEvent::GetStaticType(), replayEventId);
     }
 
     void RendererBase::SetLogicalResolution(const Vector2i& size)
@@ -51,11 +39,24 @@ namespace Engine
         }
     }
 
+    Vector2f RendererBase::ScreenToLogical(const Vector2f& screenPos) const
+    {
+        if (!useGlobalCanvas) return screenPos;
+
+        float realX = screenPos.x;
+        float realY = -screenPos.y;
+
+        float logX = (realX - lbOffset.x) / lbScale;
+        float logY = (realY - lbOffset.y) / lbScale;
+
+        return Vector2f(logX, -logY);
+    }
+
     void RendererBase::CalculateLetterbox()
     {
         if (logicalSize.x == 0 || logicalSize.y == 0) return;
 
-        if (!isReplaying || windowSize.x == logicalSize.x && windowSize.y == logicalSize.y)
+        if (!isReplaying || (windowSize.x == logicalSize.x && windowSize.y == logicalSize.y))
         {
             lbScale = 1.0f;
             lbOffset = { 0.0f, 0.0f };

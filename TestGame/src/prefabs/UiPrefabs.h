@@ -13,5 +13,6 @@ class UIPrefabs
 {
 public:
     static void CreateLevelHUD(Engine::SceneBuilder& builder, Engine::Font* font, Engine::Texture2D btnTex);
+    static void CreateMinimap(Engine::SceneBuilder& builder);
     static void CreateMouse(Engine::SceneBuilder& builder, Engine::Font* font, Engine::Texture2D btnTex);
 };

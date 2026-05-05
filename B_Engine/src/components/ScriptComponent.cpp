@@ -14,7 +14,6 @@ namespace Engine
 
     void ScriptComponent::Initialize()
     {
-        // Architectural magic! 
         // Since AddComponent already set our 'owner', we pass it to the user script.
         if (script && owner)
         {

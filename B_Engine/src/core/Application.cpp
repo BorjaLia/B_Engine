@@ -163,60 +163,49 @@ namespace Engine
 
     void Application::RenderFrame(RendererBase* renderer, const Color& bgColor)
     {
-        const bool useGlobalCanvas = renderer->IsUsingGlobalCanvas();
+        renderer->BeginFrame();
 
-        RenderTexture2D globalCanvas;
-        Vector2f lbOffset;
-        float lbScale = 1.0f;
-
-        if (useGlobalCanvas)
+        for (CameraComponent* cam : activeCameras)
         {
-            globalCanvas = renderer->GetGlobalCanvas();
-            lbOffset = renderer->GetLetterboxOffset();
-            lbScale = renderer->GetLetterboxScale();
+            if (!cam->GetOwner()->IsActive() || !cam->HasRenderTarget()) continue;
+
+            renderer->SetRenderTarget(cam->GetRenderTarget());
+            renderer->ClearScreen(bgColor);
+
+            Vector2f camPos = cam->GetOwner()->GetGlobalPosition();
+            renderer->BeginCamera({ std::round(camPos.x), std::round(camPos.y) }, cam->GetZoom());
+
+            renderer->Flush(RenderLayer::World);
+            if (debugMode && cam->GetShowDebug()) renderer->FlushDebug(RenderLayer::World);
+
+            renderer->EndCamera();
         }
 
-        renderer->BeginFrame();
+        const bool useGlobalCanvas = renderer->IsUsingGlobalCanvas();
+        std::optional<RenderTexture2D> mainTarget = useGlobalCanvas
+            ? std::make_optional(renderer->GetGlobalCanvas())
+            : std::nullopt;
+
+        renderer->SetRenderTarget(mainTarget);
 
         if (useGlobalCanvas)
         {
             renderer->ClearScreen({ 0, 0, 0, 255 });
-            renderer->BeginRenderToTexture(globalCanvas);
         }
+
         renderer->ClearScreen(bgColor);
 
         for (CameraComponent* cam : activeCameras)
         {
-            if (!cam->GetOwner()->IsActive()) continue;
-
-            const bool isCameraRT = cam->HasRenderTarget();
-
-            if (isCameraRT)
-            {
-                renderer->BeginRenderToTexture(cam->GetRenderTarget());
-                renderer->ClearScreen(bgColor);
-            }
+            if (!cam->GetOwner()->IsActive() || cam->HasRenderTarget()) continue;
 
             Vector2f camPos = cam->GetOwner()->GetGlobalPosition();
-            camPos.x = std::round(camPos.x);
-            camPos.y = std::round(camPos.y);
+            renderer->BeginCamera({ std::round(camPos.x), std::round(camPos.y) }, cam->GetZoom());
 
-            renderer->BeginCamera(camPos, cam->GetZoom());
             renderer->Flush(RenderLayer::World);
-
-            if (cam->GetShowDebug()) renderer->FlushDebug(RenderLayer::World);
+            if (debugMode && cam->GetShowDebug()) renderer->FlushDebug(RenderLayer::World);
 
             renderer->EndCamera();
-
-            if (isCameraRT)
-            {
-                renderer->EndRenderToTexture();
-
-                if (useGlobalCanvas)
-                {
-                    renderer->BeginRenderToTexture(globalCanvas);
-                }
-            }
         }
 
         renderer->Flush(RenderLayer::UI);
@@ -224,7 +213,8 @@ namespace Engine
 
         if (useGlobalCanvas)
         {
-            renderer->EndRenderToTexture();
+            renderer->SetRenderTarget(std::nullopt);
+
             renderer->DrawRenderTexture(
                 renderer->GetGlobalCanvas(),
                 renderer->GetLetterboxOffset(),

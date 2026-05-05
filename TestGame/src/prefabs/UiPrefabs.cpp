@@ -14,6 +14,7 @@
 #include "../scripts/ScoreUIScript.h"
 #include "../scripts/GameManager.h"
 #include "../scripts/MouseScript.h"
+#include "../scripts/MiniMapScript.h"
 
 void UIPrefabs::CreateLevelHUD(Engine::SceneBuilder& builder, Engine::Font* font, Engine::Texture2D btnTex)
 {
@@ -29,7 +30,7 @@ void UIPrefabs::CreateLevelHUD(Engine::SceneBuilder& builder, Engine::Font* font
 
     // 2. PAUSE BUTTON
     Engine::Node* nodePause = builder.CreateNode("PauseButton");
-    nodePause->AddComponent<Engine::UIAnchorComponent>(Engine::AnchorPreset::TopLeft);
+    nodePause->AddComponent<Engine::UIAnchorComponent>(Engine::AnchorPreset::TopRight);
     nodePause->AddComponent<Engine::SpriteComponent>(btnTex, Engine::Pivot::TopLeft, Engine::Color{ 80, 80, 80, 200 });
 
     auto* txtPause = nodePause->AddComponent<Engine::TextComponent>(font, "  PAUSE", 36.0f, Engine::Color{ 255, 255, 255, 255 }, Engine::RenderLayer::UI);
@@ -48,6 +49,27 @@ void UIPrefabs::CreateLevelHUD(Engine::SceneBuilder& builder, Engine::Font* font
     auto* txtState = nodeState->AddComponent<Engine::TextComponent>(font, "", 72.0f, Engine::Color{ 255, 255, 255, 255 }, Engine::RenderLayer::UI);
     txtState->alignment = Engine::TextAlignment::Center;
     txtState->pivot = Engine::Pivot::Center;
+}
+
+void UIPrefabs::CreateMinimap(Engine::SceneBuilder& builder)
+{
+    Engine::Node* nodeMinimap = builder.CreateNode("MinimapNode");
+
+    Engine::Node* borderNode = builder.CreateChildNode(nodeMinimap,"MinimapBorder");
+    Engine::SpriteComponent* miniMapBorder = borderNode->AddComponent<Engine::SpriteComponent>();
+    miniMapBorder->SetTargetSize({220,220});
+
+    Engine::Node* spriteNode = builder.CreateChildNode(nodeMinimap,"MinimapSprite");
+    Engine::SpriteComponent* miniMapSprite = spriteNode->AddComponent<Engine::SpriteComponent>();
+    miniMapSprite->SetTargetSize({200,200});
+
+    nodeMinimap->AddComponent<Engine::ScriptComponent>(new MiniMapScript(miniMapSprite));
+
+    Engine::Node* camNode = builder.CreateChildNode(nodeMinimap,"MinimapCam");
+
+    /*Engine::CameraComponent* camComp = */camNode->AddComponent<Engine::CameraComponent>(1.0f);
+
+    nodeMinimap->AddComponent<Engine::UIAnchorComponent>(Engine::AnchorPreset::TopLeft);
 }
 
 void UIPrefabs::CreateMouse(Engine::SceneBuilder& builder, Engine::Font* font, Engine::Texture2D btnTex)
