@@ -10,7 +10,7 @@
 
 namespace Engine
 {
-    /// Triggered when a button component is successfully clicked.
+    /// Triggered when a button component is successfully pressed.
     class ButtonPressedEvent : public EventBase<ButtonPressedEvent>
     {
     public:
@@ -18,6 +18,32 @@ namespace Engine
 
         std::string GetButtonName() const { return buttonName; }
         const char* GetName() const override { return "ButtonPressedEvent"; }
+
+    private:
+        std::string buttonName;
+    };
+
+    /// Triggered when a button component is successfully released.
+    class ButtonReleasedEvent : public EventBase<ButtonReleasedEvent>
+    {
+    public:
+        ButtonReleasedEvent(const std::string& name) : buttonName(name) {}
+
+        std::string GetButtonName() const { return buttonName; }
+        const char* GetName() const override { return "ButtonReleasedEvent"; }
+
+    private:
+        std::string buttonName;
+    };
+
+    /// Triggered when a button component is successfully clicked.
+    class ButtonClickedEvent : public EventBase<ButtonClickedEvent>
+    {
+    public:
+        ButtonClickedEvent(const std::string& name) : buttonName(name) {}
+
+        std::string GetButtonName() const { return buttonName; }
+        const char* GetName() const override { return "ButtonClickedEvent"; }
 
     private:
         std::string buttonName;
@@ -44,11 +70,16 @@ namespace Engine
         void Update(float deltaTime) override;
         void DebugDraw(class RendererBase* renderer) override;
 
+        void SetOnPress(std::function<void()> callback) { onPressCallback = callback; }
+        void SetOnRelease(std::function<void()> callback) { onReleaseCallback = callback; }
+
         void SetOnClick(std::function<void()> callback) { onClickCallback = callback; }
 
         bool IsHovered() const { return isHovered; }
         bool IsPressed() const { return isPressed; }
 
+        void SetShape(RectangleShape newShape) { shape = newShape; }
+        void SetAutoFit(bool autofit) { autoFitToSprite = autofit; }
         void SetOffset(Vector2f newoffset) { offset = newoffset; }
 
         void SetLayer(RenderLayer newLayer) { layer = newLayer; }
@@ -63,6 +94,9 @@ namespace Engine
 
         bool isHovered = false;
         bool isPressed = false;
+
+        std::function<void()> onPressCallback;
+        std::function<void()> onReleaseCallback;
 
         std::function<void()> onClickCallback;
 

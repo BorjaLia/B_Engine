@@ -30,7 +30,7 @@ void MainMenuScene::Build(Engine::SceneBuilder& builder)
         Engine::Node* node = builder.CreateNode("TitleText");
         node->AddComponent<Engine::UIAnchorComponent>(Engine::AnchorPreset::TopCenter, Engine::Vector2f(0.0f, 150.0f));
         auto* txt = node->AddComponent<Engine::TextComponent>(
-            font, "MI MOTOR INCREIBLE", 72.0f,
+            font, "Engine", 72.0f,
             Engine::Color{ 255, 255, 255, 255 },
             Engine::RenderLayer::UI);
         txt->alignment = Engine::TextAlignment::Center;

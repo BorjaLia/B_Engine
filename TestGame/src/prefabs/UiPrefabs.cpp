@@ -81,8 +81,22 @@ void UIPrefabs::CreateMinimap(Engine::SceneBuilder& builder)
     Engine::SpriteComponent* miniMapSprite = spriteNode->AddComponent<Engine::SpriteComponent>(Engine::Pivot::TopLeft,Engine::Color(255,255,255,255),Engine::RenderLayer::UI);
     miniMapSprite->SetTargetSize({200,200});
 
-    nodeMinimap->AddComponent<Engine::ScriptComponent>(new MiniMapScript(camComp, miniMapSprite));
+    Engine::Node* resizeHandle = builder.CreateChildNode(nodeMinimap, "ResizeHandle");
+    resizeHandle->transform->SetPosition({220,220});
+    
+    //auto* handleSprite = resizeHandle->AddComponent<Engine::SpriteComponent>(Engine::Pivot::BottomRight, Engine::Color(100, 100, 100, 255), Engine::RenderLayer::UI);
+    //handleSprite->SetTargetSize({ 50, 50 });
 
+    Engine::ButtonComponent* resizeBtn = resizeHandle->AddComponent<Engine::ButtonComponent>(
+        Engine::RectangleShape{ {50.0f, 50.0f} },
+        Engine::RenderLayer::UI,
+        Engine::Vector2f{ -25.0f, -25.0f },
+        false
+    );
+
+    nodeMinimap->AddComponent<Engine::ScriptComponent>(
+        new MiniMapScript(camComp, miniMapSprite, miniMapBorder, resizeBtn, 100.0f, 500.0f)
+    );
     nodeMinimap->AddComponent<Engine::UIAnchorComponent>(Engine::AnchorPreset::TopLeft);
 }
 

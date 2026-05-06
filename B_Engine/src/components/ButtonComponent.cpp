@@ -11,147 +11,141 @@
 
 namespace Engine
 {
-    ButtonComponent::ButtonComponent(const RectangleShape& initialShape, RenderLayer layer, const Vector2f& offset, bool autoFit)
-        : shape(initialShape), layer(layer), offset(offset), autoFitToSprite(autoFit)
-    {
-        auto& bus = Application::Get().GetEventBus();
+	ButtonComponent::ButtonComponent(const RectangleShape& initialShape, RenderLayer layer, const Vector2f& offset, bool autoFit)
+		: shape(initialShape), layer(layer), offset(offset), autoFitToSprite(autoFit)
+	{
+		auto& bus = Application::Get().GetEventBus();
 
-        // Subscribe to action changes from the InputMapper
-        actionEventId = bus.Subscribe<ActionChangedEvent>(
-            [this](ActionChangedEvent& e) { this->OnActionChanged(e); }
-        );
-    }
+		// Subscribe to action changes from the InputMapper
+		actionEventId = bus.Subscribe<ActionChangedEvent>(
+			[this](ActionChangedEvent& e) { this->OnActionChanged(e); }
+		);
+	}
 
-    ButtonComponent::~ButtonComponent()
-    {
-        Application::Get().GetEventBus().Unsubscribe(ActionChangedEvent::GetStaticType(), actionEventId);
-    }
+	ButtonComponent::~ButtonComponent()
+	{
+		Application::Get().GetEventBus().Unsubscribe(ActionChangedEvent::GetStaticType(), actionEventId);
+	}
 
-    void ButtonComponent::Start()
-    {
-        if (owner == nullptr) return;
+	void ButtonComponent::Start()
+	{
+		if (owner == nullptr) return;
 
-        if (auto* sprite = owner->GetComponent<SpriteComponent>())
-        {
-            layer = sprite->GetLayer();
+		if (auto* sprite = owner->GetComponent<SpriteComponent>())
+		{
+			layer = sprite->GetLayer();
 
-            if (!autoFitToSprite) return;
+			if (!autoFitToSprite) return;
 
-            // 1. Get the final transform scale
-            Vector2f scale = owner->transform->GetScale();
+			// 1. Get the final transform scale
+			Vector2f scale = owner->transform->GetScale();
 
-            // 2. Calculate the real scaled size
-            float finalWidth = sprite->GetTargetSize().x * std::abs(scale.x);
-            float finalHeight = sprite->GetTargetSize().y * std::abs(scale.y);
+			// 2. Calculate the real scaled size
+			float finalWidth = sprite->GetTargetSize().x * std::abs(scale.x);
+			float finalHeight = sprite->GetTargetSize().y * std::abs(scale.y);
 
-            // 3. Bake the final size into the shape
-            shape = RectangleShape{ {finalWidth, finalHeight} };
+			// 3. Bake the final size into the shape
+			shape = RectangleShape{ {finalWidth, finalHeight} };
 
-            // 4. THE PIVOT MAGIC
-            // Calculate the offset so that the mathematical center matches the drawing origin
-            Vector2f pivotMult = GetPivotMultiplier(sprite->pivot);
+			// 4. THE PIVOT MAGIC
+			// Calculate the offset so that the mathematical center matches the drawing origin
+			Vector2f pivotMult = GetPivotMultiplier(sprite->pivot);
 
-            offset.x = (0.5f - pivotMult.x) * finalWidth;
-            offset.y = (0.5f - pivotMult.y) * finalHeight;
-        }
+			offset.x = (0.5f - pivotMult.x) * finalWidth;
+			offset.y = (0.5f - pivotMult.y) * finalHeight;
+		}
+	}
 
-        //if (auto* sprite = owner->GetComponent<SpriteComponent>())
-        //{
-        //    layer = sprite->GetLayer();
+	void ButtonComponent::Update(float /*deltaTime*/)
+	{
+		if (owner == nullptr) return;
 
-        //    if (!autoFitToSprite) return;
+		auto& input = Application::Get().GetInputManager();
 
-        //    // 1. Get the final transform scale
-        //    Vector2f scale = Engine::Abs(owner->transform->GetScale());
+		// 1. GET THE MOUSE FROM THE MAPPER (Absolute Axes)
+		Vector2f mousePos = {
+			input.GetAxis(Hash::GetHash("Pointer_X")),
+			input.GetAxis(Hash::GetHash("Pointer_Y"))
+		};
 
-        //    // 2. Calculate the real scaled size
-        //    Vector2f finalSize = sprite->GetTargetSize() * scale;
+		if (layer == RenderLayer::UI)
+		{
+			mousePos.y = -mousePos.y; // Convert Y-Up back to Y-Down for UI layer calculations
+		}
 
-        //    // 3. Bake the final size into the shape
-        //    shape = RectangleShape{ finalSize };
+		Vector2f globalPos = owner->GetGlobalPosition();
+		Vector2f centerPos = { globalPos.x + offset.x, globalPos.y + offset.y };
 
-        //    // 4. THE PIVOT MAGIC
-        //    // Calculate the offset so that the mathematical center matches the drawing origin
-        //    Vector2f pivotMult = GetPivotMultiplier(sprite->pivot);
+		float halfW = shape.size.x / 2.0f;
+		float halfH = shape.size.y / 2.0f;
 
-        //    offset.x = (0.5f - pivotMult.x) * finalSize.x;
-        //    offset.y = (0.5f - pivotMult.y) * finalSize.y;
-        //}
-    }
+		// Update Hover State
+		isHovered = (mousePos.x >= centerPos.x - halfW && mousePos.x <= centerPos.x + halfW &&
+			mousePos.y >= centerPos.y - halfH && mousePos.y <= centerPos.y + halfH);
+	}
 
-    void ButtonComponent::Update(float /*deltaTime*/)
-    {
-        if (owner == nullptr) return;
+	void ButtonComponent::OnActionChanged(ActionChangedEvent& e)
+	{
+		// We only care about left click (UI_Interact)
+		if (e.GetHash() == Hash::GetHash("UI_Interact"))
+		{
+			// Value > 0.0f means it was pressed
+			if (e.GetValue() > 0.0f)
+			{
+				if (isHovered)
+				{
+					isPressed = true;
+					e.handled = true; // Consume the event to prevent background clicks
 
-        auto& input = Application::Get().GetInputManager();
+					if (onPressCallback) onPressCallback();
 
-        // 1. GET THE MOUSE FROM THE MAPPER (Absolute Axes)
-        Vector2f mousePos = {
-            input.GetAxis(Hash::GetHash("Pointer_X")),
-            input.GetAxis(Hash::GetHash("Pointer_Y"))
-        };
+					ButtonPressedEvent pressedEvent(owner->name);
+					Application::Get().GetEventBus().Publish(pressedEvent);
+				}
+			}
+			else // Value == 0.0f means it was released
+			{
+				if (isPressed)
+				{
+					isPressed = false;
+					e.handled = true; // Consume the event to prevent background clicks
 
-        if (layer == RenderLayer::UI)
-        {
-            mousePos.y = -mousePos.y; // Convert Y-Up back to Y-Down for UI layer calculations
-        }
+					if (onReleaseCallback) onReleaseCallback();
 
-        Vector2f globalPos = owner->GetGlobalPosition();
-        Vector2f centerPos = { globalPos.x + offset.x, globalPos.y + offset.y };
+					ButtonReleasedEvent releasedEvent(owner->name);
+					Application::Get().GetEventBus().Publish(releasedEvent);
 
-        float halfW = shape.size.x / 2.0f;
-        float halfH = shape.size.y / 2.0f;
+					if (isHovered)
+					{
+						if (onClickCallback) onClickCallback();
 
-        // Update Hover State
-        isHovered = (mousePos.x >= centerPos.x - halfW && mousePos.x <= centerPos.x + halfW &&
-            mousePos.y >= centerPos.y - halfH && mousePos.y <= centerPos.y + halfH);
-    }
+						ButtonClickedEvent clickedEvent(owner->name);
+						Application::Get().GetEventBus().Publish(clickedEvent);
+					}
+				}
+			}
+		}
+	}
 
-    void ButtonComponent::OnActionChanged(ActionChangedEvent& e)
-    {
-        // We only care about left click (UI_Interact)
-        if (e.GetHash() == Hash::GetHash("UI_Interact"))
-        {
-            // Value > 0.0f means it was pressed
-            if (e.GetValue() > 0.0f)
-            {
-                if (isHovered)
-                {
-                    isPressed = true;
-                    e.handled = true; // Consume the event to prevent background clicks
+	void ButtonComponent::DebugDraw(RendererBase* renderer)
+	{
+		if (owner == nullptr || renderer == nullptr) return;
 
-                    if (onClickCallback) onClickCallback();
+		Vector2f globalPos = owner->GetGlobalPosition();
+		Vector2f centerPos = { globalPos.x + offset.x, globalPos.y + (offset.y * (layer == Engine::RenderLayer::World ? 1.0f : -1.0f)) };
+		float rot = owner->transform->GetRotation();
 
-                    ButtonPressedEvent event(owner->name);
-                    Application::Get().GetEventBus().Publish(event);
-                }
-            }
-            else // Value == 0.0f means it was released
-            {
-                isPressed = false;
-            }
-        }
-    }
+		// Dynamic colors: Yellow (Normal), Green (Hover), Red (Click)
+		Color debugColor = { 255, 255, 0, 255 };
+		if (isPressed)
+		{
+			debugColor = { 255, 0, 0, 255 };
+		}
+		else if (isHovered)
+		{
+			debugColor = { 0, 255, 0, 255 };
+		}
 
-    void ButtonComponent::DebugDraw(RendererBase* renderer)
-    {
-        if (owner == nullptr || renderer == nullptr) return;
-
-        Vector2f globalPos = owner->GetGlobalPosition();
-        Vector2f centerPos = { globalPos.x + offset.x, globalPos.y - offset.y };
-        float rot = owner->transform->GetRotation();
-
-        // Dynamic colors: Yellow (Normal), Green (Hover), Red (Click)
-        Color debugColor = { 255, 255, 0, 255 };
-        if (isPressed)
-        {
-            debugColor = { 255, 0, 0, 255 };
-        }
-        else if (isHovered)
-        {
-            debugColor = { 0, 255, 0, 255 };
-        }
-
-        renderer->SubmitDebugShape(layer, shape, centerPos, rot, debugColor);
-    }
+		renderer->SubmitDebugShape(layer, shape, centerPos, rot, debugColor);
+	}
 }
