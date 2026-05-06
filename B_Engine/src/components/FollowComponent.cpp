@@ -11,7 +11,7 @@
 
 namespace Engine
 {
-    FollowComponent::FollowComponent(FollowMode followMode, float speed)
+    FollowComponent::FollowComponent(FollowMode followMode, Vector2f speed)
         : mode(followMode), speed(speed)
     {
     }
@@ -165,16 +165,30 @@ namespace Engine
         {
             // Framerate-independent Lerp magic formula:
             // position += diff * (1.0 - exp(-speed * deltaTime))
-            float tCam = 1.0f - std::exp(-speed * fixedDeltaTime);
-            owner->transform->SetPosition(finalCamPos + (camDiff * tCam));
+            float tCamX = 1.0f - std::exp(-speed.x * fixedDeltaTime);
+            float tCamY = 1.0f - std::exp(-speed.y * fixedDeltaTime);
+
+            owner->transform->SetPosition({
+                finalCamPos.x + (camDiff.x * tCamX),
+                finalCamPos.y + (camDiff.y * tCamY)
+                });
             break;
         }
         case FollowMode::Linear:
         {
-            float dist = std::sqrt(distSq);
-            float step = speed * fixedDeltaTime;
-            if (dist <= step) owner->transform->SetPosition(virtualFocus);
-            else owner->transform->SetPosition(finalCamPos + ((camDiff / dist) * step));
+            float stepX = speed.x * fixedDeltaTime;
+            float stepY = speed.y * fixedDeltaTime;
+
+            float newX = finalCamPos.x;
+            float newY = finalCamPos.y;
+
+            if (std::abs(camDiff.x) <= stepX) newX = virtualFocus.x;
+            else newX = finalCamPos.x + std::copysign(stepX, camDiff.x);
+
+            if (std::abs(camDiff.y) <= stepY) newY = virtualFocus.y;
+            else newY = finalCamPos.y + std::copysign(stepY, camDiff.y);
+
+            owner->transform->SetPosition({ newX, newY });
             break;
         }
         }

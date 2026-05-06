@@ -63,7 +63,14 @@ void UIPrefabs::CreateMinimap(Engine::SceneBuilder& builder)
     Engine::CameraComponent* camComp = camNode->AddComponent<Engine::CameraComponent>(0.125f);
     camComp->SetShowDebug(false);
 
-    camNode->AddComponent<Engine::FollowComponent>();
+    Engine::Node* playerNode = builder.FindPending("Player");
+    if (playerNode)
+    {
+        Engine::FollowComponent* follow = camNode->AddComponent<Engine::FollowComponent>(Engine::FollowMode::Lerp, Engine::Vector2f{ 5.0f, 0.0f });
+        follow->AddTarget(Engine::TrackedTarget(playerNode));
+
+        follow->SetOffset(Engine::Vector2f(0.0f, -200.0f));
+    }
 
     Engine::Node* borderNode = builder.CreateChildNode(nodeMinimap,"MinimapBorder");
     Engine::SpriteComponent* miniMapBorder = borderNode->AddComponent<Engine::SpriteComponent>(Engine::Pivot::TopLeft,Engine::Color(64,64,64,255),Engine::RenderLayer::UI);

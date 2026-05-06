@@ -44,7 +44,7 @@ namespace Engine
     class FollowComponent : public Component
     {
     public:
-        FollowComponent(FollowMode followMode = FollowMode::Lerp, float speed = 5.0f);
+        FollowComponent(FollowMode followMode = FollowMode::Lerp, Vector2f speed = { 5.0f,5.0f });
         ~FollowComponent() override = default;
 
         void FixedUpdate(float fixedDeltaTime) override;
@@ -58,7 +58,7 @@ namespace Engine
 
         void SetMode(FollowMode m) { mode = m; }
         void SetOffset(const Vector2f& off) { offset = off; }
-        void SetSpeed(float s) { speed = s; }
+        void SetSpeed(Vector2f& s) { speed = s; }
         void SetMaxDistance(float maxDist) { maxDistance = maxDist; }
 
         void SetDeadzone(const Vector2f& dz, bool soft = false, float cSpeed = 20.0f)
@@ -76,7 +76,7 @@ namespace Engine
         FollowMode mode = FollowMode::Lerp;
 
         Vector2f offset{ 0.0f, 0.0f };
-        float speed = 5.0f;
+        Vector2f speed{ 5.0f,5.0f };
 
         Vector2f virtualFocus{ 0.0f, 0.0f };
         bool initializedFocus = false;
