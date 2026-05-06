@@ -9,6 +9,7 @@
 #include "components/ButtonComponent.h"
 #include "components/ScriptComponent.h"
 #include "components/CameraComponent.h"
+#include "components/FollowComponent.h"
 
 // Scripts & Logic
 #include "../scripts/ScoreUIScript.h"
@@ -56,9 +57,13 @@ void UIPrefabs::CreateMinimap(Engine::SceneBuilder& builder)
 {
     Engine::Node* nodeMinimap = builder.CreateNode("MinimapNode");
 
-    Engine::Node* camNode = builder.CreateChildNode(nodeMinimap,"MinimapCam");
+    Engine::Node* camNode = builder.CreateNode("MinimapCam");
+    camNode->transform->SetPosition({0,500});
 
-    Engine::CameraComponent* camComp = camNode->AddComponent<Engine::CameraComponent>(1.0f);
+    Engine::CameraComponent* camComp = camNode->AddComponent<Engine::CameraComponent>(0.125f);
+    camComp->SetShowDebug(false);
+
+    camNode->AddComponent<Engine::FollowComponent>();
 
     Engine::Node* borderNode = builder.CreateChildNode(nodeMinimap,"MinimapBorder");
     Engine::SpriteComponent* miniMapBorder = borderNode->AddComponent<Engine::SpriteComponent>(Engine::Pivot::TopLeft,Engine::Color(64,64,64,255),Engine::RenderLayer::UI);

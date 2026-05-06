@@ -15,6 +15,9 @@ void MiniMapScript::OnStart()
 
 	rendTex = Engine::Application::Get().GetResourceManager()->CreateRenderTexture(sprite->GetTargetSize());
 	cam->SetRenderTarget(rendTex);
+
+	sprite->SetTexture(rendTex.texture);
+	sprite->SetFlipY(true);
 }
 
 void MiniMapScript::OnUpdate(float)
