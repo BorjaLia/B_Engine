@@ -19,7 +19,7 @@ public:
     static GameManager* Get() { return instance; }
 
     void OnStart() override;
-    void OnUpdate(float deltaTime) override;
+    void OnFixedUpdate(float deltaTime) override;
 
     void CollectCoin();
     void Win();

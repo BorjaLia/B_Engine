@@ -74,12 +74,14 @@ namespace Engine
             ENGINE_ERROR("Couldn't initialize window!");
             return false;
         }
+        ENGINE_INFO("Window initialized at {}",windowSize);
 
         window->SetFullscreen(userSettings.fullscreen);
         window->SetVSync(userSettings.vSync);
 
         window->GetRenderer()->SetLogicalResolution(windowSize);
-
+        window->GetRenderer()->SetAspectRatioLocked(engineConfig.lockAspectRatio);
+        
         settingsEventId = eventBus.Subscribe<SettingsChangedEvent>(
             [this](SettingsChangedEvent& e) { this->OnSettingsChanged(e); }
         );

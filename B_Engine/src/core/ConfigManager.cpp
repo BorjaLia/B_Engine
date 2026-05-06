@@ -119,6 +119,7 @@ namespace Engine
         else if (key == "TargetFPS") engineData.targetFPS = std::stoi(value);
         else if (key == "ResourceDirectory") engineData.resourceDirectory = value;
         else if (key == "EnableDevTools") engineData.enableDevTools = (value == "true" || value == "1");
+        else if (key == "LockAspectRatio") engineData.lockAspectRatio = (value == "true" || value == "1");
     }
 
     void ConfigManager::ParseUserLine(const std::string& key, const std::string& value)
@@ -187,6 +188,7 @@ namespace Engine
         ss << "TargetFPS=" << engineData.targetFPS << "\n";
         ss << "ResourceDirectory=" << engineData.resourceDirectory << "\n";
         ss << "EnableDevTools=" << (engineData.enableDevTools ? "true" : "false") << "\n";
+        ss << "LockAspectRatio=" << (engineData.enableDevTools ? "true" : "false") << "\n";
 
         if (FileSystem::WriteText("engine.ini", ss.str()))
         {

@@ -10,6 +10,9 @@ MiniMapScript::MiniMapScript(Engine::CameraComponent* cam, Engine::SpriteCompone
 
 void MiniMapScript::OnStart()
 {
+	if (!owner) return;
+	ENGINE_LOG("Started minimap script");
+
 	rendTex = Engine::Application::Get().GetResourceManager()->CreateRenderTexture(sprite->GetTargetSize());
 	cam->SetRenderTarget(rendTex);
 }

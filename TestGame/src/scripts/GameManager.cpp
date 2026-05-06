@@ -47,9 +47,11 @@ void GameManager::OnStart()
         });
 }
 
-void GameManager::OnUpdate(float deltaTime)
+void GameManager::OnFixedUpdate(float)
 {
-    (void)deltaTime;
+    auto& mapper = Engine::Application::Get().GetInputManager();
+   
+    if (mapper.IsActionJustReleased(Engine::Hash::GetHash("Fullscreen")))  Engine::Application::Get().GetWindow()->SetFullscreen(!Engine::Application::Get().GetWindow()->IsFullscreen());
 }
 
 void GameManager::CollectCoin()

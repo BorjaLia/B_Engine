@@ -31,11 +31,20 @@ namespace Engine
     {
         logicalSize = size;
 
-        if (isReplaying)
+        if (isReplaying || aspectRatioLocked)
         {
             if (globalCanvas.id != 0) UnloadRenderTexture(globalCanvas);
             globalCanvas = CreateRenderTexture(size);
             CalculateLetterbox();
+        }
+        else
+        {
+            useGlobalCanvas = false;
+            if (globalCanvas.id != 0)
+            {
+                UnloadRenderTexture(globalCanvas);
+                globalCanvas.id = 0;
+            }
         }
     }
 
@@ -52,11 +61,22 @@ namespace Engine
         return Vector2f(logX, -logY);
     }
 
+    void RendererBase::SetAspectRatioLocked(bool locked, float aspectRatio)
+    {
+        aspectRatioLocked = locked;
+        targetAspectRatio = aspectRatio;
+
+        if (isReplaying) return;
+
+        WindowResizeEvent e(windowSize);
+        OnWindowResize(e);
+    }
+
     void RendererBase::CalculateLetterbox()
     {
         if (logicalSize.x == 0 || logicalSize.y == 0) return;
 
-        if (!isReplaying || (windowSize.x == logicalSize.x && windowSize.y == logicalSize.y))
+        if ((!isReplaying && !aspectRatioLocked) || (windowSize.x == logicalSize.x && windowSize.y == logicalSize.y))
         {
             lbScale = 1.0f;
             lbOffset = { 0.0f, 0.0f };
@@ -82,6 +102,24 @@ namespace Engine
         {
             CalculateLetterbox();
         }
+        else if (aspectRatioLocked)
+        {
+            float windowAR = static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y);
+            Vector2i newLogicalSize;
+
+            if (windowAR > targetAspectRatio)
+            {
+                newLogicalSize.y = windowSize.y;
+                newLogicalSize.x = static_cast<int>(windowSize.y * targetAspectRatio);
+            }
+            else
+            {
+                newLogicalSize.x = windowSize.x;
+                newLogicalSize.y = static_cast<int>(windowSize.x / targetAspectRatio);
+            }
+
+            SetLogicalResolution(newLogicalSize);
+        }
         else
         {
             SetLogicalResolution(windowSize);
@@ -105,7 +143,8 @@ namespace Engine
                 UnloadRenderTexture(globalCanvas);
                 globalCanvas.id = 0;
             }
-            logicalSize = windowSize;
+            WindowResizeEvent fakeEvent(windowSize);
+            OnWindowResize(fakeEvent);
         }
     }
 }

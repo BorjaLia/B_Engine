@@ -18,6 +18,8 @@ void PlatformerGame::SetupInputs()
     input.BindAction(Engine::Hash::GetHash("UI_Pause"), Engine::Key::Escape, Engine::ActionCategory::Gameplay);
     input.BindAction(Engine::Hash::GetHash("UI_Pause"), Engine::Key::Tab, Engine::ActionCategory::System);
 
+    input.BindAction(Engine::Hash::GetHash("Fullscreen"), Engine::Key::F11, Engine::ActionCategory::System);
+
     // =========================================================
     // GAMEPLAY
     // =========================================================

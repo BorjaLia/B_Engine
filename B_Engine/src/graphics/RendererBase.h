@@ -7,6 +7,7 @@
 #include "../utils/Types.h"
 #include "../utils/Math.h"
 #include "../resources/Font.h"
+#include "debug/Debug.h"
 
 namespace Engine
 {
@@ -36,6 +37,14 @@ namespace Engine
         Vector2i GetLogicalResolution() const { return logicalSize; }
 
         Vector2f ScreenToLogical(const Vector2f& screenPos) const;
+
+        /// Locks or unlocks the aspect ratio, forcing letterboxing if locked.
+        /// @param locked True to force letterboxing, false to stretch/adapt.
+        /// @param targetLogicalResolution The native resolution to lock to (e.g., 1920x1080).
+        void SetAspectRatioLocked(bool locked, float aspectRatio = 16.0f / 9.0f);
+
+        /// Checks if the aspect ratio is currently locked.
+        bool IsAspectRatioLocked() const { return aspectRatioLocked; }
 
         bool IsUsingGlobalCanvas() const { return useGlobalCanvas; }
         RenderTexture2D GetGlobalCanvas() const { return globalCanvas; }
@@ -127,6 +136,10 @@ namespace Engine
 
         Vector2i logicalSize = { 1920, 1080 };
         Vector2i windowSize = { 1920, 1080 };
+
+        bool aspectRatioLocked = false;
+        float targetAspectRatio = 16.0f / 9.0f;
+
         float lbScale = 1.0f;
         Vector2f lbOffset = { 0.0f, 0.0f };
 

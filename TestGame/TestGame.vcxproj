@@ -160,7 +160,7 @@
     <ClCompile Include="src\scripts\EnemyScript.cpp" />
     <ClCompile Include="src\scripts\FinishLineScript.cpp" />
     <ClCompile Include="src\scripts\GameManager.cpp" />
-    <ClCompile Include="src\scripts\miniMapScript.cpp" />
+    <ClCompile Include="src\scripts\MiniMapScript.cpp" />
     <ClCompile Include="src\scripts\MouseScript.cpp" />
     <ClCompile Include="src\scripts\PlatformScript.cpp" />
     <ClCompile Include="src\scripts\PlayerScript.cpp" />
@@ -178,7 +178,7 @@
     <ClInclude Include="src\scripts\EnemyScript.h" />
     <ClInclude Include="src\scripts\FinishLineScript.h" />
     <ClInclude Include="src\scripts\GameManager.h" />
-    <ClInclude Include="src\scripts\miniMapScript.h" />
+    <ClInclude Include="src\scripts\MiniMapScript.h" />
     <ClInclude Include="src\scripts\MouseScript.h" />
     <ClInclude Include="src\scripts\PlatformScript.h" />
     <ClInclude Include="src\scripts\PlayerScript.h" />

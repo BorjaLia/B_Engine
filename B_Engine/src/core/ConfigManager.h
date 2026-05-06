@@ -17,6 +17,8 @@ namespace Engine
         int targetFPS = 60;
         std::string resourceDirectory = "./assets/";
         bool enableDevTools = true;
+
+        bool lockAspectRatio = true;
     };
 
     struct UserSettings

@@ -61,7 +61,7 @@ void MouseScript::OnUpdate(float deltaTime)
 
 void MouseScript::OnActionChanged(Engine::ActionChangedEvent& e)
 {
-    // GOLDEN RULE! If the UI consumed the event, we back off.
+    // If the UI consumed the event, we back off.
     if (e.handled) return;
 
     // We only care about presses (Value > 0), ignore when the click is released.

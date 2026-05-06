@@ -69,7 +69,7 @@
     <ClCompile Include="src\scripts\ScoreUIScript.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="src\scripts\miniMapScript.cpp">
+    <ClCompile Include="src\scripts\MiniMapScript.cpp">
       <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,7 +119,7 @@
     <ClInclude Include="src\scripts\ScoreUIScript.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="src\scripts\miniMapScript.h">
+    <ClInclude Include="src\scripts\MiniMapScript.h">
       <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
