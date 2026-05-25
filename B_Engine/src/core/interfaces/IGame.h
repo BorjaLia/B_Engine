@@ -1,8 +1,5 @@
 #pragma once
 
-#include <string>
-#include "../../utils/Math.h"
-
 namespace Engine
 {
     /// The base interface that every user game must inherit from.

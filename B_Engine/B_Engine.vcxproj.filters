@@ -61,6 +61,9 @@
     <Filter Include="Systems\Graphics">
       <UniqueIdentifier>{84b6893b-ab41-4605-89f3-b048e8919113}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Math">
+      <UniqueIdentifier>{ca079470-9c18-4e6c-9682-32a923e1749c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">
@@ -231,9 +234,6 @@
       <Filter>Core\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\FileSystem.h">
-      <Filter>Core\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\utils\Math.h">
       <Filter>Core\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\StringHash.h">
@@ -409,6 +409,27 @@
     </ClInclude>
     <ClInclude Include="src\graphics\RendererBase.h">
       <Filter>Systems\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\Matrix3x3.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\Vector2.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\Vector3.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\Matrix4x4.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\Vector4.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\MathUtils.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\MathDebugger.h">
+      <Filter>Core\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

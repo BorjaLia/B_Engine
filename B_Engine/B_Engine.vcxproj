@@ -249,6 +249,13 @@
     <ClInclude Include="src\inputs\InputManager.h" />
     <ClInclude Include="src\inputs\InputMapper.h" />
     <ClInclude Include="src\inputs\KeyCodes.h" />
+    <ClInclude Include="src\math\MathDebugger.h" />
+    <ClInclude Include="src\math\MathUtils.h" />
+    <ClInclude Include="src\math\Matrix3x3.h" />
+    <ClInclude Include="src\math\Matrix4x4.h" />
+    <ClInclude Include="src\math\Vector2.h" />
+    <ClInclude Include="src\math\Vector3.h" />
+    <ClInclude Include="src\math\Vector4.h" />
     <ClInclude Include="src\physics\ICollisionListener.h" />
     <ClInclude Include="src\physics\Physics.h" />
     <ClInclude Include="src\physics\PhysicsSystem.h" />
@@ -270,7 +277,6 @@
     <ClInclude Include="src\time\Time.h" />
     <ClInclude Include="src\time\TimerManager.h" />
     <ClInclude Include="src\utils\FileSystem.h" />
-    <ClInclude Include="src\utils\Math.h" />
     <ClInclude Include="src\utils\StringHash.h" />
     <ClInclude Include="src\utils\Types.h" />
   </ItemGroup>

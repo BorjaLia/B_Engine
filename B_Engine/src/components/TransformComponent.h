@@ -3,7 +3,8 @@
 #include <string>
 
 #include "Component.h"
-#include "../utils/Math.h"
+#include "../math/Vector2.h"
+#include "../math/Matrix3x3.h"
 
 namespace Engine
 {
