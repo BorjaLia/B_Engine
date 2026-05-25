@@ -2,6 +2,7 @@
 
 #include <sstream>
 
+#include "../math/MathDebugger.h"
 #include "../scenes/Node.h"
 #include "../core/Application.h"
 #include "SpriteComponent.h"

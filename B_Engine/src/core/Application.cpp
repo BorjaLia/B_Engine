@@ -74,7 +74,7 @@ namespace Engine
             ENGINE_ERROR("Couldn't initialize window!");
             return false;
         }
-        ENGINE_INFO("Window initialized at {}",windowSize);
+        ENGINE_INFO("Window initialized at {}",windowSize.ToString());
 
         window->SetFullscreen(userSettings.fullscreen);
         window->SetVSync(userSettings.vSync);

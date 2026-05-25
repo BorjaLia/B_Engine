@@ -2,7 +2,7 @@
 
 #include <optional>
 #include "KeyCodes.h"
-#include "../utils/Math.h"
+#include "../math/Vector2.h"
 
 namespace Engine
 {

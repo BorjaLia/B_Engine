@@ -3,6 +3,7 @@
 #include <sstream>
 #include <cmath>
 
+#include "../math/MathUtils.h"
 #include "../debug/Debug.h"
 
 namespace Engine

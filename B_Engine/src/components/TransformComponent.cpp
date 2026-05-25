@@ -2,6 +2,8 @@
 
 #include <sstream>
 
+#include "../math/MathUtils.h"
+#include "../math/MathDebugger.h"
 #include "../scenes/Node.h"
 #include "../graphics/RendererBase.h"
 

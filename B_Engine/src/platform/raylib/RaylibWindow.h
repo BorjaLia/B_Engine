@@ -4,7 +4,7 @@
 #include <string>
 
 #include "../../core/interfaces/IWindow.h"
-#include "../../utils/Math.h"
+#include "../../math/Vector2.h"
 
 namespace Engine
 {

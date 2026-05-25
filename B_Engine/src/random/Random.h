@@ -5,7 +5,7 @@
 #include <sstream>
 #include <cstdint>
 
-#include "../utils/Math.h"
+#include "../math/Vector2.h"
 
 namespace Engine
 {

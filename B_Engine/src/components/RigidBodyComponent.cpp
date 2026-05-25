@@ -3,6 +3,7 @@
 #include <cmath>
 #include <algorithm>
 
+#include "../math/MathUtils.h"
 #include "../core/Application.h"
 #include "../physics/PhysicsSystem.h"
 #include "../scenes/Node.h"

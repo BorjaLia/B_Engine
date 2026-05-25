@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "../utils/Types.h"
-#include "../utils/Math.h"
+#include "../math/Vector2.h"
 #include "../resources/Font.h"
 #include "debug/Debug.h"
 

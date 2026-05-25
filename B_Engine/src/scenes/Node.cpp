@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include "../core/Application.h"
+#include "../math/MathDebugger.h"
 #include "../debug/Debug.h"
 
 namespace Engine

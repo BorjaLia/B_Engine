@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Event.h"
-#include "../utils/Math.h"
+#include "../math/Vector2.h"
 #include "../core/ConfigManager.h"
 
 namespace Engine
