@@ -32,7 +32,7 @@ namespace Engine
             if (std::holds_alternative<Node*>(target))
             {
                 Node* node = std::get<Node*>(target);
-                return node ? node->GetGlobalPosition() : Vector2f(0.0f, 0.0f);
+                return node ? node->transform.GetGlobalPosition() : Vector2f(0.0f, 0.0f);
             }
             return std::get<Vector2f>(target);
         }

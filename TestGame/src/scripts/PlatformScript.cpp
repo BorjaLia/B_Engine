@@ -20,8 +20,8 @@ void PlatformScript::OnUpdate(float deltaTime)
     {
         body->SetVelocity({ 0.0f, 0.0f });
         body->SetAngularVelocity(0.0f);
-        owner->transform->SetPosition(startPos);
-        owner->transform->SetRotation(0.0f);
+        owner->transform.SetPosition(startPos);
+        owner->transform.SetRotation2D(0.0f);
     }
 }
 
@@ -33,7 +33,7 @@ void PlatformScript::OnFixedUpdate(float fixedDeltaTime)
     {
         body->SetVelocity({ 0.0f, 0.0f });
         body->SetAngularVelocity(0.0f);
-        owner->transform->SetPosition(startPos);
-        owner->transform->SetRotation(0.0f);
+        owner->transform.SetPosition(startPos);
+        owner->transform.SetRotation2D(0.0f);
     }
 }

@@ -28,23 +28,23 @@ namespace Engine
 
     void RigidBodyComponent::FixedUpdate(float fixedDeltaTime)
     {
-        if (owner == nullptr || owner->transform == nullptr) return;
+        if (owner == nullptr) return;
 
         if (type == BodyType::Static) return;
 
         // --- KINEMATIC: user-driven velocity only, no gravity ---
         if (type == BodyType::Kinematic)
         {
-            Vector2f pos = owner->transform->GetPosition();
+            Vector2f pos = owner->transform.GetPosition();
             pos.x += velocity.x * fixedDeltaTime;
             pos.y += velocity.y * fixedDeltaTime;
-            owner->transform->SetPosition(pos);
+            owner->transform.SetPosition(pos);
 
             if (!lockRotation)
             {
-                float rot = owner->transform->GetRotation();
+                float rot = owner->transform.GetRotation2D();
                 rot -= angularVelocity * RAD2DEG * fixedDeltaTime;
-                owner->transform->SetRotation(rot);
+                owner->transform.SetRotation2D(rot);
             }
             return;
         }
@@ -62,10 +62,10 @@ namespace Engine
         velocity.x *= linearRetain;
         velocity.y *= linearRetain;
 
-        Vector2f pos = owner->transform->GetPosition();
+        Vector2f pos = owner->transform.GetPosition();
         pos.x += velocity.x * fixedDeltaTime;
         pos.y += velocity.y * fixedDeltaTime;
-        owner->transform->SetPosition(pos);
+        owner->transform.SetPosition(pos);
 
         // 3. Angular integration
         if (!lockRotation)
@@ -75,11 +75,11 @@ namespace Engine
             angularVelocity += angularAcceleration * fixedDeltaTime;
             angularVelocity *= angularRetain;
 
-            float rot = owner->transform->GetRotation();
+            float rot = owner->transform.GetRotation2D();
 
             // angularVelocity is in rad/s (from the impulse solver) -> convert to deg for the transform
             rot += angularVelocity * RAD2DEG * fixedDeltaTime;
-            owner->transform->SetRotation(rot);
+            owner->transform.SetRotation2D(rot);
         }
 
         // 4. Clear accumulators
@@ -89,9 +89,9 @@ namespace Engine
 
     void RigidBodyComponent::AddLocalForce(const Vector2f& localForce)
     {
-        if (type != BodyType::Dynamic || owner == nullptr || owner->transform == nullptr) return;
+        if (type != BodyType::Dynamic || owner == nullptr) return;
 
-        float rad = owner->transform->GetRotation() * DEG2RAD;
+        float rad = owner->transform.GetRotation2D() * DEG2RAD;
         float cosA = std::cos(rad);
         float sinA = std::sin(rad);
 

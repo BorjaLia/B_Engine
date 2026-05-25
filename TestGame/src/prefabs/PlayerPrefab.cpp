@@ -28,8 +28,8 @@ Engine::Node* PlayerPrefab::Create(Engine::SceneBuilder& builder, Engine::Vector
 
     // 1. Create Base Node
     Engine::Node* node = builder.CreateNode("Player");
-    node->transform->SetScale({ 4.0f, 4.0f });
-    node->transform->SetPosition(position);
+    node->transform.SetPosition(position);
+    node->transform.SetScale(Engine::Vector2(4.0f, 4.0f ));
 
     // 2. Animations
     auto* anim = node->AddComponent<Engine::AnimatedSpriteComponent>(animPlayer, Engine::Pivot::Center);
@@ -58,7 +58,7 @@ Engine::Node* PlayerPrefab::Create(Engine::SceneBuilder& builder, Engine::Vector
     // 4. Camera System (As an independent sibling node)
     Engine::Node* camNode = builder.CreateNode("Camera");
     auto* camComp = camNode->AddComponent<Engine::CameraComponent>(0.5f);
-    camNode->transform->SetPosition(position);
+    camNode->transform.SetPosition(position);
 
     auto* follow = camNode->AddComponent<Engine::FollowComponent>(Engine::FollowMode::Lerp, 5.0f);
     follow->AddTarget(Engine::TrackedTarget(node, 1.0f));
@@ -70,7 +70,7 @@ Engine::Node* PlayerPrefab::Create(Engine::SceneBuilder& builder, Engine::Vector
 
     // 5. Aesthetics (Tag Name)
     Engine::Node* tagNode = builder.CreateChildNode(node, "tag");
-    tagNode->transform->SetPosition(Engine::Vector2f(0.0f, 25.0f));
+    tagNode->transform.SetPosition(Engine::Vector2f(0.0f, 25.0f));
     auto* txt = tagNode->AddComponent<Engine::TextComponent>(font, "Player", 26.0f, Engine::Color{ 255, 255, 255, 255 }, Engine::RenderLayer::World);
     txt->pivot = Engine::Pivot::Center;
 

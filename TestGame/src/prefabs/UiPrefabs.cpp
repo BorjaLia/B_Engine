@@ -58,7 +58,7 @@ void UIPrefabs::CreateMinimap(Engine::SceneBuilder& builder)
     Engine::Node* nodeMinimap = builder.CreateNode("MinimapNode");
 
     Engine::Node* camNode = builder.CreateNode("MinimapCam");
-    camNode->transform->SetPosition({0,500});
+    camNode->transform.SetPosition(Engine::Vector2(0,500));
 
     Engine::CameraComponent* camComp = camNode->AddComponent<Engine::CameraComponent>(0.125f);
     camComp->SetShowDebug(false);
@@ -77,12 +77,12 @@ void UIPrefabs::CreateMinimap(Engine::SceneBuilder& builder)
     miniMapBorder->SetTargetSize({220,220});
 
     Engine::Node* spriteNode = builder.CreateChildNode(nodeMinimap,"MinimapSprite");
-    spriteNode->transform->SetPosition(spriteNode->transform->GetPosition() + Engine::Vector2(10.0f, 10.0f));
+    spriteNode->transform.SetPosition(spriteNode->transform.GetPosition() + Engine::Vector2(10.0f, 10.0f));
     Engine::SpriteComponent* miniMapSprite = spriteNode->AddComponent<Engine::SpriteComponent>(Engine::Pivot::TopLeft,Engine::Color(255,255,255,255),Engine::RenderLayer::UI);
     miniMapSprite->SetTargetSize({200,200});
 
     Engine::Node* resizeHandle = builder.CreateChildNode(nodeMinimap, "ResizeHandle");
-    resizeHandle->transform->SetPosition({220,220});
+    resizeHandle->transform.SetPosition(Engine::Vector2f(220,220));
     
     //auto* handleSprite = resizeHandle->AddComponent<Engine::SpriteComponent>(Engine::Pivot::BottomRight, Engine::Color(100, 100, 100, 255), Engine::RenderLayer::UI);
     //handleSprite->SetTargetSize({ 50, 50 });

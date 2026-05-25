@@ -62,7 +62,7 @@ void MiniMapScript::OnUpdate(float /*deltaTime*/)
 
             borderSprite->SetTargetSize({ currentSize, currentSize });
             mapSprite->SetTargetSize({ currentSize - 20.0f, currentSize - 20.0f });
-            resizeBtn->GetOwner()->transform->SetPosition({ currentSize, currentSize });
+            resizeBtn->GetOwner()->transform.SetPosition(Engine::Vector2(currentSize, currentSize ));
 
             lastMousePos = mousePos;
         }

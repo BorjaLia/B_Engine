@@ -45,7 +45,7 @@ namespace Engine
 
     Vector2f FollowComponent::CalculateWeightedTargetPosition() const
     {
-        if (targets.empty()) return owner->transform->GetPosition();
+        if (targets.empty()) return owner->transform.GetPosition();
 
         Vector2f totalPos(0.0f, 0.0f);
         float totalWeight = 0.0f;
@@ -57,7 +57,7 @@ namespace Engine
             if (std::holds_alternative<Node*>(t.target))
             {
                 Node* node = std::get<Node*>(t.target);
-                if (node && node->transform) pos = node->GetGlobalPosition();
+                if (node) pos = node->transform.GetGlobalPosition();
             }
             else
             {
@@ -159,7 +159,7 @@ namespace Engine
         switch (mode)
         {
         case FollowMode::Strict:
-            owner->transform->SetPosition(virtualFocus);
+            owner->transform.SetPosition(virtualFocus);
             break;
         case FollowMode::Lerp:
         {
@@ -168,10 +168,10 @@ namespace Engine
             float tCamX = 1.0f - std::exp(-speed.x * fixedDeltaTime);
             float tCamY = 1.0f - std::exp(-speed.y * fixedDeltaTime);
 
-            owner->transform->SetPosition({
+            owner->transform.SetPosition(Vector2f(
                 finalCamPos.x + (camDiff.x * tCamX),
                 finalCamPos.y + (camDiff.y * tCamY)
-                });
+                ));
             break;
         }
         case FollowMode::Linear:
@@ -188,7 +188,7 @@ namespace Engine
             if (std::abs(camDiff.y) <= stepY) newY = virtualFocus.y;
             else newY = finalCamPos.y + std::copysign(stepY, camDiff.y);
 
-            owner->transform->SetPosition({ newX, newY });
+            owner->transform.SetPosition(Vector2f( newX, newY ));
             break;
         }
         }
@@ -197,7 +197,7 @@ namespace Engine
 
     void FollowComponent::FixedUpdate(float fixedDeltaTime)
     {
-        if (!owner || !owner->transform || targets.empty()) return;
+        if (!owner || targets.empty()) return;
 
         Vector2f rawTarget = CalculateWeightedTargetPosition() + offset;
         Vector2f finalTargetPos = rawTarget + UpdateLookahead(fixedDeltaTime);
@@ -209,7 +209,7 @@ namespace Engine
         }
 
         ProcessDeadzoneAndCentering(finalTargetPos, fixedDeltaTime);
-        MoveCamera(owner->transform->GetPosition(), fixedDeltaTime);
+        MoveCamera(owner->transform.GetPosition(), fixedDeltaTime);
     }
 
     void FollowComponent::DebugDraw(RendererBase* renderer)

@@ -62,7 +62,7 @@ void MainMenuScene::Build(Engine::SceneBuilder& builder)
     {
         Engine::Node* node = builder.CreateNode("Mouse");
         node->AddComponent<Engine::SpriteComponent>(texButton, Engine::Pivot::Center, Engine::Color{ 80, 80, 80, 200 });
-        node->transform->SetScale({ 0.2f, 0.2f });
+        node->transform.SetScale(Engine::Vector2(0.2f, 0.2f ));
 
         node->AddComponent<Engine::ScriptComponent>(new MouseScript(camComp));
     }

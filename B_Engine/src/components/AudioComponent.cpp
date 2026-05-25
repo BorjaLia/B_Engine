@@ -74,12 +74,12 @@ namespace Engine
         if (positional)
         {
             // Find the listener position. If none exists, fall back to global playback.
-            Vector2f listenerPos = owner->GetGlobalPosition();
+            Vector2f listenerPos = owner->transform.GetGlobalPosition();
 
             Node* listenerNode = Application::Get().FindAudioListener();
-            if (listenerNode) listenerPos = listenerNode->GetGlobalPosition();
+            if (listenerNode) listenerPos = listenerNode->transform.GetGlobalPosition();
 
-            audio->PlayPositional(clip, params, listenerPos, owner->GetGlobalPosition(), maxDistance);
+            audio->PlayPositional(clip, params, listenerPos, owner->transform.GetGlobalPosition(), maxDistance);
         }
         else
         {

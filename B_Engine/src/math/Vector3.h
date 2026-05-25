@@ -3,6 +3,7 @@
 #include <cmath>
 #include <type_traits>
 #include <string>
+#include "Vector2.h"
 
 namespace Engine
 {
@@ -21,13 +22,20 @@ namespace Engine
         constexpr Vector3(T x = 0, T y = 0, T z = 0) : x(x), y(y), z(z) {}
 
         /// Conversion constructor.
-        /// Allows explicit or implicit casting (e.g., Vector3i to Vector3f).
         template <typename U>
         constexpr Vector3(const Vector3<U>& other)
             : x(static_cast<T>(other.x)), y(static_cast<T>(other.y)), z(static_cast<T>(other.z))
         {
         }
 
+        /// Implicit conversion to Vector2
+        /// Allows passing or assigning a Vector3 directly where a Vector2 is expected.
+        constexpr operator Vector2<T>() const
+        {
+            return Vector2<T>(x, y);
+        }
+
+#pragma region Vector3 vs Vector3 Operations
         constexpr Vector3& operator+=(const Vector3& other) { x += other.x; y += other.y; z += other.z; return *this; }
         constexpr Vector3& operator-=(const Vector3& other) { x -= other.x; y -= other.y; z -= other.z; return *this; }
 
@@ -36,8 +44,27 @@ namespace Engine
 
         /// Component-wise multiplication.
         constexpr Vector3 operator*(const Vector3& other) const { return { x * other.x, y * other.y, z * other.z }; }
+#pragma endregion
 
-        /// Scalar multiplication with deduced type.
+#pragma region Vector3 vs Vector2 Operations (Hybrid 2D/3D Support)
+        // Mathematically treats the Vector2 as if its Z component was 0.
+
+        constexpr Vector3& operator+=(const Vector2<T>& other) { x += other.x; y += other.y; return *this; }
+        constexpr Vector3& operator-=(const Vector2<T>& other) { x -= other.x; y -= other.y; return *this; }
+
+        constexpr Vector3 operator+(const Vector2<T>& other) const { return { x + other.x, y + other.y, z }; }
+        constexpr Vector3 operator-(const Vector2<T>& other) const { return { x - other.x, y - other.y, z }; }
+
+        /* * Note on Multiplication/Division:
+         * We do NOT overload * or / for Vector2 here.
+         * Why? If you scale a Vector3 by a Vector2, should Z become 0 (Z * 0)?
+         * Or should it remain intact (Z * 1)? Because it's ambiguous and dangerous,
+         * we force the developer to explicitly use a Vector3 for scaling/division to avoid silent bugs.
+         */
+#pragma endregion
+
+#pragma region Scalar Operations
+         /// Scalar multiplication with deduced type.
         template <typename U>
         constexpr auto operator*(U scalar) const
         {
@@ -54,7 +81,9 @@ namespace Engine
         }
 
         constexpr Vector3 operator-() const { return { -x, -y, -z }; }
+#pragma endregion
 
+#pragma region Math Functions
         /// Calculates the length of the vector.
         float Magnitude() const
         {
@@ -62,7 +91,6 @@ namespace Engine
         }
 
         /// Calculates the squared length of the vector.
-        /// Faster than Magnitude() and useful for distance comparisons.
         constexpr T MagnitudeSquared() const
         {
             return x * x + y * y + z * z;
@@ -98,7 +126,6 @@ namespace Engine
         }
 
         /// 3D Cross Product.
-        /// Returns a vector perpendicular to both input vectors.
         constexpr Vector3 Cross(const Vector3& other) const
         {
             return Vector3(
@@ -113,6 +140,7 @@ namespace Engine
         {
             return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
         }
+#pragma endregion
     };
 
     // Standard engine aliases

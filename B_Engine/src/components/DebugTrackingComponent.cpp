@@ -16,7 +16,7 @@ namespace Engine
         if (!Application::Get().IsDebugMode()) return;
         if (owner == nullptr) return;
 
-        Vector2f currentPos = owner->GetGlobalPosition();
+        Vector2f currentPos = owner->transform.GetGlobalPosition();
 
         bool isMovingNow = (currentPos.x != lastPosition.x || currentPos.y != lastPosition.y);
 

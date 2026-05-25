@@ -4,6 +4,7 @@
 
 #include "ICollisionListener.h"
 #include "../math/MathUtils.h"
+#include "../math/Matrix3x3.h"
 #include "../scenes/Node.h"
 #include "../components/ColliderComponent.h"
 #include "../components/RigidBodyComponent.h"
@@ -40,8 +41,8 @@ namespace Engine
             float restitution = std::min(bodyA ? bodyA->GetRestitution() : 0.0f, bodyB ? bodyB->GetRestitution() : 0.0f);
             float friction = std::sqrt((bodyA ? bodyA->GetFriction() : 0.5f) * (bodyB ? bodyB->GetFriction() : 0.5f));
 
-            Vector2f centerOfMassA = pair.bodyA->collider->GetOwner()->GetGlobalPosition();
-            Vector2f centerOfMassB = pair.bodyB->collider->GetOwner()->GetGlobalPosition();
+            Vector2f centerOfMassA = pair.bodyA->collider->GetOwner()->transform.GetGlobalPosition();
+            Vector2f centerOfMassB = pair.bodyB->collider->GetOwner()->transform.GetGlobalPosition();
 
             Vector2f totalLinearImpulseA(0, 0);
             float totalAngularImpulseA = 0.0f;
@@ -164,16 +165,19 @@ namespace Engine
             const float percent = 0.35f;
             const float slop = 0.05f;
 
-            Vector2f correction = pair.manifold.normal *
-                (std::max(pair.manifold.depth - slop, 0.0f) / (invMassA + invMassB)) * percent;
+            Vector2f correction = pair.manifold.normal * (std::max(pair.manifold.depth - slop, 0.0f) / (invMassA + invMassB)) * percent;
 
             if (invMassA > 0.0f)
-                pair.bodyA->collider->GetOwner()->transform->SetPosition(
-                    pair.bodyA->collider->GetOwner()->transform->GetPosition() + (correction * invMassA));
+            {
+                Vector2f currentPos = pair.bodyA->collider->GetOwner()->transform.GetPosition();
+                pair.bodyA->collider->GetOwner()->transform.SetPosition(currentPos + (correction * invMassA));
+            }
 
             if (invMassB > 0.0f)
-                pair.bodyB->collider->GetOwner()->transform->SetPosition(
-                    pair.bodyB->collider->GetOwner()->transform->GetPosition() - (correction * invMassB));
+            {
+                Vector2f currentPos = pair.bodyB->collider->GetOwner()->transform.GetPosition();
+                pair.bodyB->collider->GetOwner()->transform.SetPosition(currentPos - (correction * invMassB));
+            }
         }
 
         void DispatchCollisionEvents(CollisionPair& pair)
@@ -314,9 +318,11 @@ namespace Engine
                 if (std::holds_alternative<RectangleShape>(col->GetShape()))
                 {
                     const auto rect = std::get<RectangleShape>(col->GetShape());
-                    float rot = col->GetOwner()->transform->GetRotation() * (3.14159f / 180.0f);
+                    float rot = col->GetOwner()->transform.GetRotation2D() * DEG2RAD;
                     Vector2f rotatedOffset = Matrix3x3::Rotation(rot) * col->GetOffset();
-                    Vector2f pos = col->GetOwner()->GetGlobalPosition() + rotatedOffset;
+                    Vector2f globalPos = col->GetOwner()->transform.GetGlobalPosition();
+
+                    Vector2f pos = globalPos + rotatedOffset;
 
                     obbCache[i] = Physics::GetOBB(pos, rect.size, rot);
                 }
@@ -351,11 +357,14 @@ namespace Engine
                 bool isRectA = std::holds_alternative<RectangleShape>(shapeA);
                 bool isRectB = std::holds_alternative<RectangleShape>(shapeB);
 
-                float rotA = bodyA.collider->GetOwner()->transform->GetRotation() * DEG2RAD;
-                float rotB = bodyB.collider->GetOwner()->transform->GetRotation() * DEG2RAD;
+                float rotA = bodyA.collider->GetOwner()->transform.GetRotation2D() * DEG2RAD;
+                float rotB = bodyB.collider->GetOwner()->transform.GetRotation2D() * DEG2RAD;
 
-                Vector2f posA = bodyA.collider->GetOwner()->GetGlobalPosition() + (Matrix3x3::Rotation(rotA) * bodyA.collider->GetOffset());
-                Vector2f posB = bodyB.collider->GetOwner()->GetGlobalPosition() + (Matrix3x3::Rotation(rotB) * bodyB.collider->GetOffset());
+                Vector2f globalPosA = bodyA.collider->GetOwner()->transform.GetGlobalPosition();
+                Vector2f posA = globalPosA + (Matrix3x3::Rotation(rotA) * bodyA.collider->GetOffset());
+
+                Vector2f globalPosB = bodyB.collider->GetOwner()->transform.GetGlobalPosition();
+                Vector2f posB = globalPosB + (Matrix3x3::Rotation(rotB) * bodyB.collider->GetOffset());
 
                 Physics::CollisionManifold manifold;
 
@@ -405,8 +414,10 @@ namespace Engine
             trigger->SetDebugColor({ 255, 255, 0, 150 });
 
             bool isRectT = std::holds_alternative<RectangleShape>(trigger->GetShape());
-            float rotT = trigger->GetOwner()->transform->GetRotation() * (3.14159f / 180.0f);
-            Vector2f posT = trigger->GetOwner()->GetGlobalPosition() + (Matrix3x3::Rotation(rotT) * trigger->GetOffset());
+            float rotT = trigger->GetOwner()->transform.GetRotation2D() * DEG2RAD;
+
+            Vector2f globalPosT = trigger->GetOwner()->transform.GetGlobalPosition();
+            Vector2f posT = globalPosT + (Matrix3x3::Rotation(rotT) * trigger->GetOffset());
 
             Physics::OBB obbT;
             if (isRectT) obbT = Physics::GetOBB(posT, std::get<RectangleShape>(trigger->GetShape()).size, rotT);
@@ -417,8 +428,10 @@ namespace Engine
                 if (!body.collider->IsActive() || !body.collider->GetOwner()->IsActive()) continue;
 
                 bool isRectC = std::holds_alternative<RectangleShape>(body.collider->GetShape());
-                float rotC = body.collider->GetOwner()->transform->GetRotation() * (3.14159f / 180.0f);
-                Vector2f posC = body.collider->GetOwner()->GetGlobalPosition() + (Matrix3x3::Rotation(rotC) * body.collider->GetOffset());
+                float rotC = body.collider->GetOwner()->transform.GetRotation2D() * DEG2RAD;
+
+                Vector2f globalPosC = body.collider->GetOwner()->transform.GetGlobalPosition();
+                Vector2f posC = globalPosC + (Matrix3x3::Rotation(rotC) * body.collider->GetOffset());
 
                 Physics::CollisionManifold manifold;
 

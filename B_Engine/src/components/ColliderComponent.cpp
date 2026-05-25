@@ -4,6 +4,8 @@
 #include <algorithm>
 
 #include "../core/Application.h"
+#include "../math/MathUtils.h"
+#include "../math/Matrix3x3.h"
 #include "../physics/PhysicsSystem.h"
 #include "../scenes/Node.h"
 #include "../graphics/RendererBase.h"
@@ -59,7 +61,7 @@ namespace Engine
         }
 
         // 1. Get the final transform scale
-        Vector2f scale = owner->transform->GetScale();
+        Vector2f scale = owner->transform.GetScale();
 
         // 2. Calculate the real scaled size based on 'baseSize'
         float finalWidth = baseSize.x * std::abs(scale.x);
@@ -86,11 +88,11 @@ namespace Engine
     {
         if (owner == nullptr || renderer == nullptr) return;
 
-        Vector2f globalPos = owner->GetGlobalPosition();
+        Vector2f globalPos = owner->transform.GetGlobalPosition();
         Vector2f colliderPos = { globalPos.x + offset.x, globalPos.y + offset.y };
 
-        float rot = owner->transform->GetRotation();
-        float rotRad = rot * (3.14159f / 180.0f);
+        float rot = owner->transform.GetRotation2D();
+        float rotRad = rot * DEG2RAD;
 
         // Draw the main collider boundaries
         renderer->SubmitDebugShape(RenderLayer::World, GetShape(), colliderPos, rot, debugColor);

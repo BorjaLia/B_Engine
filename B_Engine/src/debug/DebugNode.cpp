@@ -27,17 +27,17 @@ namespace Engine
 
         std::unique_ptr<Node> fpsNode = std::make_unique<Node>("FPSCounter");
         fpsNode->AddComponent<TextComponent>(debugFont, "FPS: 0", 32.0f, Color(0, 255, 0, 255), RenderLayer::UI);
-        fpsNode->transform->SetPosition({ 5.0f, 0.0f });
+        fpsNode->transform.SetPosition(Vector2( 5.0f, 0.0f ));
         rootDebug->AddChild(std::move(fpsNode));
 
         std::unique_ptr<Node> framesNode = std::make_unique<Node>("FrameCounter");
         framesNode->AddComponent<TextComponent>(debugFont, "Frames: 0", 32.0f, Color(0, 255, 0, 255), RenderLayer::UI);
-        framesNode->transform->SetPosition({ 5.0f, 20.0f });
+        framesNode->transform.SetPosition(Vector2(5.0f, 20.0f ));
         rootDebug->AddChild(std::move(framesNode));
 
         std::unique_ptr<Node> ticksNode = std::make_unique<Node>("TickCounter");
         ticksNode->AddComponent<TextComponent>(debugFont, "Ticks: 0", 32.0f, Color(0, 255, 0, 255), RenderLayer::UI);
-        ticksNode->transform->SetPosition({ 5.0f, 40.0f });
+        ticksNode->transform.SetPosition(Vector2(5.0f, 40.0f ));
         rootDebug->AddChild(std::move(ticksNode));
 
         rootDebug->SetActive(false);

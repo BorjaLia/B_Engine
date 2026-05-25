@@ -4,14 +4,16 @@
 
 #include "Component.h"
 #include "../math/Vector2.h"
-#include "../math/Matrix3x3.h"
+#include "../math/Vector3.h"
+#include "../math/Matrix4x4.h"
 
 namespace Engine
 {
-    class IRenderer;
+    class RendererBase;
 
-    /// Defines the position, rotation, and scale of a Node in 2D space.
+    /// Defines the position, rotation, and scale of a Node in 3D space.
     /// Calculates global matrices hierarchically based on parent transforms.
+    /// Exposes a unified API with implicit 2D conversions where mathematically viable.
     /// @ingroup Components
     class TransformComponent : public Component
     {
@@ -24,31 +26,41 @@ namespace Engine
 
         std::string ToString() const override;
 
-        // Setters automatically flag the transform hierarchy as "dirty"
-        void SetPosition(const Vector2f& pos);
-        void SetRotation(float rot);
-        void SetScale(const Vector2f& scale);
+#pragma region API
+        // Setters (Overloaded for 3D and 2D convenience)
+        void SetPosition(const Vector3f& pos);
+        void SetPosition(const Vector2f& pos); // Keeps Z intact
 
-        Vector2f GetPosition() const { return localPosition; }
-        float    GetRotation() const { return localRotation; }
-        Vector2f GetScale()    const { return localScale; }
+        // Rotation requires explicit naming to separate Quaternions/Euler (3D) from simple Angles (2D)
+        void SetEulerAngles(const Vector3f& rotRadians);
+        void SetRotation2D(float rotDegrees); // Modifies only Z (Roll)
+
+        void SetScale(const Vector3f& scale);
+        void SetScale(const Vector2f& scale); // Keeps Z intact
+
+        // Unified Getters (Vector3f implicitly converts to Vector2f when assigned)
+        Vector3f GetPosition() const { return localPosition; }
+        Vector3f GetScale()  const { return localScale; }
+
+        Vector3f GetEulerAngles() const { return localRotation; }
+        float    GetRotation2D() const;
+
+        Vector3f GetGlobalPosition() const;
+#pragma endregion
 
         /// Recalculates the internal matrices if the transform has been modified.
         void UpdateTransform();
 
         /// Retrieves the final calculated hierarchy matrix.
-        const Matrix3x3& GetGlobalMatrix();
-
-        /// Utility function to extract the global position directly from the matrix.
-        Vector2f GetGlobalPosition();
+        const Matrix4x4& GetGlobalMatrix() const;
 
     private:
-        Vector2f localPosition;
-        float localRotation; // In degrees
-        Vector2f localScale;
+        Vector3f localPosition;
+        Vector3f localRotation; // Euler angles in Radians (Pitch, Yaw, Roll)
+        Vector3f localScale;
 
-        Matrix3x3 localMatrix;
-        Matrix3x3 globalMatrix;
+        Matrix4x4 localMatrix;
+        Matrix4x4 globalMatrix;
 
         bool isDirty; // Optimization flag
 

@@ -49,7 +49,7 @@ namespace Engine
 
     void UIAnchorComponent::RecalculatePosition()
     {
-        if (owner == nullptr || owner->transform == nullptr) return;
+        if (owner == nullptr) return;
 
         Vector2i logicalRes = Application::Get().GetRenderer()->GetLogicalResolution();
         float refWidth = static_cast<float>(logicalRes.x);
@@ -62,7 +62,7 @@ namespace Engine
             {
                 refWidth = parentUI->GetSize().x;
                 refHeight = parentUI->GetSize().y;
-                refGlobalPos = owner->GetParent()->GetGlobalPosition();
+                refGlobalPos = owner->GetParent()->transform.GetGlobalPosition();
             }
         }
 
@@ -73,16 +73,16 @@ namespace Engine
         );
 
         Vector2f parentGlobal = (owner->GetParent() != nullptr)
-            ? owner->GetParent()->GetGlobalPosition()
+            ? owner->GetParent()->transform.GetGlobalPosition()
             : Vector2f(0.0f, 0.0f);
 
-        owner->transform->SetPosition(Vector2f(
+        owner->transform.SetPosition(Vector2f(
             finalGlobalPos.x - parentGlobal.x,
             finalGlobalPos.y - parentGlobal.y
         ));
 
         // Ensure child transforms use this updated value immediately
-        owner->transform->UpdateTransform();
+        owner->transform.UpdateTransform();
     }
 
     void UIAnchorComponent::Start()

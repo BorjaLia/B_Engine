@@ -132,7 +132,7 @@ namespace Engine
     private:
         static Application* instance;
 
-        EngineMode currentEngineMode = EngineMode::Normal;
+        EngineMode currentEngineMode = EngineMode::AutoPlayback;
 
         std::unique_ptr<IWindow>         window;
         std::unique_ptr<IAudio>          audio;

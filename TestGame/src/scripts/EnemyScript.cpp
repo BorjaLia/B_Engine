@@ -51,7 +51,7 @@ void EnemyScript::OnFixedUpdate(float fixedDeltaTime)
     vel.x = movingRight ? speed : -speed;
     body->SetVelocity(vel);
 
-    float x = owner->GetGlobalPosition().x;
+    float x = owner->transform.GetGlobalPosition().x;
     if (movingRight && x >= rightX) movingRight = false;
     if (!movingRight && x <= leftX)  movingRight = true;
 }

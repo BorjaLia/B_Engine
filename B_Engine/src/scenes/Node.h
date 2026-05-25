@@ -6,6 +6,7 @@
 #include <sstream>
 #include <algorithm>
 #include <string_view>
+#include <type_traits>
 
 #include "../utils/Types.h"
 #include "../components/Component.h"
@@ -29,7 +30,8 @@ namespace Engine
     {
     public:
         std::string name;
-        TransformComponent* transform;
+
+        TransformComponent transform;
 
         /// Constructs a node with an optional name.
         /// @param name The name identifier for the node.
@@ -70,8 +72,6 @@ namespace Engine
         Node* FindChild(std::string_view targetName) const;
         Node* GetParent() const { return parent; }
         const std::vector<std::unique_ptr<Node>>& GetChildren() const { return children; }
-
-        Vector2f GetGlobalPosition() const;
 #pragma endregion
 
 #pragma region Component Management

@@ -122,15 +122,15 @@ namespace Engine
 
     void AnimatedSpriteComponent::Draw(RendererBase* renderer)
     {
-        if (owner == nullptr || owner->transform == nullptr || renderer == nullptr) return;
+        if (owner == nullptr || renderer == nullptr) return;
         if (currentAnimation.empty() || animations.find(currentAnimation) == animations.end()) return;
 
         const Animation& anim = animations[currentAnimation];
         if (anim.frames.empty() || currentFrameIndex >= anim.frames.size()) return;
 
-        Vector2f position = owner->GetGlobalPosition();
-        float rotation = owner->transform->GetRotation();
-        Vector2f scale = owner->transform->GetScale();
+        Vector2f position = owner->transform.GetGlobalPosition();
+        float rotation = owner->transform.GetRotation2D();
+        Vector2f scale = owner->transform.GetScale();
 
         // Get the cropped rect for the current frame
         Rect sourceRect = anim.frames[currentFrameIndex];

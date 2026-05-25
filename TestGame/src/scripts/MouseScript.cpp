@@ -56,7 +56,7 @@ void MouseScript::OnUpdate(float deltaTime)
     };
 
     Engine::Vector2f worldMousePos = camera->ScreenToWorld(screenMousePos);
-    owner->transform->SetPosition(worldMousePos);
+    owner->transform.SetPosition(worldMousePos);
 }
 
 void MouseScript::OnActionChanged(Engine::ActionChangedEvent& e)
@@ -92,7 +92,7 @@ void MouseScript::OnActionChanged(Engine::ActionChangedEvent& e)
         rb->SetMassAndBoxInertia(0.0f, { realWidth, realHeight });
         rb->SetGravityScale(0.0f);
 
-        node->transform->SetPosition(worldMousePos);
+        node->transform.SetPosition(worldMousePos);
 
         Engine::Application::Get().GetTimerManager().SetTimeout(10.0f, [node]
             {
@@ -116,7 +116,7 @@ void MouseScript::OnActionChanged(Engine::ActionChangedEvent& e)
         rb->SetFriction(0.8f);
         rb->SetMassAndBoxInertia(5.0f, { realWidth, realHeight });
 
-        node->transform->SetPosition(worldMousePos);
+        node->transform.SetPosition(worldMousePos);
 
         Engine::Application::Get().GetTimerManager().SetTimeout(10.0f, [node]
             {

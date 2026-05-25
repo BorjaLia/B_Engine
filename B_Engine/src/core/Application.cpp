@@ -174,7 +174,7 @@ namespace Engine
             renderer->SetRenderTarget(cam->GetRenderTarget());
             renderer->ClearScreen(bgColor);
 
-            Vector2f camPos = cam->GetOwner()->GetGlobalPosition();
+            Vector2f camPos = cam->GetOwner()->transform.GetGlobalPosition();
             renderer->BeginCamera({ std::round(camPos.x), std::round(camPos.y) }, cam->GetZoom());
 
             renderer->Flush(RenderLayer::World);
@@ -201,7 +201,7 @@ namespace Engine
         {
             if (!cam->GetOwner()->IsActive() || cam->HasRenderTarget()) continue;
 
-            Vector2f camPos = cam->GetOwner()->GetGlobalPosition();
+            Vector2f camPos = cam->GetOwner()->transform.GetGlobalPosition();
             renderer->BeginCamera({ std::round(camPos.x), std::round(camPos.y) }, cam->GetZoom());
 
             renderer->Flush(RenderLayer::World);

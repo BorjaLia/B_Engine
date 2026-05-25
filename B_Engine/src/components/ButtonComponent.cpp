@@ -38,7 +38,7 @@ namespace Engine
 			if (!autoFitToSprite) return;
 
 			// 1. Get the final transform scale
-			Vector2f scale = owner->transform->GetScale();
+			Vector2f scale = owner->transform.GetScale();
 
 			// 2. Calculate the real scaled size
 			float finalWidth = sprite->GetTargetSize().x * std::abs(scale.x);
@@ -73,7 +73,7 @@ namespace Engine
 			mousePos.y = -mousePos.y; // Convert Y-Up back to Y-Down for UI layer calculations
 		}
 
-		Vector2f globalPos = owner->GetGlobalPosition();
+		Vector2f globalPos = owner->transform.GetGlobalPosition();
 		Vector2f centerPos = { globalPos.x + offset.x, globalPos.y + offset.y };
 
 		float halfW = shape.size.x / 2.0f;
@@ -131,9 +131,9 @@ namespace Engine
 	{
 		if (owner == nullptr || renderer == nullptr) return;
 
-		Vector2f globalPos = owner->GetGlobalPosition();
+		Vector2f globalPos = owner->transform.GetGlobalPosition();
 		Vector2f centerPos = { globalPos.x + offset.x, globalPos.y + (offset.y * (layer == Engine::RenderLayer::World ? 1.0f : -1.0f)) };
-		float rot = owner->transform->GetRotation();
+		float rot = owner->transform.GetRotation2D();
 
 		// Dynamic colors: Yellow (Normal), Green (Hover), Red (Click)
 		Color debugColor = { 255, 255, 0, 255 };

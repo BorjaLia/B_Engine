@@ -146,7 +146,7 @@ void PlayerScript::OnUpdate(float deltaTime)
     {
         if (sequencer && sequencer->IsPlaying()) return;
 
-        Engine::Vector2f playerPos = owner->GetGlobalPosition();
+        Engine::Vector2f playerPos = owner->transform.GetGlobalPosition();
         auto& inputManager = Engine::Application::Get().GetInputManager();
         Engine::Vector2f mouseScreenPos = {
             inputManager.GetAxis(Engine::Hash::GetHash("Pointer_X")),

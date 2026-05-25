@@ -38,11 +38,11 @@ namespace Engine
 
     void TextComponent::Draw(RendererBase* renderer)
     {
-        if (!font || text.empty() || owner == nullptr || owner->transform == nullptr || renderer == nullptr) return;
+        if (!font || text.empty() || owner == nullptr || renderer == nullptr) return;
 
-        Vector2f globalPos = owner->GetGlobalPosition();
-        float rotation = owner->transform->GetRotation();
-        Vector2f transformScale = owner->transform->GetScale();
+        Vector2f globalPos = owner->transform.GetGlobalPosition();
+        float rotation = owner->transform.GetRotation2D();
+        Vector2f transformScale = owner->transform.GetScale();
 
         float fontScale = fontSize / static_cast<float>(font->GetBaseSize());
         Vector2f finalScale = { fontScale * transformScale.x, fontScale * transformScale.y };

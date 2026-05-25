@@ -51,7 +51,7 @@ namespace Engine
             }
 
             // 1. Get the final transform scale
-            Vector2f scale = owner->transform->GetScale();
+            Vector2f scale = owner->transform.GetScale();
 
             // 2. Calculate the real scaled size based on 'baseSize'
             float finalWidth = baseSize.x * std::abs(scale.x);
@@ -79,10 +79,10 @@ namespace Engine
     {
         if (owner == nullptr || renderer == nullptr) return;
 
-        Vector2f globalPos = owner->GetGlobalPosition();
+        Vector2f globalPos = owner->transform.GetGlobalPosition();
         Vector2f triggerPos = { globalPos.x + offset.x, globalPos.y + offset.y };
 
-        float rot = owner->transform->GetRotation();
+        float rot = owner->transform.GetRotation2D();
 
         renderer->SubmitDebugShape(RenderLayer::World, shape, triggerPos, rot, debugColor);
     }

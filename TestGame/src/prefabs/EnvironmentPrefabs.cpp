@@ -19,8 +19,8 @@
 Engine::Node* EnvironmentPrefabs::CreatePlatform(Engine::SceneBuilder& builder, const std::string& name, Engine::Texture2D tex, Engine::Vector2f pos, Engine::Vector2f scale)
 {
     Engine::Node* node = builder.CreateNode(name);
-    node->transform->SetPosition(pos);
-    node->transform->SetScale(scale);
+    node->transform.SetPosition(pos);
+    node->transform.SetScale(scale);
 
     node->AddComponent<Engine::SpriteComponent>(tex, Engine::Pivot::Center);
     node->AddComponent<Engine::ColliderComponent>(Engine::RectangleShape{}, Engine::Vector2f(0.0f, 0.0f), true);
@@ -40,8 +40,8 @@ void EnvironmentPrefabs::CreateCoin(Engine::SceneBuilder& builder, Engine::Textu
 {
     static int id = 0;
     Engine::Node* node = builder.CreateNode("Coin_" + std::to_string(id++));
-    node->transform->SetPosition(pos);
-    node->transform->SetScale({ 0.35f, 0.35f });
+    node->transform.SetPosition(pos);
+    node->transform.SetScale(Engine::Vector2(0.35f, 0.35f ));
 
     auto* anim = node->AddComponent<Engine::AnimatedSpriteComponent>(tex, Engine::Pivot::Center);
     anim->AddAnimationGrid("Rotate", 0, 0, 6, 200.0f, 256.0f, 0.3f, true);
@@ -54,8 +54,8 @@ void EnvironmentPrefabs::CreateCoin(Engine::SceneBuilder& builder, Engine::Textu
 Engine::Node* EnvironmentPrefabs::CreateBox(Engine::SceneBuilder& builder, Engine::Texture2D tex, Engine::Vector2f pos)
 {
     Engine::Node* node = builder.CreateNode("Box");
-    node->transform->SetPosition(pos);
-    node->transform->SetScale({ 0.35f, 0.35f });
+    node->transform.SetPosition(pos);
+    node->transform.SetScale(Engine::Vector2(0.35f, 0.35f ));
 
     node->AddComponent<Engine::SpriteComponent>(tex, Engine::Pivot::Center);
     node->AddComponent<Engine::ColliderComponent>(Engine::RectangleShape{}, Engine::Vector2f(0.0f, 0.0f), true);
@@ -73,7 +73,7 @@ Engine::Node* EnvironmentPrefabs::CreateBox(Engine::SceneBuilder& builder, Engin
 Engine::Node* EnvironmentPrefabs::CreateEnemy(Engine::SceneBuilder& builder, Engine::Texture2D tex, Engine::Vector2f pos, float leftBound, float rightBound)
 {
     Engine::Node* node = builder.CreateNode("Enemy");
-    node->transform->SetPosition(pos);
+    node->transform.SetPosition(pos);
 
     // Tint red to distinguish it
     node->AddComponent<Engine::SpriteComponent>(tex, Engine::Pivot::Center, Engine::Color{ 220, 50, 50, 255 });
@@ -92,8 +92,8 @@ Engine::Node* EnvironmentPrefabs::CreateEnemy(Engine::SceneBuilder& builder, Eng
 Engine::Node* EnvironmentPrefabs::CreateFinishLine(Engine::SceneBuilder& builder, Engine::Texture2D tex, Engine::Vector2f pos)
 {
     Engine::Node* node = builder.CreateNode("FinishLine");
-    node->transform->SetPosition(pos);
-    node->transform->SetScale({ 0.5f, 4.0f });
+    node->transform.SetPosition(pos);
+    node->transform.SetScale(Engine::Vector2(0.5f, 4.0f ));
 
     // Tint green
     node->AddComponent<Engine::SpriteComponent>(tex, Engine::Pivot::Center, Engine::Color{ 50, 220, 80, 200 });

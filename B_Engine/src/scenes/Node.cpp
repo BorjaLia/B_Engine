@@ -7,15 +7,10 @@
 
 namespace Engine
 {
-    Node::Node(const std::string& name) : name(name), parent(nullptr)
+    Node::Node(const std::string& name)
+        : name(name), parent(nullptr), transform()
     {
-        // 1. Mandatory instantiation of TransformComponent
-        auto newTransform = std::make_unique<TransformComponent>();
-        transform = newTransform.get();
-
-        // 2. Add it to the normal list for Update() and Draw()
-        newTransform->SetOwner(this);
-        components.push_back(std::move(newTransform));
+        transform.SetOwner(this);
     }
 
     void Node::NotifyEnginePendingStart()
@@ -74,6 +69,8 @@ namespace Engine
         {
             child->CleanUp();
         }
+
+        // Note: transform doesn't need explicit cleanup because it's stored by-value.
     }
 
     void Node::ClearChildren()
@@ -93,7 +90,14 @@ namespace Engine
     {
         if (!isActive) return;
 
-        // 1. Start newborn components
+        // 1. Start the innate Transform Component
+        if (transform.IsActive() && !transform.HasStarted())
+        {
+            transform.Start();
+            transform.SetStarted(true);
+        }
+
+        // 2. Start newborn components
         for (auto& comp : components)
         {
             if (comp->IsActive() && !comp->HasStarted())
@@ -103,7 +107,7 @@ namespace Engine
             }
         }
 
-        // 2. Propagate to children
+        // 3. Propagate to children
         for (auto& child : children)
         {
             child->Start();
@@ -115,12 +119,17 @@ namespace Engine
         if (!isActive) return;
 
         // Force transform update before logic
-        transform->UpdateTransform();
+        transform.UpdateTransform();
+
+        // Update the innate transform
+        if (transform.IsActive())
+        {
+            transform.Update(deltaTime);
+        }
 
         for (auto& comp : components)
         {
-            // Skip transform as it was manually updated above
-            if (comp.get() != transform && comp->IsActive())
+            if (comp->IsActive())
             {
                 comp->Update(deltaTime);
             }
@@ -136,9 +145,15 @@ namespace Engine
     {
         if (!isActive) return;
 
+        // Update the innate transform
+        if (transform.IsActive())
+        {
+            transform.FixedUpdate(fixedDeltaTime);
+        }
+
         for (auto& comp : components)
         {
-            if (comp->IsActive() && comp.get() != transform)
+            if (comp->IsActive())
             {
                 comp->FixedUpdate(fixedDeltaTime);
             }
@@ -153,6 +168,12 @@ namespace Engine
     void Node::Draw(RendererBase* renderer)
     {
         if (!isActive) return;
+
+        // Draw innate transform (if it ever has graphical representation)
+        if (transform.IsActive())
+        {
+            transform.Draw(renderer);
+        }
 
         for (auto& comp : components)
         {
@@ -172,6 +193,11 @@ namespace Engine
     {
         if (!isActive) return;
 
+        if (transform.IsActive())
+        {
+            transform.DebugDraw(renderer);
+        }
+
         for (auto& component : components)
         {
             component->DebugDraw(renderer);
@@ -187,8 +213,8 @@ namespace Engine
     {
         std::stringstream ss;
         ss << "Node: '" << name << "' | ";
-        ss << "Local Pos: " << transform->GetPosition() << " | ";
-        ss << "Global Pos: " << GetGlobalPosition() << "\n";
+        ss << "Local Pos: " << transform.GetPosition() << " | ";
+        ss << "Global Pos: " << transform.GetGlobalPosition() << "\n";
 
         ss << "  Children: " << children.size() << " | Components: " << components.size() << "\n";
 
@@ -238,10 +264,5 @@ namespace Engine
         }
 
         return nullptr;
-    }
-
-    Vector2f Node::GetGlobalPosition() const
-    {
-        return transform->GetGlobalPosition();
     }
 }
