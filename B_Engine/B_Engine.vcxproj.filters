@@ -123,9 +123,6 @@
     <ClCompile Include="src\components\TextComponent.cpp">
       <Filter>SceneGraph\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\TransformComponent.cpp">
-      <Filter>SceneGraph\Components</Filter>
-    </ClCompile>
     <ClCompile Include="src\components\TriggerAreaComponent.cpp">
       <Filter>SceneGraph\Components</Filter>
     </ClCompile>
@@ -213,6 +210,9 @@
     <ClCompile Include="src\graphics\RendererBase.cpp">
       <Filter>Systems\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="src\scenes\Transform.cpp">
+      <Filter>SceneGraph\Nodes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\Application.h">
@@ -294,9 +294,6 @@
       <Filter>SceneGraph\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\components\TextComponent.h">
-      <Filter>SceneGraph\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\components\TransformComponent.h">
       <Filter>SceneGraph\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\components\TriggerAreaComponent.h">
@@ -430,6 +427,9 @@
     </ClInclude>
     <ClInclude Include="src\math\MathDebugger.h">
       <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\Transform.h">
+      <Filter>SceneGraph\Nodes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

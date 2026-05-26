@@ -172,7 +172,6 @@
     <ClCompile Include="src\components\ScriptComponent.cpp" />
     <ClCompile Include="src\components\SpriteComponent.cpp" />
     <ClCompile Include="src\components\TextComponent.cpp" />
-    <ClCompile Include="src\components\TransformComponent.cpp" />
     <ClCompile Include="src\components\TriggerAreaComponent.cpp" />
     <ClCompile Include="src\components\UiAnchorComponent.cpp" />
     <ClCompile Include="src\core\Application.cpp" />
@@ -202,6 +201,7 @@
     <ClCompile Include="src\scenes\Node.cpp" />
     <ClCompile Include="src\scenes\SceneBuilder.cpp" />
     <ClCompile Include="src\scenes\SceneManager.cpp" />
+    <ClCompile Include="src\scenes\Transform.cpp" />
     <ClCompile Include="src\time\Time.cpp" />
     <ClCompile Include="src\time\TimerManager.cpp" />
     <ClCompile Include="src\utils\FileSystem.cpp" />
@@ -223,7 +223,6 @@
     <ClInclude Include="src\components\ScriptComponent.h" />
     <ClInclude Include="src\components\SpriteComponent.h" />
     <ClInclude Include="src\components\TextComponent.h" />
-    <ClInclude Include="src\components\TransformComponent.h" />
     <ClInclude Include="src\components\TriggerAreaComponent.h" />
     <ClInclude Include="src\components\UiAnchorComponent.h" />
     <ClInclude Include="src\core\Application.h" />
@@ -273,6 +272,7 @@
     <ClInclude Include="src\scenes\Scene.h" />
     <ClInclude Include="src\scenes\SceneBuilder.h" />
     <ClInclude Include="src\scenes\SceneManager.h" />
+    <ClInclude Include="src\scenes\Transform.h" />
     <ClInclude Include="src\scripts\Script.h" />
     <ClInclude Include="src\time\Time.h" />
     <ClInclude Include="src\time\TimerManager.h" />

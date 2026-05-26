@@ -90,14 +90,7 @@ namespace Engine
     {
         if (!isActive) return;
 
-        // 1. Start the innate Transform Component
-        if (transform.IsActive() && !transform.HasStarted())
-        {
-            transform.Start();
-            transform.SetStarted(true);
-        }
-
-        // 2. Start newborn components
+        // 1. Start newborn components
         for (auto& comp : components)
         {
             if (comp->IsActive() && !comp->HasStarted())
@@ -107,7 +100,7 @@ namespace Engine
             }
         }
 
-        // 3. Propagate to children
+        // 2. Propagate to children
         for (auto& child : children)
         {
             child->Start();
@@ -120,12 +113,6 @@ namespace Engine
 
         // Force transform update before logic
         transform.UpdateTransform();
-
-        // Update the innate transform
-        if (transform.IsActive())
-        {
-            transform.Update(deltaTime);
-        }
 
         for (auto& comp : components)
         {
@@ -145,12 +132,6 @@ namespace Engine
     {
         if (!isActive) return;
 
-        // Update the innate transform
-        if (transform.IsActive())
-        {
-            transform.FixedUpdate(fixedDeltaTime);
-        }
-
         for (auto& comp : components)
         {
             if (comp->IsActive())
@@ -168,12 +149,6 @@ namespace Engine
     void Node::Draw(RendererBase* renderer)
     {
         if (!isActive) return;
-
-        // Draw innate transform (if it ever has graphical representation)
-        if (transform.IsActive())
-        {
-            transform.Draw(renderer);
-        }
 
         for (auto& comp : components)
         {
@@ -193,10 +168,7 @@ namespace Engine
     {
         if (!isActive) return;
 
-        if (transform.IsActive())
-        {
-            transform.DebugDraw(renderer);
-        }
+        //TODO transform debug draw reimplementation
 
         for (auto& component : components)
         {

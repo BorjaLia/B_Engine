@@ -10,7 +10,7 @@
 
 #include "../utils/Types.h"
 #include "../components/Component.h"
-#include "../components/TransformComponent.h"
+#include "Transform.h"
 #include "../components/CameraComponent.h"
 #include "../components/ColliderComponent.h"
 #include "../components/TriggerAreaComponent.h"
@@ -31,7 +31,7 @@ namespace Engine
     public:
         std::string name;
 
-        TransformComponent transform;
+        Transform transform;
 
         /// Constructs a node with an optional name.
         /// @param name The name identifier for the node.
