@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <vector>
 #include <string>
 
@@ -48,7 +47,7 @@ namespace Engine
 
         struct PendingNode
         {
-            std::unique_ptr<Node> node;
+            Node* node;
             Node* parent; // If nullptr, belongs to RootScene
         };
 

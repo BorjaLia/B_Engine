@@ -16,6 +16,7 @@
 #include "ReplayModes.h"
 
 #include "../utils/Types.h"
+#include "../memory/BlockAllocator.h"
 #include "../time/Time.h"
 #include "../time/TimerManager.h"
 #include "../events/EventBus.h"
@@ -70,10 +71,11 @@ namespace Engine
         SceneBuilder& GetSceneBuilder() { return sceneBuilder; }
         SceneManager& GetSceneManager() { return sceneManager; }
         TimerManager& GetTimerManager() { return timerManager; }
+        BlockAllocator<Node>& GetNodePool() { return nodePool; }
 
         ResourceManager* GetResourceManager() const { return resourceManager.get(); }
         EventBus& GetEventBus() { return eventBus; }
-        Node* GetRootScene() const { return rootScene.get(); }
+        Node* GetRootScene() const { return rootScene; }
         IWindow* GetWindow() const { return window.get(); }
         RendererBase* GetRenderer() const { return window->GetRenderer(); }
         IAudio* GetAudio() const { return audio.get(); }
@@ -145,10 +147,12 @@ namespace Engine
         SceneManager sceneManager;
         TimerManager timerManager;
 
+        BlockAllocator<Node> nodePool;
+
         std::function<std::unique_ptr<IScene>()> sceneFactory;
 
-        std::unique_ptr<Node> rootScene;
-        std::unique_ptr<Node> debugNode;
+        Node* rootScene = nullptr;
+        Node* debugNode = nullptr;
 
         bool isRunning = false;
         bool isSceneDirty = false;

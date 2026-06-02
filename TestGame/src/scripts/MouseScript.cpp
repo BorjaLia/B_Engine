@@ -90,7 +90,7 @@ void MouseScript::OnActionChanged(Engine::ActionChangedEvent& e)
         auto* rb = node->AddComponent<Engine::RigidBodyComponent>(Engine::BodyType::Dynamic, false);
         rb->SetFriction(100.0f);
         rb->SetMassAndBoxInertia(0.0f, { realWidth, realHeight });
-        rb->SetGravityScale(0.0f);
+        //rb->SetGravityScale(0.0f);
 
         node->transform.SetPosition(worldMousePos);
 

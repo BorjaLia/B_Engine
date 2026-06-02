@@ -13,6 +13,16 @@ namespace Engine
         transform.SetOwner(this);
     }
 
+    Node::~Node()
+    {
+        // When this node is Freed, free all its children cascading down via the pool
+        for (Node* child : children)
+        {
+            Application::Get().GetNodePool().Free(child);
+        }
+        children.clear();
+    }
+
     void Node::NotifyEnginePendingStart()
     {
         Application::Get().MarkScenePendingStart();
@@ -54,18 +64,27 @@ namespace Engine
             components.end()
         );
 
-        // 2. Clean Children
+        // 2. Free Children memory BEFORE erasing them from the vector
+        for (Node* child : children)
+        {
+            if (child->IsPendingDestruction())
+            {
+                Application::Get().GetNodePool().Free(child);
+            }
+        }
+
+        // 3. Remove them from the active vector
         children.erase(
             std::remove_if(children.begin(), children.end(),
-                [](const std::unique_ptr<Node>& child)
+                [](Node* child)
                 {
                     return child->IsPendingDestruction();
                 }),
             children.end()
         );
 
-        // 3. Propagate cleanup to survivors
-        for (auto& child : children)
+        // 4. Propagate cleanup to survivors
+        for (Node* child : children)
         {
             child->CleanUp();
         }
@@ -75,10 +94,19 @@ namespace Engine
 
     void Node::ClearChildren()
     {
-        // Remove children EXCEPT the ones marked as persistent
+        // Free memory for non-persistent nodes via the Pool
+        for (Node* child : children)
+        {
+            if (!child->IsPersistent())
+            {
+                Application::Get().GetNodePool().Free(child);
+            }
+        }
+
+        // Remove from the hierarchy
         children.erase(
             std::remove_if(children.begin(), children.end(),
-                [](const std::unique_ptr<Node>& child)
+                [](Node* child)
                 {
                     return !child->IsPersistent();
                 }),
@@ -208,25 +236,25 @@ namespace Engine
         }
     }
 
-    void Node::AddChild(std::unique_ptr<Node> child)
+    void Node::AddChild(Node* child)
     {
         child->parent = this;
-        children.push_back(std::move(child));
+        children.push_back(child);
     }
 
     Node* Node::FindChild(std::string_view targetName) const
     {
         // 1. Direct children search
-        for (const auto& child : children)
+        for (Node* child : children)
         {
             if (child->name == targetName)
             {
-                return child.get();
+                return child;
             }
         }
 
         // 2. Recursive search
-        for (const auto& child : children)
+        for (Node* child : children)
         {
             Node* found = child->FindChild(targetName);
             if (found != nullptr)

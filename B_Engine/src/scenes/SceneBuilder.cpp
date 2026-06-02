@@ -8,18 +8,16 @@ namespace Engine
 {
     Node* SceneBuilder::CreateNode(const std::string& name)
     {
-        auto node = std::make_unique<Node>(name);
-        Node* raw = node.get();
-        pendingNodes.push_back({ std::move(node), nullptr });
+        Node* raw = Application::Get().GetNodePool().Allocate(name);
+        pendingNodes.push_back({ raw, nullptr });
         return raw;
     }
 
     Node* SceneBuilder::CreateChildNode(Node* parent, const std::string& name)
     {
         // The child is owned by its parent node, not by pendingNodes directly.
-        auto child = std::make_unique<Node>(name);
-        Node* raw = child.get();
-        pendingNodes.push_back({ std::move(child), parent });
+        Node* raw = Application::Get().GetNodePool().Allocate(name);
+        pendingNodes.push_back({ raw, parent });
         return raw;
     }
 
@@ -27,7 +25,7 @@ namespace Engine
     {
         for (auto& pending : pendingNodes)
         {
-            Node* current = pending.node.get();
+            Node* current = pending.node;
             if (current->name == name) return current;
 
             Node* found = current->FindChild(name);
@@ -48,11 +46,11 @@ namespace Engine
         {
             if (pending.parent == nullptr)
             {
-                rootScene->AddChild(std::move(pending.node));
+                rootScene->AddChild(pending.node);
             }
             else
             {
-                pending.parent->AddChild(std::move(pending.node));
+                pending.parent->AddChild(pending.node);
             }
             nodesAdded = true;
         }

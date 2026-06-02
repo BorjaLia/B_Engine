@@ -64,6 +64,9 @@
     <Filter Include="Core\Math">
       <UniqueIdentifier>{ca079470-9c18-4e6c-9682-32a923e1749c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Memory">
+      <UniqueIdentifier>{d7c46a07-57fe-4043-b41b-128541a78be5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Application.cpp">
@@ -430,6 +433,9 @@
     </ClInclude>
     <ClInclude Include="src\scenes\Transform.h">
       <Filter>SceneGraph\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\memory\BlockAllocator.h">
+      <Filter>Core\Memory</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

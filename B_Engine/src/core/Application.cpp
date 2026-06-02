@@ -29,10 +29,11 @@ namespace Engine
 
     Application* Application::instance = nullptr;
 
-    Application::Application()
+    Application::Application() : nodePool(10000) // Huge contiguous block for performance
     {
         instance = this;
-        rootScene = std::make_unique<Node>("Root");
+        rootScene = nodePool.Allocate("Root");
+
         eventBus.Subscribe<WindowCloseEvent>([this](WindowCloseEvent& e) { OnWindowClose(e); });
     }
 
@@ -112,7 +113,7 @@ namespace Engine
 
         resourceManager = std::make_unique<ResourceManager>(window->GetRenderer(), audio.get());
         physicsSystem = std::make_unique<PhysicsSystem>();
-        debugNode = std::move(CreateDebugNode());
+        debugNode = CreateDebugNode();
 
         inputManager.Initialize(window->GetInput());
 
@@ -154,6 +155,7 @@ namespace Engine
     void Application::ProcessPendingScene()
     {
         rootScene->ClearChildren();
+
         auto newScene = sceneManager.ConsumePendingScene();
 
         if (newScene)
@@ -241,7 +243,7 @@ namespace Engine
             currentFPS = frameCount;
             frameCount = 0;
             fpsTimer -= 1.0f;
-            if (showDebugNode) UpdateDebugNode(debugNode.get(), currentFPS);
+            if (showDebugNode) UpdateDebugNode(debugNode, currentFPS);
         }
 
         accumulator += Time::GetUnscaledDeltaTime();
@@ -255,7 +257,7 @@ namespace Engine
             float scaledTimestep = fixedTimestep * Time::GetTimeScale();
 
             rootScene->FixedUpdate(scaledTimestep);
-            if (physicsSystem) physicsSystem->Update(rootScene.get(), scaledTimestep);
+            if (physicsSystem) physicsSystem->Update(rootScene, scaledTimestep);
 
             inputManager.PostFixedUpdate();
             accumulator -= fixedTimestep;
@@ -333,7 +335,7 @@ namespace Engine
 
     void Application::Run()
     {
-        sceneBuilder.FlushToScene(rootScene.get());
+        sceneBuilder.FlushToScene(rootScene);
 
         Color bgColor(50, 50, 60, 255);
         RendererBase* renderer = window->GetRenderer();
@@ -373,7 +375,7 @@ namespace Engine
                 accumulator = 0.0f;
             }
 
-            sceneBuilder.FlushToScene(rootScene.get());
+            sceneBuilder.FlushToScene(rootScene);
 
             if (isScenePendingStart)
             {
@@ -395,8 +397,8 @@ namespace Engine
         eventBus.Unsubscribe(AudioMuteEvent::GetStaticType(), muteEventId);
         eventBus.Unsubscribe(AudioVolumeEvent::GetStaticType(), volumeEventId);
 
-        rootScene.reset();
-        debugNode.reset();
+        if (rootScene) nodePool.Free(rootScene);
+        if (debugNode) nodePool.Free(debugNode);
 
         if (audio)  audio->Shutdown();
         if (window) window->Shutdown();

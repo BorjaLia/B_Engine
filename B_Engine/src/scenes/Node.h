@@ -36,7 +36,9 @@ namespace Engine
         /// Constructs a node with an optional name.
         /// @param name The name identifier for the node.
         Node(const std::string& name = "Node");
-        virtual ~Node() = default;
+        
+        /// Destructor recursively frees children to the NodePool
+        virtual ~Node();
 
 #pragma region Lifecycle & State
         bool IsActive() const { return isActive; }
@@ -68,10 +70,10 @@ namespace Engine
 #pragma endregion
 
 #pragma region Hierarchy & Position
-        void AddChild(std::unique_ptr<Node> child);
+        void AddChild(Node* child);
         Node* FindChild(std::string_view targetName) const;
         Node* GetParent() const { return parent; }
-        const std::vector<std::unique_ptr<Node>>& GetChildren() const { return children; }
+        const std::vector<Node*>& GetChildren() const { return children; }
 #pragma endregion
 
 #pragma region Component Management
@@ -123,7 +125,7 @@ namespace Engine
         bool isPersistent = false;
 
         std::vector<std::unique_ptr<Component>> components;
-        std::vector<std::unique_ptr<Node>> children;
+        std::vector<Node*> children;
         Node* parent = nullptr;
     };
 }
