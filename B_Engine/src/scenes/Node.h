@@ -10,6 +10,7 @@
 
 #include "../utils/Types.h"
 #include "../components/Component.h"
+#include "../memory/ComponentRegistry.h"
 #include "Transform.h"
 #include "../components/CameraComponent.h"
 #include "../components/ColliderComponent.h"
@@ -19,6 +20,13 @@
 namespace Engine
 {
     class RendererBase;
+
+    /// Wrapper to hold a raw component pointer and its type-erased memory pool releaser.
+    struct ComponentRecord
+    {
+        Component* instance = nullptr;
+        void (*freeFunction)(Component*) = nullptr;
+    };
 
     /// @defgroup Scenes Scene Management
     /// @brief The Node graph, Scene Builder, and scene transitions.
@@ -77,17 +85,24 @@ namespace Engine
 #pragma endregion
 
 #pragma region Component Management
-        /// Instantiates and attaches a component of type T to this node.
+        /// Instantiates and attaches a component of type T to this node utilizing Data-Oriented Pools.
         template <typename T, typename... Args>
         T* AddComponent(Args&&... args)
         {
-            auto newComponent = std::make_unique<T>(std::forward<Args>(args)...);
-            newComponent->SetOwner(this);
-
-            T* rawPtr = newComponent.get();
-            components.push_back(std::move(newComponent));
-
+            // 1. Allocate from the specific contiguous pool for this Component Type
+            T* rawPtr = ComponentRegistry::GetPool<T>().Allocate(std::forward<Args>(args)...);
+            rawPtr->SetOwner(this);
             rawPtr->Initialize();
+
+            // 2. Create the Type-Erased Deleter
+            auto freeFunc = [](Component* comp)
+                {
+                    // Safely cast back to T* and return it to its specific memory pool
+                    ComponentRegistry::GetPool<T>().Free(static_cast<T*>(comp));
+                };
+
+            // 3. Store the record
+            components.push_back({ rawPtr, freeFunc });
             NotifyEnginePendingStart();
 
             return rawPtr;
@@ -99,7 +114,7 @@ namespace Engine
         {
             for (auto& comp : components)
             {
-                T* target = dynamic_cast<T*>(comp.get());
+                T* target = dynamic_cast<T*>(comp.instance);
                 if (target != nullptr)
                 {
                     return target;
@@ -108,7 +123,7 @@ namespace Engine
             return nullptr;
         }
 
-        const std::vector<std::unique_ptr<Component>>& GetAllComponents() const { return components; }
+        const std::vector<ComponentRecord>& GetAllComponents() const { return components; }
 #pragma endregion
 
 #pragma region Debugging
@@ -124,7 +139,7 @@ namespace Engine
         bool pendingDestruction = false;
         bool isPersistent = false;
 
-        std::vector<std::unique_ptr<Component>> components;
+        std::vector<ComponentRecord> components;
         std::vector<Node*> children;
         Node* parent = nullptr;
     };

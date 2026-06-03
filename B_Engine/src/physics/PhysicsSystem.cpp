@@ -184,7 +184,7 @@ namespace Engine
         {
             for (const auto& comp : pair.bodyA->collider->GetOwner()->GetAllComponents())
             {
-                if (auto* listener = dynamic_cast<ICollisionListener*>(comp.get()))
+                if (auto* listener = dynamic_cast<ICollisionListener*>(comp.instance))
                 {
                     listener->OnCollision(pair.manifold);
                 }
@@ -195,7 +195,7 @@ namespace Engine
 
             for (const auto& comp : pair.bodyB->collider->GetOwner()->GetAllComponents())
             {
-                if (auto* listener = dynamic_cast<ICollisionListener*>(comp.get()))
+                if (auto* listener = dynamic_cast<ICollisionListener*>(comp.instance))
                 {
                     listener->OnCollision(invertedHit);
                 }

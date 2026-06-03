@@ -256,6 +256,7 @@
     <ClInclude Include="src\math\Vector3.h" />
     <ClInclude Include="src\math\Vector4.h" />
     <ClInclude Include="src\memory\BlockAllocator.h" />
+    <ClInclude Include="src\memory\ComponentRegistry.h" />
     <ClInclude Include="src\physics\ICollisionListener.h" />
     <ClInclude Include="src\physics\Physics.h" />
     <ClInclude Include="src\physics\PhysicsSystem.h" />

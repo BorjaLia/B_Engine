@@ -437,5 +437,8 @@
     <ClInclude Include="src\memory\BlockAllocator.h">
       <Filter>Core\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="src\memory\ComponentRegistry.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

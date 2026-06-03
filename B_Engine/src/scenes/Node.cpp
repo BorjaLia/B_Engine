@@ -15,7 +15,14 @@ namespace Engine
 
     Node::~Node()
     {
-        // When this node is Freed, free all its children cascading down via the pool
+        // 1. Free all components to their respective pools
+        for (auto& comp : components)
+        {
+            comp.freeFunction(comp.instance);
+        }
+        components.clear();
+
+        // 2. Free all children
         for (Node* child : children)
         {
             Application::Get().GetNodePool().Free(child);
@@ -54,15 +61,19 @@ namespace Engine
 
     void Node::CleanUp()
     {
-        // 1. Clean Components
-        components.erase(
-            std::remove_if(components.begin(), components.end(),
-                [](const std::unique_ptr<Component>& comp)
-                {
-                    return comp->IsPendingDestruction();
-                }),
-            components.end()
-        );
+        // 1. Clean Components using Type-Erased Deleter
+        for (auto it = components.begin(); it != components.end(); )
+        {
+            if (it->instance->IsPendingDestruction())
+            {
+                it->freeFunction(it->instance); // Return to pool
+                it = components.erase(it);      // Remove from vector
+            }
+            else
+            {
+                ++it;
+            }
+        }
 
         // 2. Free Children memory BEFORE erasing them from the vector
         for (Node* child : children)
@@ -88,8 +99,6 @@ namespace Engine
         {
             child->CleanUp();
         }
-
-        // Note: transform doesn't need explicit cleanup because it's stored by-value.
     }
 
     void Node::ClearChildren()
@@ -121,10 +130,10 @@ namespace Engine
         // 1. Start newborn components
         for (auto& comp : components)
         {
-            if (comp->IsActive() && !comp->HasStarted())
+            if (comp.instance->IsActive() && !comp.instance->HasStarted())
             {
-                comp->Start();
-                comp->SetStarted(true);
+                comp.instance->Start();
+                comp.instance->SetStarted(true);
             }
         }
 
@@ -144,9 +153,9 @@ namespace Engine
 
         for (auto& comp : components)
         {
-            if (comp->IsActive())
+            if (comp.instance->IsActive())
             {
-                comp->Update(deltaTime);
+                comp.instance->Update(deltaTime);
             }
         }
 
@@ -162,9 +171,9 @@ namespace Engine
 
         for (auto& comp : components)
         {
-            if (comp->IsActive())
+            if (comp.instance->IsActive())
             {
-                comp->FixedUpdate(fixedDeltaTime);
+                comp.instance->FixedUpdate(fixedDeltaTime);
             }
         }
 
@@ -180,9 +189,9 @@ namespace Engine
 
         for (auto& comp : components)
         {
-            if (comp->IsActive())
+            if (comp.instance->IsActive())
             {
-                comp->Draw(renderer);
+                comp.instance->Draw(renderer);
             }
         }
 
@@ -200,7 +209,7 @@ namespace Engine
 
         for (auto& component : components)
         {
-            component->DebugDraw(renderer);
+            component.instance->DebugDraw(renderer);
         }
 
         for (auto& child : children)
@@ -220,7 +229,7 @@ namespace Engine
 
         for (const auto& comp : components)
         {
-            ss << "    -> " << comp->ToString() << "\n";
+            ss << "    -> " << comp.instance->ToString() << "\n";
         }
         return ss.str();
     }
@@ -247,20 +256,14 @@ namespace Engine
         // 1. Direct children search
         for (Node* child : children)
         {
-            if (child->name == targetName)
-            {
-                return child;
-            }
+            if (child->name == targetName) return child;
         }
 
         // 2. Recursive search
         for (Node* child : children)
         {
             Node* found = child->FindChild(targetName);
-            if (found != nullptr)
-            {
-                return found;
-            }
+            if (found != nullptr) return found;
         }
 
         return nullptr;

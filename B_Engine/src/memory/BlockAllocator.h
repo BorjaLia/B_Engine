@@ -65,6 +65,7 @@ namespace Engine
 
 		// Restricted creation to the Application core.
 		friend class Application;
+		friend class ComponentRegistry;
 
 		/// Creates a new paged memory allocator.
 //		/ @param initialCapacity The size of each memory page (chunk).
