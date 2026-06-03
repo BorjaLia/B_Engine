@@ -40,15 +40,17 @@ namespace Engine
     {
         if (!font || text.empty() || owner == nullptr || renderer == nullptr) return;
 
-        Vector2f globalPos = owner->transform.GetGlobalPosition();
+        Vector3f globalPos = owner->transform.GetGlobalPosition();
         float rotation = owner->transform.GetRotation2D();
-        Vector2f transformScale = owner->transform.GetScale();
+
+        Vector3f transformScale = owner->transform.GetScale();
 
         float fontScale = fontSize / static_cast<float>(font->GetBaseSize());
         Vector2f finalScale = { fontScale * transformScale.x, fontScale * transformScale.y };
 
         Vector2f bounds = GetBounds();
-        Vector2f startPos = globalPos;
+
+        Vector3f startPos = globalPos;
         Vector2f pivotMult = GetPivotMultiplier(pivot);
 
         startPos.x -= bounds.x * pivotMult.x;
@@ -85,7 +87,8 @@ namespace Engine
                 const Glyph* g = font->GetGlyph(c);
                 if (!g) continue;
 
-                Vector2f charPos = { currentX, currentY };
+                Vector3f charPos = { currentX, currentY, startPos.z };
+
                 charPos.x += g->offset.x * finalScale.x;
                 charPos.y += g->offset.y * finalScale.y * yOffsetSign;
 

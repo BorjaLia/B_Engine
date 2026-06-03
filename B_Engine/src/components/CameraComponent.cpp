@@ -26,7 +26,8 @@ namespace Engine
     std::string CameraComponent::ToString() const
     {
         std::stringstream ss;
-        ss << "CameraComponent [Zoom: " << zoom;
+        ss << "CameraComponent [Proj: " << (projectionType == CameraProjection::Perspective ? "3D" : "2D");
+        ss << " | Zoom: " << zoom;
 
         if (renderTarget.has_value())
         {
@@ -51,9 +52,9 @@ namespace Engine
         zoom = newZoom;
     }
 
-    void CameraComponent::SetRenderTarget(const RenderTexture2D& target)
+    void CameraComponent::SetRenderTarget(const RenderTexture2D& newTarget)
     {
-        renderTarget = target;
+        renderTarget = newTarget;
     }
 
     void CameraComponent::ClearRenderTarget()

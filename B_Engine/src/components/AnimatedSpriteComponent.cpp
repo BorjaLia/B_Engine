@@ -128,9 +128,10 @@ namespace Engine
         const Animation& anim = animations[currentAnimation];
         if (anim.frames.empty() || currentFrameIndex >= anim.frames.size()) return;
 
-        Vector2f position = owner->transform.GetGlobalPosition();
+        Vector3f position = owner->transform.GetGlobalPosition();
+
         float rotation = owner->transform.GetRotation2D();
-        Vector2f scale = owner->transform.GetScale();
+        Vector2f scale = { owner->transform.GetScale().x, owner->transform.GetScale().y };
 
         // Get the cropped rect for the current frame
         Rect sourceRect = anim.frames[currentFrameIndex];

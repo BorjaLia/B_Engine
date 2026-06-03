@@ -69,32 +69,44 @@ namespace Engine
             return result;
         }
 
-        /// Creates a rotation matrix based on Euler angles (Pitch, Yaw, Roll).
-        /// @param rotationRadians A Vector3f containing angles in radians (X=Pitch, Y=Yaw, Z=Roll).
+        /// Directly calculates the combined Translation * Rotation * Scale matrix.
+        /// Bypasses the need for 4 heavy 4x4 matrix multiplications.
+        static Matrix4x4 TRS(const Vector3f& translation, const Vector3f& rotation, const Vector3f& scale)
+        {
+            Matrix4x4 result;
+
+            float cx = std::cos(rotation.x);
+            float sx = std::sin(rotation.x);
+            float cy = std::cos(rotation.y);
+            float sy = std::sin(rotation.y);
+            float cz = std::cos(rotation.z);
+            float sz = std::sin(rotation.z);
+
+            // Mathematical expansion of Scale * (Rz * Ry * Rx)
+            result.m[0][0] = scale.x * (cz * cy);
+            result.m[1][0] = scale.x * (sz * cy);
+            result.m[2][0] = scale.x * (-sy);
+
+            result.m[0][1] = scale.y * (cz * sy * sx - sz * cx);
+            result.m[1][1] = scale.y * (sz * sy * sx + cz * cx);
+            result.m[2][1] = scale.y * (cy * sx);
+
+            result.m[0][2] = scale.z * (cz * sy * cx + sz * sx);
+            result.m[1][2] = scale.z * (sz * sy * cx - cz * sx);
+            result.m[2][2] = scale.z * (cy * cx);
+
+            // Apply translation directly
+            result.m[0][3] = translation.x;
+            result.m[1][3] = translation.y;
+            result.m[2][3] = translation.z;
+
+            // Bottom row is kept as 0, 0, 0, 1 from the default constructor
+            return result;
+        }
+
         static Matrix4x4 Rotation(const Vector3f& rotationRadians)
         {
-            Matrix4x4 rx, ry, rz;
-
-            // X-Axis Rotation (Pitch)
-            float cx = std::cos(rotationRadians.x);
-            float sx = std::sin(rotationRadians.x);
-            rx.m[1][1] = cx;  rx.m[1][2] = -sx;
-            rx.m[2][1] = sx;  rx.m[2][2] = cx;
-
-            // Y-Axis Rotation (Yaw)
-            float cy = std::cos(rotationRadians.y);
-            float sy = std::sin(rotationRadians.y);
-            ry.m[0][0] = cy;  ry.m[0][2] = sy;
-            ry.m[2][0] = -sy; ry.m[2][2] = cy;
-
-            // Z-Axis Rotation (Roll)
-            float cz = std::cos(rotationRadians.z);
-            float sz = std::sin(rotationRadians.z);
-            rz.m[0][0] = cz;  rz.m[0][1] = -sz;
-            rz.m[1][0] = sz;  rz.m[1][1] = cz;
-
-            // Combined rotation: Rz * Ry * Rx (standard YXZ order commonly used)
-            return rz * ry * rx;
+            return TRS(Vector3f(0.0f, 0.0f, 0.0f), rotationRadians, Vector3f(1.0f, 1.0f, 1.0f));
         }
     };
 }

@@ -104,6 +104,28 @@ namespace Engine
     {
         return Vector3f(globalMatrix.m[0][3], globalMatrix.m[1][3], globalMatrix.m[2][3]);
     }
+
+    Vector3f Transform::GetRight() const
+    {
+        // X-Axis of the rotation matrix (Column 0)
+        Vector3f right(globalMatrix.m[0][0], globalMatrix.m[1][0], globalMatrix.m[2][0]);
+        return right.Normalized();
+    }
+
+    Vector3f Transform::GetUp() const
+    {
+        // Y-Axis of the rotation matrix (Column 1)
+        Vector3f up(globalMatrix.m[0][1], globalMatrix.m[1][1], globalMatrix.m[2][1]);
+        return up.Normalized();
+    }
+
+    Vector3f Transform::GetForward() const
+    {
+        // Z-Axis of the rotation matrix (Column 2)
+        // Depending on Handedness (Right/Left), you might need to invert this to -Z.
+        Vector3f forward(globalMatrix.m[0][2], globalMatrix.m[1][2], globalMatrix.m[2][2]);
+        return forward.Normalized();
+    }
 #pragma endregion
 
     void Transform::UpdateTransform()

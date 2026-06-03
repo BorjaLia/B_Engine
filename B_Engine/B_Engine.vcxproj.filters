@@ -216,6 +216,9 @@
     <ClCompile Include="src\scenes\Transform.cpp">
       <Filter>SceneGraph\Nodes</Filter>
     </ClCompile>
+    <ClCompile Include="src\components\PlayerMovement3DComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\Application.h">
@@ -439,6 +442,9 @@
     </ClInclude>
     <ClInclude Include="src\memory\ComponentRegistry.h">
       <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\PlayerMovement3DComponent.h">
+      <Filter>SceneGraph\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -26,6 +26,7 @@ namespace Engine
         void EndFrame() override;
 
         void BeginCamera(const Vector2f& targetPosition, float zoom) override;
+        void BeginCamera3D(const Vector3f& position, const Vector3f& target, const Vector3f& up, float fov) override;
         void EndCamera() override;
 
         virtual void SetRenderTarget(std::optional<RenderTexture2D>) override {};

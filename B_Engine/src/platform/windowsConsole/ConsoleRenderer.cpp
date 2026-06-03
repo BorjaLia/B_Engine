@@ -231,6 +231,10 @@ namespace Engine
         cameraZoom = zoom;
     }
 
+    void ConsoleRenderer::BeginCamera3D(const Vector3f& , const Vector3f& , const Vector3f& , float )
+    {
+    }
+
     void ConsoleRenderer::EndCamera()
     {
         cameraTarget = { 0.0f, 0.0f };

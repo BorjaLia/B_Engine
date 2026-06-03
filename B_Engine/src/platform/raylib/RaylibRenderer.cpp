@@ -69,9 +69,37 @@ namespace Engine
         ::BeginMode2D(cam);
     }
 
+    void RaylibRenderer::BeginCamera3D(const Vector3f& position, const Vector3f& target, const Vector3f& up, float fov)
+    {
+        isCamera3DActive = true;
+
+        // Guardamos los valores de forma nativa para el momento del Flush
+        camPosition = position;
+        camTarget = target;
+        camUp = up;
+        camFov = fov;
+
+        // Construimos la cámara de Raylib en la pila
+        ::Camera3D internalCam3D = { 0 };
+        internalCam3D.position = { position.x, position.y, position.z };
+        internalCam3D.target = { target.x, target.y, target.z };
+        internalCam3D.up = { up.x, up.y, up.z };
+        internalCam3D.fovy = fov;
+        internalCam3D.projection = CAMERA_PERSPECTIVE;
+
+        ::BeginMode3D(internalCam3D);
+    }
+
     void RaylibRenderer::EndCamera()
     {
-        ::EndMode2D();
+        if (isCamera3DActive)
+        {
+            ::EndMode3D();
+        }
+        else
+        {
+            ::EndMode2D();
+        }
     }
 
     void RaylibRenderer::SetRenderTarget(std::optional<Engine::RenderTexture2D> target)
@@ -138,6 +166,18 @@ namespace Engine
     {
         std::vector<SpriteRenderCommand>& queue = (layer == RenderLayer::World) ? worldQueue : uiQueue;
 
+        bool use3DBillboards = (layer == RenderLayer::World && isCamera3DActive);
+
+        ::Camera3D internalCam3D = { 0 };
+        if (use3DBillboards)
+        {
+            internalCam3D.position = { camPosition.x, camPosition.y, camPosition.z };
+            internalCam3D.target = { camTarget.x, camTarget.y, camTarget.z };
+            internalCam3D.up = { camUp.x, camUp.y, camUp.z };
+            internalCam3D.fovy = camFov;
+            internalCam3D.projection = CAMERA_PERSPECTIVE;
+        }
+
         for (const auto& cmd : queue)
         {
             // Reconstruct Raylib texture from our generic ID
@@ -179,25 +219,30 @@ namespace Engine
             float destWidth = baseWidth * cmd.scale.x;
             float destHeight = baseHeight * cmd.scale.y;
 
-            float finalY = (layer == RenderLayer::World) ? -cmd.position.y : cmd.position.y;
-
-            ::Rectangle destRec = {
-                cmd.position.x,
-                finalY,
-                destWidth,
-                destHeight
-            };
-
-            Engine::Vector2f pivotMult = Engine::GetPivotMultiplier(cmd.pivot);
-
-            ::Vector2 origin = {
-                destWidth * pivotMult.x,
-                destHeight * pivotMult.y
-            };
-
             ::Color raylibTint = { cmd.tint.r, cmd.tint.g, cmd.tint.b, cmd.tint.a };
 
-            ::DrawTexturePro(raylibTex, sourceRec, destRec, origin, -cmd.rotation, raylibTint);
+            if (use3DBillboards)
+            {
+                // --- 3D BILLBOARDING PATH ---
+                ::Vector3 pos3D = { cmd.position.x, cmd.position.y, cmd.position.z };
+                ::Vector2 size2D = { destWidth, destHeight };
+
+                Engine::Vector2f pivotMult = Engine::GetPivotMultiplier(cmd.pivot);
+                ::Vector2 origin = { destWidth * pivotMult.x, destHeight * pivotMult.y };
+                ::Vector3 upDir = { 0.0f, 1.0f, 0.0f }; // Standard Y-up
+
+                ::DrawBillboardPro(internalCam3D, raylibTex, sourceRec, pos3D, upDir, size2D, origin, -cmd.rotation, raylibTint);
+            }
+            else
+            {
+                // --- 2D ORTHOGRAPHIC PATH ---
+                float finalY = (layer == RenderLayer::World) ? -cmd.position.y : cmd.position.y;
+                ::Rectangle destRec = { cmd.position.x, finalY, destWidth, destHeight };
+                Engine::Vector2f pivotMult = Engine::GetPivotMultiplier(cmd.pivot);
+                ::Vector2 origin = { destWidth * pivotMult.x, destHeight * pivotMult.y };
+
+                ::DrawTexturePro(raylibTex, sourceRec, destRec, origin, -cmd.rotation, raylibTint);
+            }
         }
     }
 

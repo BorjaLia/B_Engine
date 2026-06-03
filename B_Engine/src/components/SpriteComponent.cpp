@@ -30,9 +30,10 @@ namespace Engine
 	{
 		if (owner == nullptr || renderer == nullptr) return;
 
-		Vector2f position = owner->transform.GetGlobalPosition();
+		Vector3f position = owner->transform.GetGlobalPosition();
+
 		float rotation = owner->transform.GetRotation2D();
-		Vector2f scale = owner->transform.GetScale();
+		Vector2f scale = { owner->transform.GetScale().x, owner->transform.GetScale().y }; // We only care about X,Y scaling for billboards
 
 		if (targetSize.x != 0.0f && targetSize.y != 0.0f)
 		{
@@ -40,6 +41,7 @@ namespace Engine
 			scale.y *= (targetSize.y / texture.size.y);
 		}
 
+		// Submits with a Vector3f. If the renderer is in 2D mode, it ignores Z. If 3D, it billboards it
 		renderer->SubmitSprite(layer, texture, position, rotation, scale, pivot, tint, flipX, flipY);
 	}
 

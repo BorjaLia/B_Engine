@@ -41,6 +41,13 @@ namespace Engine
         float    GetRotation2D() const;
         
         Vector3f GetGlobalPosition() const;
+
+        /// Returns the normalized forward vector (Z-axis) in global space.
+        Vector3f GetForward() const;
+        /// Returns the normalized right vector (X-axis) in global space.
+        Vector3f GetRight() const;
+        /// Returns the normalized up vector (Y-axis) in global space.
+        Vector3f GetUp() const;
 #pragma endregion
 
         /// Recalculates the internal matrices if the transform has been modified.

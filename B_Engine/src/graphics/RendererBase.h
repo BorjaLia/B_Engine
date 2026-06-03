@@ -6,6 +6,7 @@
 
 #include "../utils/Types.h"
 #include "../math/Vector2.h"
+#include "../math/Vector3.h"
 #include "../resources/Font.h"
 #include "debug/Debug.h"
 
@@ -53,28 +54,52 @@ namespace Engine
         float GetLetterboxScale() const { return lbScale; }
 
         virtual void BeginCamera(const Vector2f& targetPosition, float zoom = 1.0f) = 0;
+        virtual void BeginCamera3D(const Vector3f& position, const Vector3f& target, const Vector3f& up, float fov) = 0;
         virtual void EndCamera() = 0;
 
         virtual void DrawRenderTexture(RenderTexture2D target, const Vector2f& position, const Vector2f& scale = { 1.0f, 1.0f }, const Color& tint = { 255, 255, 255, 255 }) = 0;
 
         /// Queues a full sprite for rendering in the specified layer.
-        virtual void SubmitSprite(RenderLayer layer, const Texture2D& texture, const Vector2f& position, float rotation, const Vector2f& scale, Pivot pivot, const Color& tint = { 255, 255, 255, 255 }, bool flipX = false, bool flipY = false)
+        virtual void SubmitSprite(RenderLayer layer, const Texture2D& texture, const Vector3f& position, float rotation, const Vector2f& scale, Pivot pivot, const Color& tint = { 255, 255, 255, 255 }, bool flipX = false, bool flipY = false)
         {
-            SpriteRenderCommand cmd = { texture, Rect(), position, rotation, scale, pivot, tint, flipX, flipY, false };
-            if (layer == RenderLayer::World) worldQueue.push_back(cmd);
-            else if (layer == RenderLayer::UI) uiQueue.push_back(cmd);
+            SpriteRenderCommand cmd = {
+                .texture = texture,
+                .sourceRect = Rect(),
+                .position = position,
+                .rotation = rotation,
+                .scale = scale,
+                .pivot = pivot,
+                .tint = tint,
+                .flipX = flipX,
+                .flipY = flipY,
+                .useSourceRect = false
+            };
+
+            if (layer == RenderLayer::World) worldQueue.push_back(std::move(cmd));
+            else if (layer == RenderLayer::UI) uiQueue.push_back(std::move(cmd));
         }
 
         /// Queues a partial sprite (spritesheet) or text for rendering.
-        virtual void SubmitSprite(RenderLayer layer, const Texture2D& texture, const Rect& sourceRect, const Vector2f& position, float rotation, const Vector2f& scale, Pivot pivot, const Color& tint = { 255, 255, 255, 255 }, bool flipX = false, bool flipY = false)
+        virtual void SubmitSprite(RenderLayer layer, const Texture2D& texture, const Rect& sourceRect, const Vector3f& position, float rotation, const Vector2f& scale, Pivot pivot, const Color& tint = { 255, 255, 255, 255 }, bool flipX = false, bool flipY = false)
         {
-            SpriteRenderCommand cmd = { texture, sourceRect, position, rotation, scale, pivot, tint, flipX, flipY, true };
-            if (layer == RenderLayer::World) worldQueue.push_back(cmd);
-            else if (layer == RenderLayer::UI) uiQueue.push_back(cmd);
+            SpriteRenderCommand cmd = {
+                .texture = texture,
+                .sourceRect = sourceRect,
+                .position = position,
+                .rotation = rotation,
+                .scale = scale,
+                .pivot = pivot,
+                .tint = tint,
+                .flipX = flipX,
+                .flipY = flipY,
+                .useSourceRect = true
+            };
+
+            if (layer == RenderLayer::World) worldQueue.push_back(std::move(cmd));
+            else if (layer == RenderLayer::UI) uiQueue.push_back(std::move(cmd));
         }
 
         virtual void Flush(RenderLayer layer) = 0;
-
         /// Queues a debug wireframe shape for rendering.
         virtual void SubmitDebugShape(RenderLayer layer, const Shape& shape, const Vector2f& position, float rotation, const Color& color)
         {
@@ -121,6 +146,7 @@ namespace Engine
         void OnReplayStateChanged(class ReplayStateEvent& e);
 
         bool debugRenderEnabled = false;
+        bool isCamera3DActive = false;
 
         std::vector<SpriteRenderCommand> worldQueue;
         std::vector<SpriteRenderCommand> uiQueue;
