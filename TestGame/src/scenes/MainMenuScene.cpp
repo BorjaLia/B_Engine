@@ -12,6 +12,7 @@
 #include "debug/Debug.h"
 
 #include "GameplayScene.h" 
+#include "TestScene3D.h" // <-- Nuestra nueva escena híbrida
 #include "../scripts/MouseScript.h"
 
 void MainMenuScene::Build(Engine::SceneBuilder& builder)
@@ -37,32 +38,51 @@ void MainMenuScene::Build(Engine::SceneBuilder& builder)
         txt->pivot = Engine::Pivot::TopCenter;
     }
 
-    // 3. Play Button
+    // 3. Play Button (2D)
     {
-        Engine::Node* node = builder.CreateNode("PlayButton");
+        Engine::Node* node = builder.CreateNode("PlayButton2D");
 
-        node->AddComponent<Engine::UIAnchorComponent>(Engine::AnchorPreset::Center);
-        node->AddComponent<Engine::SpriteComponent>(texButton, Engine::Pivot::Center, Engine::Color{ 80, 80, 80, 200 });
+        node->AddComponent<Engine::UIAnchorComponent>(Engine::AnchorPreset::Center, Engine::Vector2f(0.0f, -60.0f)); // Movido arriba
+        node->AddComponent<Engine::SpriteComponent>(texButton, Engine::Pivot::Center, Engine::Color{ 80, 80, 180, 200 });
 
         auto* txt = node->AddComponent<Engine::TextComponent>(
-            font, "  PLAY", 36.0f,
+            font, " PLAY 2D", 36.0f,
             Engine::Color{ 255, 255, 255, 255 },
             Engine::RenderLayer::UI);
-        txt->pivot = Engine::Pivot::TopLeft;
+        txt->pivot = Engine::Pivot::LeftCenter;
 
         auto* btn = node->AddComponent<Engine::ButtonComponent>();
-
         btn->SetOnClick([]()
             {
                 Engine::Application::Get().LoadScene<PlatformerScene>();
             });
     }
 
-    // 4. Mouse Cursor
+    // 4. Play Button (3D)
+    {
+        Engine::Node* node = builder.CreateNode("PlayButton3D");
+
+        node->AddComponent<Engine::UIAnchorComponent>(Engine::AnchorPreset::Center, Engine::Vector2f(0.0f, 60.0f)); // Movido abajo
+        node->AddComponent<Engine::SpriteComponent>(texButton, Engine::Pivot::Center, Engine::Color{ 180, 80, 80, 200 });
+
+        auto* txt = node->AddComponent<Engine::TextComponent>(
+            font, " PLAY 3D", 36.0f,
+            Engine::Color{ 255, 255, 255, 255 },
+            Engine::RenderLayer::UI);
+        txt->pivot = Engine::Pivot::LeftCenter;
+
+        auto* btn = node->AddComponent<Engine::ButtonComponent>();
+        btn->SetOnClick([]()
+            {
+                Engine::Application::Get().LoadScene<TestScene3D>();
+            });
+    }
+
+    // 5. Mouse Cursor
     {
         Engine::Node* node = builder.CreateNode("Mouse");
         node->AddComponent<Engine::SpriteComponent>(texButton, Engine::Pivot::Center, Engine::Color{ 80, 80, 80, 200 });
-        node->transform.SetScale(Engine::Vector2(0.2f, 0.2f ));
+        node->transform.SetScale(Engine::Vector2f(0.2f, 0.2f));
 
         node->AddComponent<Engine::ScriptComponent>(new MouseScript(camComp));
     }

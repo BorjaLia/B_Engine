@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <new>     
-#include <cstdlib> 
+#include <cstdlib>
 
 // Anonymous namespace prevents these variables from being visible to other files,
 // while allowing the global new/delete operators below to access them cleanly.

@@ -88,6 +88,8 @@ namespace Engine
 			{
 				::operator delete(page);
 			}
+
+			ENGINE_LOG("DELETED MEMORY BLOCK");
 		}
 
 		std::vector<T*> pages;      // Holds pointers to the raw memory blocks

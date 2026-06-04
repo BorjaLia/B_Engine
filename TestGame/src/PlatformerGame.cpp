@@ -26,10 +26,12 @@ void PlatformerGame::SetupInputs()
     input.BindAction(Engine::Hash::GetHash("Game_SpawnRight"), Engine::MouseButton::Right, Engine::ActionCategory::Gameplay);
 
     // Horizontal Movement
+    input.BindAxis(Engine::Hash::GetHash("Game_MoveY"), Engine::Key::W, 1.0f);
+    input.BindAxis(Engine::Hash::GetHash("Game_MoveY"), Engine::Key::S, -1.0f);
     input.BindAxis(Engine::Hash::GetHash("Game_MoveX"), Engine::Key::D, 1.0f);
     input.BindAxis(Engine::Hash::GetHash("Game_MoveX"), Engine::Key::A, -1.0f);
-    input.BindAxis(Engine::Hash::GetHash("Game_MoveX"), Engine::Key::Right, 1.0f);
-    input.BindAxis(Engine::Hash::GetHash("Game_MoveX"), Engine::Key::Left, -1.0f);
+    //input.BindAxis(Engine::Hash::GetHash("Game_MoveX"), Engine::Key::Right, 1.0f);
+    //input.BindAxis(Engine::Hash::GetHash("Game_MoveX"), Engine::Key::Left, -1.0f);
 
     // Jump
     input.BindAction(Engine::Hash::GetHash("Game_Jump"), Engine::Key::Space);
@@ -41,8 +43,12 @@ void PlatformerGame::SetupInputs()
     input.BindAction(Engine::Hash::GetHash("Game_Run"), Engine::Key::LeftShift);
 
     // Rotation
+    input.BindAxis(Engine::Hash::GetHash("Game_RotX"), Engine::Key::Right, 1.0f);
+    input.BindAxis(Engine::Hash::GetHash("Game_RotX"), Engine::Key::Left, -1.0f);
+    input.BindAxis(Engine::Hash::GetHash("Game_RotX"), Engine::Key::Up, 1.0f);
+    input.BindAxis(Engine::Hash::GetHash("Game_RotY"), Engine::Key::Down, -1.0f);
     input.BindAxis(Engine::Hash::GetHash("Game_RotX"), Engine::Key::E, 1.0f);
-    input.BindAxis(Engine::Hash::GetHash("Game_RotX"), Engine::Key::Q, -1.0f);
+    input.BindAxis(Engine::Hash::GetHash("Game_RotY"), Engine::Key::Q, -1.0f);
 }
 
 void PlatformerGame::RegisterScenes()

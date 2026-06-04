@@ -169,6 +169,7 @@ namespace Engine
     {
         renderer->BeginFrame();
 
+        // --- PASS 1: Render Targets (Minimapas, Split Screen, etc) ---
         for (CameraComponent* cam : activeCameras)
         {
             if (!cam->GetOwner()->IsActive() || !cam->HasRenderTarget()) continue;
@@ -176,8 +177,17 @@ namespace Engine
             renderer->SetRenderTarget(cam->GetRenderTarget());
             renderer->ClearScreen(bgColor);
 
-            Vector2f camPos = cam->GetOwner()->transform.GetGlobalPosition();
-            renderer->BeginCamera({ std::round(camPos.x), std::round(camPos.y) }, cam->GetZoom());
+            Vector3f camPos = cam->GetOwner()->transform.GetGlobalPosition();
+
+            // 2D or 3D Camera?
+            if (cam->GetProjectionType() == CameraProjection::Perspective)
+            {
+                renderer->BeginCamera3D(camPos, cam->GetTarget(), cam->GetUpVector(), cam->GetFOV());
+            }
+            else
+            {
+                renderer->BeginCamera({ std::round(camPos.x), std::round(camPos.y) }, cam->GetZoom());
+            }
 
             renderer->Flush(RenderLayer::World);
             if (debugMode && cam->GetShowDebug()) renderer->FlushDebug(RenderLayer::World);
@@ -185,6 +195,7 @@ namespace Engine
             renderer->EndCamera();
         }
 
+        // --- PASS 2: Main Screen (Global Canvas setup) ---
         const bool useGlobalCanvas = renderer->IsUsingGlobalCanvas();
         std::optional<RenderTexture2D> mainTarget = useGlobalCanvas
             ? std::make_optional(renderer->GetGlobalCanvas())
@@ -194,7 +205,7 @@ namespace Engine
 
         if (useGlobalCanvas)
         {
-            renderer->ClearScreen({ 0, 0, 0, 255 });
+            renderer->ClearScreen({ 0, 0, 0, 255 }); // Letterbox bars
         }
 
         renderer->ClearScreen(bgColor);
@@ -203,8 +214,17 @@ namespace Engine
         {
             if (!cam->GetOwner()->IsActive() || cam->HasRenderTarget()) continue;
 
-            Vector2f camPos = cam->GetOwner()->transform.GetGlobalPosition();
-            renderer->BeginCamera({ std::round(camPos.x), std::round(camPos.y) }, cam->GetZoom());
+            Vector3f camPos = cam->GetOwner()->transform.GetGlobalPosition();
+
+            // 2D or 3D Camera?
+            if (cam->GetProjectionType() == CameraProjection::Perspective)
+            {
+                renderer->BeginCamera3D(camPos, cam->GetTarget(), cam->GetUpVector(), cam->GetFOV());
+            }
+            else
+            {
+                renderer->BeginCamera({ std::round(camPos.x), std::round(camPos.y) }, cam->GetZoom());
+            }
 
             renderer->Flush(RenderLayer::World);
             if (debugMode && cam->GetShowDebug()) renderer->FlushDebug(RenderLayer::World);
@@ -212,6 +232,7 @@ namespace Engine
             renderer->EndCamera();
         }
 
+        // UI is ALWAYS 2D (Orthographic mapping implicitly handled by Flush without BeginCamera)
         renderer->Flush(RenderLayer::UI);
         if (debugMode) renderer->FlushDebug(RenderLayer::UI);
 
@@ -314,6 +335,11 @@ namespace Engine
                 ENGINE_ERROR("Failed to start replay: File not found.");
             }
         }
+
+        //if (input->IsKeyReleased(Key::F9))
+        //{
+        //    sceneManager.LoadScene
+        //}
     }
 
     void Application::RenderAndCleanup(RendererBase* renderer, const Color& bgColor)

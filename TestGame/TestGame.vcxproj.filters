@@ -72,6 +72,9 @@
     <ClCompile Include="src\scripts\MiniMapScript.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="src\scenes\TestScene3D.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PlatformerGame.h">
@@ -121,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="src\scripts\MiniMapScript.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\TestScene3D.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,6 +2,13 @@
 #include "core/Application.h"
 #include "debug/MemoryTracker.h"
 
+#include <cstdlib> // Para atexit
+
+void PrintLeaks()
+{
+    Engine::MemoryTracker::Print();
+}
+
 int game()
 {
     PlatformerGame game;
@@ -25,9 +32,9 @@ int main()
 {
     Engine::MemoryTracker::RecordBaseline();
 
-    int ret = game();
+    std::atexit(PrintLeaks);
 
-    Engine::MemoryTracker::Print();
+    int ret = game();
 
     return ret;
 }
