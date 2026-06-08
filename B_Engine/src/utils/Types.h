@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <variant>
-#include <iostream>
+#include <string>
 #include "../math/Vector2.h"
 #include "../math/Vector3.h"
 
@@ -20,12 +20,12 @@ namespace Engine
 			: r(r), g(g), b(b), a(a)
 		{
 		}
-	};
 
-	inline std::ostream& operator<<(std::ostream& os, const Color& c)
-	{
-		return os << "[R:" << static_cast<int>(c.r) << " G:" << static_cast<int>(c.g) << " B:" << static_cast<int>(c.b) << " A:" << static_cast<int>(c.a) << "]";
-	}
+		std::string ToString() const
+		{
+			return "[R:" + std::to_string(r) + " G:" + std::to_string(g) + " B:" + std::to_string(b) + " A:" + std::to_string(a) + "]";
+		}
+	};
 
 	enum class Pivot
 	{

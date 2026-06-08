@@ -48,7 +48,7 @@ namespace Engine
 	std::string SpriteComponent::ToString() const
 	{
 		std::stringstream ss;
-		ss << "SpriteComponent [Color: " << tint << "]";
+		ss << "SpriteComponent [Color: " << tint.ToString() << "]";
 		return ss.str();
 	}
 }

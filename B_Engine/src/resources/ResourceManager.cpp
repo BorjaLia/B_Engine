@@ -2,6 +2,7 @@
 
 #include <unordered_set>
 #include "../debug/Debug.h"
+#include "../utils/FileSystem.h"
 
 namespace Engine
 {
@@ -20,11 +21,13 @@ namespace Engine
         auto it = textures.find(filepath);
         if (it != textures.end()) return it->second;
 
-        Texture2D tex = renderer->LoadTexture(filepath.c_str());
+        std::string absolutePath = FileSystem::GetAbsolutePath(filepath);
+
+        Texture2D tex = renderer->LoadTexture(absolutePath.c_str());
 
         if (tex.id == 0)
         {
-            ENGINE_WARN("ResourceManager: '{}' not found. Using fallback.", filepath);
+            ENGINE_WARN("ResourceManager: '{}' not found. Using fallback.", absolutePath);
 
             if (filepath != "res/sprites/NoTexture.png")
                 tex = GetTexture("res/sprites/NoTexture.png");
@@ -59,10 +62,12 @@ namespace Engine
         auto it = fonts.find(key);
         if (it != fonts.end()) return it->second;
 
-        Font* f = renderer->LoadFont(filepath.c_str(), fontSize);
+        std::string absolutePath = FileSystem::GetAbsolutePath(filepath);
+
+        Font* f = renderer->LoadFont(absolutePath.c_str(), fontSize);
         if (f == nullptr)
         {
-            ENGINE_ERROR("Couldn't load font: {}", filepath);
+            ENGINE_ERROR("Couldn't load font: {}", absolutePath);
         }
         fonts[key] = f;
         return f;
@@ -79,7 +84,9 @@ namespace Engine
         auto it = audioClips.find(filepath);
         if (it != audioClips.end()) return it->second;
 
-        AudioClip clip = audio->LoadClip(filepath.c_str());
+        std::string absolutePath = FileSystem::GetAbsolutePath(filepath);
+
+        AudioClip clip = audio->LoadClip(absolutePath.c_str());
         if (clip.id == 0)
         {
             ENGINE_WARN("ResourceManager: Audio clip '{}' failed to load.", filepath);

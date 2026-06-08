@@ -181,6 +181,11 @@ namespace Engine
         void HandleSystemHotkeys(InputBase* input);
         void RenderAndCleanup(RendererBase* renderer, const Color& bgColor);
 
+        /// Applies the given user settings to the window, renderer, and audio systems.
+        /// @param settings The settings struct to apply.
+        /// @param isStartup True if this is called during engine initialization.
+        void ApplyUserSettings(const UserSettings& settings, bool isStartup = false);
+
         void OnSettingsChanged(SettingsChangedEvent& e);
         bool OnWindowClose(WindowCloseEvent& e);
     };

@@ -43,6 +43,7 @@ namespace Engine
         ConfigManager::LoadAll();
 
         const EngineConfig& engineConfig = ConfigManager::GetEngineConfig();
+        const UserSettings& userSettings = ConfigManager::GetUserSettings();
 
         Logger::Init();
         Logger::SetLevel(engineConfig.logLevel);
@@ -65,8 +66,7 @@ namespace Engine
         }
 
         ENGINE_INFO("Engine config loaded");
-
-        const UserSettings& userSettings = ConfigManager::GetUserSettings();
+        
         Vector2i windowSize(userSettings.windowWidth, userSettings.windowHeight);
 
         if (!window->Initialize(windowSize, title))
@@ -76,10 +76,6 @@ namespace Engine
         }
         ENGINE_INFO("Window initialized at {}",windowSize.ToString());
 
-        window->SetFullscreen(userSettings.fullscreen);
-        window->SetVSync(userSettings.vSync);
-
-        window->GetRenderer()->SetLogicalResolution(windowSize);
         window->GetRenderer()->SetAspectRatioLocked(engineConfig.lockAspectRatio);
         
         settingsEventId = eventBus.Subscribe<SettingsChangedEvent>(
@@ -108,7 +104,7 @@ namespace Engine
                 if (audio) audio->SetMasterVolume(e.GetVolume());
             });
 
-        if (audio) audio->SetMasterVolume(userSettings.masterVolume);
+        ApplyUserSettings(userSettings, true);
 
         resourceManager = std::make_unique<ResourceManager>(window->GetRenderer(), audio.get());
         physicsSystem = std::make_unique<PhysicsSystem>();
@@ -128,28 +124,56 @@ namespace Engine
         return true;
     }
 
-    void Application::OnSettingsChanged(SettingsChangedEvent& e)
+    void Application::ApplyUserSettings(const UserSettings& settings, bool isStartup)
     {
-        const UserSettings& settings = e.GetSettings();
-
-        ENGINE_INFO("Applying new user settings in real-time...");
-
         if (window)
         {
             window->SetSize({ settings.windowWidth, settings.windowHeight });
             window->SetFullscreen(settings.fullscreen);
             window->SetVSync(settings.vSync);
-        
-            if (!GetInputManager().GetInjector().IsPlaying())
+
+            // Moved TargetFPS from EngineConfig to UserSettings
+            window->SetTargetFPS(settings.targetFPS);
+
+            // Avoid changing logical resolution during replays to prevent coordinate desync
+            // During startup (isStartup == true), the InputManager is not yet initialized, so we bypass the check.
+            if (isStartup || !GetInputManager().GetInjector().IsPlaying())
             {
                 window->GetRenderer()->SetLogicalResolution({ settings.windowWidth, settings.windowHeight });
             }
+
+            // --- FUTURE GRAPHICS IMPLEMENTATIONS ---
+            // TODO: Implement Anti-Aliasing pipeline in RendererBase
+            // window->GetRenderer()->SetAntiAliasing(settings.antiAliasing);
+
+            // TODO: Implement Shadow Mapping and Quality settings in RendererBase
+            // window->GetRenderer()->SetShadowQuality(settings.shadowQuality);
+
+            // TODO: Implement Screen Brightness / Gamma Correction (usually via post-processing shader)
+            // window->GetRenderer()->SetBrightness(settings.brightness);
+
+            // TODO: Implement UI Scaling
+            // window->GetRenderer()->SetUIScale(settings.uiScale);
+
+            // TODO: Implement Localization System
+            // LocalizationSystem::SetLanguage(settings.language);
         }
-        
+
         if (audio)
         {
             audio->SetMasterVolume(settings.masterVolume);
+
+            // --- FUTURE AUDIO IMPLEMENTATIONS ---
+            // TODO: Implement distinct audio channels in AudioBase
+            // audio->SetMusicVolume(settings.musicVolume);
+            // audio->SetSFXVolume(settings.sfxVolume);
         }
+    }
+
+    void Application::OnSettingsChanged(SettingsChangedEvent& e)
+    {
+        ENGINE_INFO("Applying new user settings in real-time...");
+        ApplyUserSettings(e.GetSettings(), false);
     }
 
     bool Application::OnWindowClose(WindowCloseEvent& e)

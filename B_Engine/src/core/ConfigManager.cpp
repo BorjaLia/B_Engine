@@ -116,7 +116,6 @@ namespace Engine
         else if (key == "LogLevel") engineData.logLevel = StringToLogLevel(value);
         else if (key == "ReplayMode") engineData.replayMode = StringToReplayMode(value);
         else if (key == "FixedTimeStep") engineData.fixedTimeStep = std::stof(value);
-        else if (key == "TargetFPS") engineData.targetFPS = std::stoi(value);
         else if (key == "ResourceDirectory") engineData.resourceDirectory = value;
         else if (key == "EnableDevTools") engineData.enableDevTools = (value == "true" || value == "1");
         else if (key == "LockAspectRatio") engineData.lockAspectRatio = (value == "true" || value == "1");
@@ -128,7 +127,10 @@ namespace Engine
         else if (key == "WindowHeight") userData.windowHeight = std::stoi(value);
         else if (key == "Fullscreen") userData.fullscreen = (value == "true" || value == "1");
         else if (key == "VSync") userData.vSync = (value == "true" || value == "1");
+        else if (key == "TargetFPS") userData.targetFPS = std::stoi(value);
         else if (key == "ShowFPS") userData.showFPS = (value == "true" || value == "1");
+        else if (key == "Brightness") userData.brightness = std::stof(value);
+        else if (key == "UIScale") userData.uiScale = std::stof(value);
 
         else if (key == "MasterVolume") userData.masterVolume = std::stof(value);
         else if (key == "MusicVolume") userData.musicVolume = std::stof(value);
@@ -144,21 +146,41 @@ namespace Engine
         userData = newSettings;
 
         std::stringstream ss;
+        ss << "# User settings configuration file\n";
+        ss << "# Modify these values to adjust game preferences.\n\n";
+
         ss << "[Screen]\n";
+        ss << "# Resolution width in pixels.\n";
         ss << "WindowWidth=" << userData.windowWidth << "\n";
+        ss << "# Resolution height in pixels.\n";
         ss << "WindowHeight=" << userData.windowHeight << "\n";
+        ss << "# Fullscreen mode. Options: true, false\n";
         ss << "Fullscreen=" << (userData.fullscreen ? "true" : "false") << "\n";
+        ss << "# Vertical synchronization. Options: true, false\n";
         ss << "VSync=" << (userData.vSync ? "true" : "false") << "\n";
-        ss << "ShowFPS=" << (userData.showFPS ? "true" : "false") << "\n\n";
+        ss << "# Maximum frames per second. Set to 0 for unlimited.\n";
+        ss << "TargetFPS=" << userData.targetFPS << "\n";
+        ss << "# Show an FPS counter on screen. Options: true, false\n";
+        ss << "ShowFPS=" << (userData.showFPS ? "true" : "false") << "\n";
+        ss << "# Screen brightness/gamma correction. Range: 0.0 to 2.0\n";
+        ss << "Brightness=" << userData.brightness << "\n";
+        ss << "# UI scale multiplier.\n";
+        ss << "UIScale=" << userData.uiScale << "\n\n";
 
         ss << "[Audio]\n";
+        ss << "# Master volume multiplier. Range: 0.0 to 1.0\n";
         ss << "MasterVolume=" << userData.masterVolume << "\n";
+        ss << "# Music volume multiplier. Range: 0.0 to 1.0\n";
         ss << "MusicVolume=" << userData.musicVolume << "\n";
+        ss << "# Sound effects volume multiplier. Range: 0.0 to 1.0\n";
         ss << "SFXVolume=" << userData.sfxVolume << "\n\n";
 
         ss << "[System]\n";
+        ss << "# Game language code. Options: en, es\n";
         ss << "Language=" << userData.language << "\n";
+        ss << "# Shadow resolution quality. Options: 0 (Low), 1 (Medium), 2 (High)\n";
         ss << "ShadowQuality=" << userData.shadowQuality << "\n";
+        ss << "# Multi-sample anti-aliasing level. Options: 0 (Off), 2, 4, 8\n";
         ss << "AntiAliasing=" << userData.antiAliasing << "\n";
 
         if (FileSystem::WriteText("user_settings.ini", ss.str()))
@@ -181,14 +203,29 @@ namespace Engine
         Logger::SetLevel(engineData.logLevel);
 
         std::stringstream ss;
-        ss << "Backend=" << engineData.backend << "\n";
-        ss << "LogLevel=" << LogLevelToString(engineData.logLevel) << "\n";
-        ss << "ReplayMode=" << ReplayModeToString(engineData.replayMode) << "\n";
-        ss << "FixedTimeStep=" << engineData.fixedTimeStep << "\n";
-        ss << "TargetFPS=" << engineData.targetFPS << "\n";
-        ss << "ResourceDirectory=" << engineData.resourceDirectory << "\n";
-        ss << "EnableDevTools=" << (engineData.enableDevTools ? "true" : "false") << "\n";
-        ss << "LockAspectRatio=" << (engineData.enableDevTools ? "true" : "false") << "\n";
+        ss << "# Engine configuration file\n";
+        ss << "# Core engine parameters. Modify with caution.\n\n";
+
+        ss << "# Graphics backend to initialize. Options: Raylib, OpenGL\n";
+        ss << "Backend=" << engineData.backend << "\n\n";
+
+        ss << "# Console verbosity level. Options: Error, Warn, Info, None, NoInput, NoMouseInput, All\n";
+        ss << "LogLevel=" << LogLevelToString(engineData.logLevel) << "\n\n";
+
+        ss << "# Replay system state. Options: Normal, AutoRecord, AutoPlayback\n";
+        ss << "ReplayMode=" << ReplayModeToString(engineData.replayMode) << "\n\n";
+
+        ss << "# Fixed delta time for physics integration. (e.g., 0.01666 for 60Hz)\n";
+        ss << "FixedTimeStep=" << engineData.fixedTimeStep << "\n\n";
+
+        ss << "# Root directory path for game assets.\n";
+        ss << "ResourceDirectory=" << engineData.resourceDirectory << "\n\n";
+
+        ss << "# Enable engine developer tools and debug UI. Options: true, false\n";
+        ss << "EnableDevTools=" << (engineData.enableDevTools ? "true" : "false") << "\n\n";
+
+        ss << "# Force aspect ratio to remain constant on window resize. Options: true, false\n";
+        ss << "LockAspectRatio=" << (engineData.lockAspectRatio ? "true" : "false") << "\n";
 
         if (FileSystem::WriteText("engine.ini", ss.str()))
         {
