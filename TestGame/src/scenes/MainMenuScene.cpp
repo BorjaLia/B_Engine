@@ -12,7 +12,7 @@
 #include "debug/Debug.h"
 
 #include "GameplayScene.h" 
-#include "TestScene3D.h" // <-- Nuestra nueva escena híbrida
+#include "TestScene3D.h"
 #include "../scripts/MouseScript.h"
 
 void MainMenuScene::Build(Engine::SceneBuilder& builder)

@@ -14,5 +14,8 @@ namespace Engine
 
         /// The developer registers all available scenes and sets the initial one here.
         virtual void RegisterScenes() = 0;
+
+        /// Called right before the engine shuts down. Used to clean up user-created persistent data.
+        virtual void Shutdown() {}
     };
 }

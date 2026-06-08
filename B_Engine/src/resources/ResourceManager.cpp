@@ -60,6 +60,10 @@ namespace Engine
         if (it != fonts.end()) return it->second;
 
         Font* f = renderer->LoadFont(filepath.c_str(), fontSize);
+        if (f == nullptr)
+        {
+            ENGINE_ERROR("Couldn't load font: {}", filepath);
+        }
         fonts[key] = f;
         return f;
     }

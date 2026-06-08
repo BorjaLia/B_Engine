@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{418600b6-27e3-4985-97e9-b202a6dfb593}</ProjectGuid>
-    <RootNamespace>TestGame</RootNamespace>
+    <ProjectGuid>{2c9d28b6-d16e-41af-91a9-9d2d7c4bc9ff}</ProjectGuid>
+    <RootNamespace>BLauncher</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,13 +40,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -84,12 +84,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)lib\raylib-5.5_win64_msvc16\lib\raylib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -100,12 +98,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)lib\raylib-5.5_win64_msvc16\lib\raylib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -114,8 +110,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)B_Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)B_Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -132,61 +128,27 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)B_Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)B_Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)B_Engine\lib\raylib-5.5_win64_msvc16\lib\raylib.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <AdditionalDependencies>$(SolutionDir)B_Engine\lib\raylib-5.5_win64_msvc16\lib\raylib.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\B_Engine\B_Engine.vcxproj">
       <Project>{1256d7a2-1ec2-4ae6-9eff-84ec766acc4c}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\entry\EntryPoint.cpp" />
-    <ClCompile Include="src\Main.cpp" />
-    <ClCompile Include="src\PlatformerGame.cpp" />
-    <ClCompile Include="src\prefabs\EnvironmentPrefabs.cpp" />
-    <ClCompile Include="src\prefabs\PlayerPrefab.cpp" />
-    <ClCompile Include="src\prefabs\UiPrefabs.cpp" />
-    <ClCompile Include="src\scenes\GameplayScene.cpp" />
-    <ClCompile Include="src\scenes\MainMenuScene.cpp" />
-    <ClCompile Include="src\scenes\TestScene3D.cpp" />
-    <ClCompile Include="src\scripts\CoinScript.cpp" />
-    <ClCompile Include="src\scripts\EnemyScript.cpp" />
-    <ClCompile Include="src\scripts\FinishLineScript.cpp" />
-    <ClCompile Include="src\scripts\GameManager.cpp" />
-    <ClCompile Include="src\scripts\MiniMapScript.cpp" />
-    <ClCompile Include="src\scripts\MouseScript.cpp" />
-    <ClCompile Include="src\scripts\PlatformScript.cpp" />
-    <ClCompile Include="src\scripts\PlayerScript.cpp" />
-    <ClCompile Include="src\scripts\ScoreUIScript.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\entry\EntryPoint.h" />
-    <ClInclude Include="src\events\GameEvents.h" />
-    <ClInclude Include="src\PlatformerGame.h" />
-    <ClInclude Include="src\prefabs\EnvironmentPrefabs.h" />
-    <ClInclude Include="src\prefabs\PlayerPrefab.h" />
-    <ClInclude Include="src\prefabs\UiPrefabs.h" />
-    <ClInclude Include="src\scenes\GameplayScene.h" />
-    <ClInclude Include="src\scenes\MainMenuScene.h" />
-    <ClInclude Include="src\scenes\TestScene3D.h" />
-    <ClInclude Include="src\scripts\CoinScript.h" />
-    <ClInclude Include="src\scripts\EnemyScript.h" />
-    <ClInclude Include="src\scripts\FinishLineScript.h" />
-    <ClInclude Include="src\scripts\GameManager.h" />
-    <ClInclude Include="src\scripts\MiniMapScript.h" />
-    <ClInclude Include="src\scripts\MouseScript.h" />
-    <ClInclude Include="src\scripts\PlatformScript.h" />
-    <ClInclude Include="src\scripts\PlayerScript.h" />
-    <ClInclude Include="src\scripts\ScoreUIScript.h" />
+    <ProjectReference Include="..\TestGame\TestGame.vcxproj">
+      <Project>{418600b6-27e3-4985-97e9-b202a6dfb593}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

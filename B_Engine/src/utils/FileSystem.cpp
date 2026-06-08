@@ -5,54 +5,78 @@
 
 namespace Engine
 {
-    bool FileSystem::ReadBinary(const std::string& filepath, std::vector<uint8_t>& outData)
-    {
-        // std::ios::ate puts the cursor at the end of the file to quickly determine its size
-        std::ifstream file(filepath, std::ios::binary | std::ios::ate);
-        if (!file.is_open()) return false;
+	// Define the static variable
+	std::string FileSystem::rootPath = "";
 
-        size_t fileSize = static_cast<size_t>(file.tellg());
-        outData.resize(fileSize);
+	void FileSystem::SetRootPath(const std::string& path)
+	{
+		rootPath = path;
 
-        file.seekg(0);
-        file.read(reinterpret_cast<char*>(outData.data()), fileSize);
-        file.close();
+		// Format the string to ensure it ends with a slash for easy concatenation
+		if (!rootPath.empty() && rootPath.back() != '/' && rootPath.back() != '\\')
+		{
+			rootPath += '/';
+		}
+	}
 
-        return true;
-    }
+	std::string FileSystem::GetAbsolutePath(const std::string& filepath)
+	{
+		if (rootPath.empty()) return filepath;
 
-    bool FileSystem::WriteBinary(const std::string& filepath, const void* data, size_t size)
-    {
-        std::ofstream file(filepath, std::ios::binary);
-        if (!file.is_open()) return false;
+		// Basic check to avoid double-rooting if the user provided an absolute path by mistake
+		// (Checks for Windows drive letter 'C:' or Unix absolute root '/')
+		if (filepath.length() > 1 && filepath[1] == ':') return filepath;
+		if (!filepath.empty() && (filepath[0] == '/' || filepath[0] == '\\')) return filepath;
 
-        file.write(reinterpret_cast<const char*>(data), size);
-        file.close();
+		return rootPath + filepath;
+	}
 
-        return true;
-    }
+	bool FileSystem::ReadBinary(const std::string& filepath, std::vector<uint8_t>& outData)
+	{
+		std::ifstream file(GetAbsolutePath(filepath), std::ios::binary | std::ios::ate);
+		if (!file.is_open()) return false;
 
-    bool FileSystem::ReadText(const std::string& filepath, std::string& outText)
-    {
-        std::ifstream file(filepath);
-        if (!file.is_open()) return false;
+		size_t fileSize = static_cast<size_t>(file.tellg());
+		outData.resize(fileSize);
 
-        // Read the entire file at once using a string stream
-        std::stringstream buffer;
-        buffer << file.rdbuf();
-        outText = buffer.str();
+		file.seekg(0);
+		file.read(reinterpret_cast<char*>(outData.data()), fileSize);
+		file.close();
 
-        file.close();
-        return true;
-    }
+		return true;
+	}
 
-    bool FileSystem::WriteText(const std::string& filepath, const std::string& text)
-    {
-        std::ofstream file(filepath);
-        if (!file.is_open()) return false;
+	bool FileSystem::WriteBinary(const std::string& filepath, const void* data, size_t size)
+	{
+		std::ofstream file(GetAbsolutePath(filepath), std::ios::binary);
+		if (!file.is_open()) return false;
 
-        file << text;
-        file.close();
-        return true;
-    }
+		file.write(reinterpret_cast<const char*>(data), size);
+		file.close();
+
+		return true;
+	}
+
+	bool FileSystem::ReadText(const std::string& filepath, std::string& outText)
+	{
+		std::ifstream file(GetAbsolutePath(filepath));
+		if (!file.is_open()) return false;
+
+		std::stringstream buffer;
+		buffer << file.rdbuf();
+		outText = buffer.str();
+
+		file.close();
+		return true;
+	}
+
+	bool FileSystem::WriteText(const std::string& filepath, const std::string& text)
+	{
+		std::ofstream file(GetAbsolutePath(filepath));
+		if (!file.is_open()) return false;
+
+		file << text;
+		file.close();
+		return true;
+	}
 }

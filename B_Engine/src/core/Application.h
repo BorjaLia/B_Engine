@@ -10,6 +10,7 @@
 #include <vector>
 #include <functional>
 
+#include "interfaces/IGame.h"
 #include "interfaces/IWindow.h"
 #include "interfaces/IAudio.h"
 #include "../graphics/RendererBase.h"
@@ -57,7 +58,7 @@ namespace Engine
 #pragma region Lifecycle
         /// Initializes window, renderer, audio, and reads configuration files.
         /// @param title The name that will appear on the window bar.
-        bool Initialize(const std::string& title = "Engine");
+        bool Initialize(const std::string& title = "Engine", IGame* gameInstance = nullptr);
 
         /// Flushes the SceneBuilder, then locks into the main game loop.
         void Run();
@@ -134,7 +135,9 @@ namespace Engine
     private:
         static Application* instance;
 
-        EngineMode currentEngineMode = EngineMode::AutoPlayback;
+        IGame* activeGame = nullptr;
+
+        EngineMode currentEngineMode = EngineMode::Normal;
 
         std::unique_ptr<IWindow>         window;
         std::unique_ptr<IAudio>          audio;

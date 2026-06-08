@@ -360,7 +360,6 @@ namespace Engine
 
         if (rlFont.texture.id == 0)
         {
-            std::cerr << "RaylibRenderer ERROR: Could not load font: " << filepath << "\n";
             return nullptr;
         }
 

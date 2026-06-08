@@ -22,6 +22,9 @@
     <Filter Include="UI">
       <UniqueIdentifier>{ca7e6a1b-9e30-4deb-b83a-3bd5272bffbc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EntryPoint">
+      <UniqueIdentifier>{3138bfcb-40c5-45aa-8c29-08b7a66bcdb9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp">
@@ -75,6 +78,9 @@
     <ClCompile Include="src\scenes\TestScene3D.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="src\entry\EntryPoint.cpp">
+      <Filter>EntryPoint</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PlatformerGame.h">
@@ -127,6 +133,9 @@
     </ClInclude>
     <ClInclude Include="src\scenes\TestScene3D.h">
       <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\entry\EntryPoint.h">
+      <Filter>EntryPoint</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

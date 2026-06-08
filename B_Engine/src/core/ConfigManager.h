@@ -25,7 +25,7 @@ namespace Engine
     {
         int windowWidth = 1920;
         int windowHeight = 1080;
-        bool fullscreen = true;
+        bool fullscreen = false;
         bool vSync = false;
         bool showFPS = false;
 

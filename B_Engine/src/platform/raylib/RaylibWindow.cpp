@@ -23,7 +23,6 @@ namespace Engine
         // Set the minimum log level to display from Raylib internals.
         // LOG_NONE will hide all native warnings to keep our engine console clean.
         ::SetTraceLogLevel(LOG_NONE);
-
         data.size = size;
         data.title = title;
 

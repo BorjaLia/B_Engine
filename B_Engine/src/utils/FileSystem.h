@@ -11,6 +11,10 @@ namespace Engine
     class FileSystem
     {
     public:
+        /// Sets the root directory path for all subsequent file operations.
+/// @param path The base directory path (e.g., from command line args).
+        static void SetRootPath(const std::string& path);
+
         /// Reads an entire binary file into a byte vector.
         /// @param filepath The path to the file.
         /// @param outData The vector to populate with the file's binary data.
@@ -31,5 +35,13 @@ namespace Engine
         /// @param filepath The path where the file will be saved.
         /// @param text The text data to write.
         static bool WriteText(const std::string& filepath, const std::string& text);
+
+    private:
+        static std::string rootPath;
+
+        /// Prepends the root path to the given filepath if necessary.
+        /// @param filepath The original relative filepath.
+        /// @return The absolute filepath combined with the root path.
+        static std::string GetAbsolutePath(const std::string& filepath);
     };
 }

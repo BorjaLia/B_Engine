@@ -39,7 +39,7 @@ namespace Engine
 
     Application::~Application() {}
 
-    bool Application::Initialize(const std::string& title)
+    bool Application::Initialize(const std::string& title, IGame* gameInstance)
     {
         ConfigManager::LoadAll();
 
@@ -116,6 +116,14 @@ namespace Engine
         debugNode = CreateDebugNode();
 
         inputManager.Initialize(window->GetInput());
+
+        activeGame = gameInstance;
+        if (activeGame)
+        {
+            ENGINE_INFO("Game initialized");
+            activeGame->SetupInputs();
+            activeGame->RegisterScenes();
+        }
 
         isRunning = true;
         return true;
@@ -422,6 +430,14 @@ namespace Engine
         eventBus.Unsubscribe(SettingsChangedEvent::GetStaticType(), settingsEventId);
         eventBus.Unsubscribe(AudioMuteEvent::GetStaticType(), muteEventId);
         eventBus.Unsubscribe(AudioVolumeEvent::GetStaticType(), volumeEventId);
+
+        if (activeGame)
+        {
+            ENGINE_INFO("Shutting down Game instance");
+            activeGame->Shutdown();
+            delete activeGame;
+            activeGame = nullptr;
+        }
 
         if (rootScene) nodePool.Free(rootScene);
         if (debugNode) nodePool.Free(debugNode);
