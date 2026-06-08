@@ -1,7 +1,10 @@
 #include "Debug.h"
 
+// Standard Library Headers
+#include <iostream>
 #include <fstream>
 
+// OS Specific Headers
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -40,15 +43,23 @@ namespace Engine
 #endif
     }
 
-    void Logger::PrintOut(const std::string& message)
+    void Logger::PrintInternal(const char* colorCode, const char* prefix, const std::string& message)
     {
+        // 1. Print to standard console (iostream)
+        std::cout << colorCode << prefix << COLOR_RESET << " " << message << "\n";
+
+        // 2. Format the plain text message (no ANSI colors) for file and VS Output
+        std::string plainMessage = std::string(prefix) + " " + message + "\n";
+
 #ifdef _WIN32
-        OutputDebugStringA(message.c_str());
+        // Print to Visual Studio's "Output" window
+        OutputDebugStringA(plainMessage.c_str());
 #endif
 
+        // 3. Write to log file
         if (logFile.is_open())
         {
-            logFile << message;
+            logFile << plainMessage;
             logFile.flush();
         }
     }

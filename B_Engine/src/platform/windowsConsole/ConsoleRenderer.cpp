@@ -1,5 +1,4 @@
 #include "ConsoleRenderer.h"
-#include <iostream>
 
 // IMPORTANT: Define STB_IMAGE_IMPLEMENTATION in exactly ONE .cpp file globally.
 // #define STB_IMAGE_IMPLEMENTATION

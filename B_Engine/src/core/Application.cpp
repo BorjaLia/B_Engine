@@ -19,7 +19,6 @@
 #include "../platform/raylib/RaylibWindow.h"
 #include "../platform/windowsConsole/ConsoleWindow.h"
 
-#include <iostream>
 #include <cmath>
 #include <algorithm>
 

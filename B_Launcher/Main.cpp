@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     if (argc > 1)
     {
         Engine::FileSystem::SetRootPath(argv[1]);
-        std::cout << "Engine Launcher: Working directory set to '" << argv[1] << "'\n";
+        ENGINE_LOG("Engine Launcher: Working directory set to {}",argv[1]);
     }
 
     Engine::IGame* gameInstance = CreateGame();

@@ -1,7 +1,6 @@
 #include "RaylibRenderer.h"
 
 #include <raylib.h> // The only place where Raylib rendering API exists
-#include <iostream>
 
 namespace Engine
 {

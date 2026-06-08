@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <string>
 #include <cstdint>
 #include <format>
@@ -15,7 +14,7 @@ concept CustomStreamable = requires(std::ostream & os, const T & obj)
 {
     os << obj;
 } && !std::is_convertible_v<T, std::string_view> // Ignore strings
-&& !std::is_arithmetic_v<T>;                   // Ignore ints, floats, bools
+&& !std::is_arithmetic_v<T>;                     // Ignore ints, floats, bools
 
 // 2. Clean specialization without inheritance for std::format
 template <CustomStreamable T>
@@ -47,9 +46,9 @@ namespace Engine
     constexpr const char* COLOR_RESET = "\033[0m";
     constexpr const char* COLOR_RED = "\033[31m";
     constexpr const char* COLOR_GREEN = "\033[32m";
-    constexpr const char* COLOR_YELLOW = "\033[33m"; // Orange/Yellow
-    constexpr const char* COLOR_MAGENTA = "\033[35m"; // Purple
-    constexpr const char* COLOR_CYAN = "\033[36m"; // Turquoise
+    constexpr const char* COLOR_YELLOW = "\033[33m";   // Orange/Yellow
+    constexpr const char* COLOR_MAGENTA = "\033[35m";  // Purple
+    constexpr const char* COLOR_CYAN = "\033[36m";     // Turquoise
     constexpr const char* COLOR_GRAY = "\033[90m";
 #pragma endregion
 
@@ -72,7 +71,6 @@ namespace Engine
 
         All = 65535,
 
-        // --- NEW FILTERS ---
         // All, but turns off bit 5 (Mouse)
         NoMouseInput = 65535 & ~(1 << 5),
 
@@ -107,17 +105,16 @@ namespace Engine
         {
             if (!Has(level)) return;
 
+            // Resolve the format string at the call site
             std::string formattedMsg = std::format(fmt, std::forward<Args>(args)...);
 
-            // Print to console with colored prefix
-            std::cout << colorCode << prefix << COLOR_RESET << " " << formattedMsg << "\n";
-
-            // Print to Visual Studio's "Output" window and write to file
-            PrintOut(std::string(prefix) + " " + formattedMsg + "\n");
+            // Delegate the actual I/O operations to the .cpp file
+            PrintInternal(colorCode, prefix, formattedMsg);
         }
 
     private:
-        static void PrintOut(const std::string& message);
+        /// Handles the final output to console, VS Output Window, and the log file.
+        static void PrintInternal(const char* colorCode, const char* prefix, const std::string& message);
 
         static LogLevel currentLevel;
     };
