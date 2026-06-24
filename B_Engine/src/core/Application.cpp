@@ -439,9 +439,11 @@ namespace Engine
                 rootScene->Start();
                 isScenePendingStart = false;
             }
-
-            CalculateTime(accumulator, frameCount, fpsTimer, currentFPS, renderer);
-            UpdateFixed(FIXED_TIMESTEP, accumulator);
+            else
+            {
+                CalculateTime(accumulator, frameCount, fpsTimer, currentFPS, renderer);
+            }
+                UpdateFixed(FIXED_TIMESTEP, accumulator);
             UpdateVariable();
             HandleSystemHotkeys(input);
             RenderAndCleanup(renderer, bgColor);
