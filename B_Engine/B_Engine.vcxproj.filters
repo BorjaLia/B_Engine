@@ -31,9 +31,6 @@
     <Filter Include="Systems\Events">
       <UniqueIdentifier>{cda1c7ed-a107-47df-9a19-160d7de4c1df}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Systems\Inputs">
-      <UniqueIdentifier>{4e35afe1-3702-4c80-ad0a-fbf680feb5ca}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Systems\Physics">
       <UniqueIdentifier>{59fbec70-7d39-4485-98a9-6f96300f8588}</UniqueIdentifier>
     </Filter>
@@ -66,6 +63,9 @@
     </Filter>
     <Filter Include="Core\Memory">
       <UniqueIdentifier>{d7c46a07-57fe-4043-b41b-128541a78be5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Inputs">
+      <UniqueIdentifier>{4e35afe1-3702-4c80-ad0a-fbf680feb5ca}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +217,9 @@
       <Filter>SceneGraph\Nodes</Filter>
     </ClCompile>
     <ClCompile Include="src\components\PlayerMovement3DComponent.cpp">
+      <Filter>SceneGraph\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\MeshRendererComponent.cpp">
       <Filter>SceneGraph\Components</Filter>
     </ClCompile>
   </ItemGroup>
@@ -444,6 +447,9 @@
       <Filter>Core\Memory</Filter>
     </ClInclude>
     <ClInclude Include="src\components\PlayerMovement3DComponent.h">
+      <Filter>SceneGraph\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\MeshRendererComponent.h">
       <Filter>SceneGraph\Components</Filter>
     </ClInclude>
   </ItemGroup>

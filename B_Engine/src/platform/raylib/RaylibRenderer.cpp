@@ -72,13 +72,11 @@ namespace Engine
     {
         isCamera3DActive = true;
 
-        // Guardamos los valores de forma nativa para el momento del Flush
         camPosition = position;
         camTarget = target;
         camUp = up;
         camFov = fov;
 
-        // Construimos la cámara de Raylib en la pila
         ::Camera3D internalCam3D = { 0 };
         internalCam3D.position = { position.x, position.y, position.z };
         internalCam3D.target = { target.x, target.y, target.z };
@@ -247,14 +245,48 @@ namespace Engine
 
     void RaylibRenderer::FlushDebug(RenderLayer layer)
     {
+        // 1. Process 3D Debug Shapes
+        if (layer == RenderLayer::World && isCamera3DActive && !debug3DQueue.empty())
+        {
+            ::Camera3D internalCam3D = { 0 };
+            internalCam3D.position = { camPosition.x, camPosition.y, camPosition.z };
+            internalCam3D.target = { camTarget.x, camTarget.y, camTarget.z };
+            internalCam3D.up = { camUp.x, camUp.y, camUp.z };
+            internalCam3D.fovy = camFov;
+            internalCam3D.projection = CAMERA_PERSPECTIVE;
+
+            ::BeginMode3D(internalCam3D);
+            for (const auto& cmd : debug3DQueue)
+            {
+                ::Color raylibColor = ToRaylibColor(cmd.color);
+
+                std::visit([&](auto&& shape)
+                    {
+                        using T = std::decay_t<decltype(shape)>;
+                        if constexpr (std::is_same_v<T, Line3DShape>)
+                        {
+                            // Positions are treated as relative to the command's position origin
+                            ::Vector3 start = { cmd.position.x + shape.start.x, cmd.position.y + shape.start.y, cmd.position.z + shape.start.z };
+                            ::Vector3 end = { cmd.position.x + shape.end.x, cmd.position.y + shape.end.y, cmd.position.z + shape.end.z };
+                            ::DrawLine3D(start, end, raylibColor);
+                        }
+                        else if constexpr (std::is_same_v<T, Cube3DShape>)
+                        {
+                            ::Vector3 pos = { cmd.position.x, cmd.position.y, cmd.position.z };
+                            ::DrawCubeWires(pos, shape.size.x, shape.size.y, shape.size.z, raylibColor);
+                        }
+                    }, cmd.shape);
+            }
+            ::EndMode3D();
+        }
+
+        // 2. Process 2D Debug Shapes
         std::vector<DebugRenderCommand>& queue = (layer == RenderLayer::World) ? debugWorldQueue : debugUIQueue;
 
         for (const auto& cmd : queue)
         {
             ::Color raylibColor = ToRaylibColor(cmd.color);
 
-            // std::visit is the modern C++ approach for std::variant
-            // It safely determines the active shape at runtime
             std::visit([&](auto&& shape)
                 {
                     using T = std::decay_t<decltype(shape)>;
@@ -264,7 +296,6 @@ namespace Engine
                         float hw = shape.size.x / 2.0f;
                         float hh = shape.size.y / 2.0f;
 
-                        // Convert to radians (Raylib uses inverted Y, so we invert the angle)
                         float rad = cmd.rotation * (3.14159265f / 180.0f);
                         float c = std::cos(rad);
                         float s = std::sin(rad);
@@ -274,7 +305,6 @@ namespace Engine
                             {  hw,  hh }, { -hw,  hh }
                         };
 
-                        // Rotate and translate to world space
                         for (int i = 0; i < 4; ++i)
                         {
                             float rx = corners[i].x * c - corners[i].y * s;
@@ -291,7 +321,6 @@ namespace Engine
                     }
                     else if constexpr (std::is_same_v<T, CircleShape>)
                     {
-                        // Circles are drawn from the center by default
                         ::DrawCircleLines(
                             static_cast<int>(cmd.position.x),
                             static_cast<int>(-cmd.position.y),
@@ -308,13 +337,11 @@ namespace Engine
                     else if constexpr (std::is_same_v<T, PolygonShape>)
                     {
                         size_t vertexCount = shape.localVertices.size();
-
                         if (vertexCount > 1)
                         {
                             for (size_t i = 0; i < vertexCount; ++i)
                             {
                                 size_t next = (i + 1) % vertexCount;
-
                                 ::Vector2 start = {
                                     cmd.position.x + shape.localVertices[i].x,
                                     -(cmd.position.y + shape.localVertices[i].y)
@@ -323,7 +350,6 @@ namespace Engine
                                     cmd.position.x + shape.localVertices[next].x,
                                     -(cmd.position.y + shape.localVertices[next].y)
                                 };
-
                                 ::DrawLineV(start, end, raylibColor);
                             }
                         }
@@ -331,6 +357,8 @@ namespace Engine
                 }, cmd.shape);
         }
     }
+
+#pragma region Resource Loading implementations
 
     Texture2D RaylibRenderer::LoadTexture(const char* filepath)
     {
@@ -437,4 +465,86 @@ namespace Engine
 
         return Engine::Texture2D{ tex.id, {tex.width, tex.height} };
     }
+
+    Model RaylibRenderer::LoadModel(const char* filepath)
+    {
+        ::Model rlModel = ::LoadModel(filepath);
+
+        // If it failed to load, Raylib sets meshCount to 0
+        if (rlModel.meshCount == 0 || rlModel.meshes == nullptr)
+        {
+            return Engine::Model{};
+        }
+
+        Engine::Model engModel;
+
+        // 1. Calculate and Steal the Bounding Box
+        ::BoundingBox bbox = ::GetModelBoundingBox(rlModel);
+        engModel.bounds.min = { bbox.min.x, bbox.min.y, bbox.min.z };
+        engModel.bounds.max = { bbox.max.x, bbox.max.y, bbox.max.z };
+
+        // 2. Hijack the Mesh Data (CPU & GPU)
+        for (int i = 0; i < rlModel.meshCount; i++)
+        {
+            Engine::Mesh engMesh;
+            engMesh.vaoId = rlModel.meshes[i].vaoId;
+            engMesh.vertexCount = rlModel.meshes[i].vertexCount;
+            engMesh.triangleCount = rlModel.meshes[i].triangleCount;
+
+            // --- GPU Data Steal ---
+            // Raylib allocates a maximum of 7 VBOs per mesh
+            if (rlModel.meshes[i].vboId != nullptr)
+            {
+                for (int v = 0; v < 7; v++)
+                {
+                    engMesh.vboIds.push_back(rlModel.meshes[i].vboId[v]);
+                    rlModel.meshes[i].vboId[v] = 0; // Wipe ID so Raylib doesn't delete it from VRAM
+                }
+            }
+            rlModel.meshes[i].vaoId = 0; // Wipe ID so Raylib doesn't delete it from VRAM
+
+            // --- CPU Data Steal (Deep Copy for Physics and Custom GL later) ---
+            if (rlModel.meshes[i].vertices != nullptr)
+                engMesh.vertices.assign(rlModel.meshes[i].vertices, rlModel.meshes[i].vertices + (engMesh.vertexCount * 3));
+
+            if (rlModel.meshes[i].normals != nullptr)
+                engMesh.normals.assign(rlModel.meshes[i].normals, rlModel.meshes[i].normals + (engMesh.vertexCount * 3));
+
+            if (rlModel.meshes[i].texcoords != nullptr)
+                engMesh.texcoords.assign(rlModel.meshes[i].texcoords, rlModel.meshes[i].texcoords + (engMesh.vertexCount * 2));
+
+            if (rlModel.meshes[i].indices != nullptr)
+                engMesh.indices.assign(rlModel.meshes[i].indices, rlModel.meshes[i].indices + (engMesh.triangleCount * 3));
+
+            engModel.meshes.push_back(engMesh);
+        }
+
+        // 3. Safe Cleanup. 
+        // Since we copied the CPU arrays, we WANT Raylib to free its memory.
+        // Since we zeroed the GPU IDs, Raylib will NOT destroy our graphics memory!
+        ::UnloadModel(rlModel);
+
+        return engModel;
+    }
+
+    void RaylibRenderer::UnloadModel(Model model)
+    {
+        // Forge temporary meshes with empty CPU arrays to force Raylib to ONLY delete the VRAM buffers
+        for (const auto& engMesh : model.meshes)
+        {
+            ::Mesh forgedMesh = { 0 };
+            forgedMesh.vaoId = engMesh.vaoId;
+
+            forgedMesh.vboId = static_cast<unsigned int*>(::MemAlloc(7 * sizeof(unsigned int)));
+            for (int i = 0; i < 7; i++)
+            {
+                forgedMesh.vboId[i] = (i < engMesh.vboIds.size()) ? engMesh.vboIds[i] : 0;
+            }
+
+            // Because CPU arrays (vertices, etc) are nullptr in our forgedMesh, 
+            // ::UnloadMesh will safely skip CPU deletion and only call glDeleteVertexArrays / glDeleteBuffers!
+            ::UnloadMesh(forgedMesh);
+        }
+    }
+#pragma region Resource Loading implementations
 }

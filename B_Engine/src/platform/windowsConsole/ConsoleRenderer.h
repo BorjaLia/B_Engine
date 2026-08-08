@@ -49,6 +49,9 @@ namespace Engine
 
         Texture2D CreateWhitePixel() override;
 
+        virtual Model LoadModel(const char* filepath) override;
+        virtual void UnloadModel(Model model) override;
+
     private:
         HANDLE hConsole;
         SMALL_RECT consoleWriteArea;

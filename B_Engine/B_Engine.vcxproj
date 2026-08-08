@@ -166,6 +166,7 @@
     <ClCompile Include="src\components\DebugTrackingComponent.cpp" />
     <ClCompile Include="src\components\FollowComponent.cpp" />
     <ClCompile Include="src\components\FollowSequencerComponent.cpp" />
+    <ClCompile Include="src\components\MeshRendererComponent.cpp" />
     <ClCompile Include="src\components\PhysicsPlayerMovementComponent.cpp" />
     <ClCompile Include="src\components\PlayerMovement3DComponent.cpp" />
     <ClCompile Include="src\components\PlayerMovementComponent.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="src\components\DebugTrackingComponent.h" />
     <ClInclude Include="src\components\FollowComponent.h" />
     <ClInclude Include="src\components\FollowSequencerComponent.h" />
+    <ClInclude Include="src\components\MeshRendererComponent.h" />
     <ClInclude Include="src\components\PhysicsPlayerMovementComponent.h" />
     <ClInclude Include="src\components\PlayerMovement3DComponent.h" />
     <ClInclude Include="src\components\PlayerMovementComponent.h" />

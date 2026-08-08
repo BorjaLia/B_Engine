@@ -7,6 +7,7 @@
 #include "components/CameraComponent.h"
 #include "components/SpriteComponent.h"
 #include "components/ScriptComponent.h"
+#include "components/MeshRendererComponent.h"
 #include "components/TextComponent.h"
 #include "components/UIAnchorComponent.h"
 #include "components/PlayerMovement3DComponent.h"
@@ -102,6 +103,15 @@ void TestScene3D::Build(Engine::SceneBuilder& builder)
 		treeNode->transform.SetPosition({ randX, 0.0f, randZ });
 		treeNode->AddComponent<Engine::SpriteComponent>(texTree, Engine::Pivot::BottomCenter);
 	}
+
+	// 1. Cargar el modelo a través de nuestro nuevo ResourceManager
+	Engine::Model myCubeModel = rm.GetModel("res/models/cube.obj");
+
+	// 2. Crear el Nodo y el Componente
+	Engine::Node* cubeNode = builder.CreateNode("MyCube");
+	cubeNode->AddComponent<Engine::MeshRendererComponent>(myCubeModel);
+
+	cubeNode->transform.SetScale(Engine::Vector3f(10.0f, 10.0f, 10.0f));
 
 	// 4. UI DE DEBUG
 	Engine::Font* font = rm.GetFont("res/fonts/ReemKufiFunRegular.ttf", 24);

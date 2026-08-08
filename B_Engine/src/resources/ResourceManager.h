@@ -44,6 +44,10 @@ namespace Engine
         /// Returns an invalid clip (id == 0) if audio is not available.
         AudioClip GetAudioClip(const std::string& filepath);
 
+        /// Returns a cached 3D Model, loading it on first request.
+        /// Returns an invalid model (id == 0) if it fails to load.
+        Model GetModel(const std::string& filepath);
+
         /// Unloads all resources and releases GPU/audio memory.
         void Clear();
 
@@ -54,6 +58,8 @@ namespace Engine
         std::unordered_map<std::string, Texture2D> textures;
         std::unordered_map<std::string, Font*>     fonts;
         std::unordered_map<std::string, AudioClip> audioClips;
+        std::unordered_map<std::string, Model>     models;
+
         std::vector<RenderTexture2D>               renderTextures;
     };
 }

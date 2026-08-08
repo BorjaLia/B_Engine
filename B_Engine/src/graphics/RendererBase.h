@@ -100,7 +100,14 @@ namespace Engine
         }
 
         virtual void Flush(RenderLayer layer) = 0;
-        /// Queues a debug wireframe shape for rendering.
+
+        /// Queues a 3D Model for rendering.
+        virtual void SubmitModel(const Model& model, const Vector3f& position, const Vector3f& rotationAxis = { 0.0f, 1.0f, 0.0f }, float rotationAngle = 0.0f, const Vector3f& scale = { 1.0f, 1.0f, 1.0f }, const Color& tint = { 255, 255, 255, 255 })
+        {
+            modelQueue.push_back({ model, position, rotationAxis, rotationAngle, scale, tint });
+        }
+
+        /// Queues a debug wireframe 2D shape for rendering.
         virtual void SubmitDebugShape(RenderLayer layer, const Shape& shape, const Vector2f& position, float rotation, const Color& color)
         {
             if (!debugRenderEnabled) return;
@@ -109,6 +116,13 @@ namespace Engine
                 debugWorldQueue.push_back({ shape, position, rotation, color });
             else if (layer == RenderLayer::UI)
                 debugUIQueue.push_back({ shape, position, rotation, color });
+        }
+
+        /// Queues a debug wireframe 3D shape for rendering.
+        virtual void SubmitDebugShape3D(const Shape3D& shape, const Vector3f& position, const Color& color)
+        {
+            if (!debugRenderEnabled) return;
+            debug3DQueue.push_back({ shape, position, color });
         }
 
         virtual void FlushDebug(RenderLayer layer) = 0;
@@ -122,16 +136,22 @@ namespace Engine
         virtual bool OnInit() = 0;
         virtual void OnShutdown() = 0;
 
+        // Texture API
         virtual Texture2D LoadTexture(const char* filepath) = 0;
         virtual void UnloadTexture(Texture2D texture) = 0;
 
+        // Font API
         virtual Font* LoadFont(const char* filepath, int baseSize) = 0;
         virtual void UnloadFont(Font* font) = 0;
 
+        // Render Texture API
         virtual RenderTexture2D CreateRenderTexture(const Vector2i& size) = 0;
         virtual void UnloadRenderTexture(RenderTexture2D target) = 0;
-
         virtual Texture2D CreateWhitePixel() = 0;
+
+        // 3D Model API
+        virtual Model LoadModel(const char* filepath) = 0;
+        virtual void UnloadModel(Model model) = 0;
 
         virtual void ClearQueues()
         {
@@ -139,6 +159,8 @@ namespace Engine
             uiQueue.clear();
             debugWorldQueue.clear();
             debugUIQueue.clear();
+            modelQueue.clear();
+            debug3DQueue.clear();
         }
 
         void CalculateLetterbox();
@@ -150,9 +172,11 @@ namespace Engine
 
         std::vector<SpriteRenderCommand> worldQueue;
         std::vector<SpriteRenderCommand> uiQueue;
+        std::vector<ModelRenderCommand> modelQueue;
 
         std::vector<DebugRenderCommand> debugWorldQueue;
         std::vector<DebugRenderCommand> debugUIQueue;
+        std::vector<DebugRenderCommand3D> debug3DQueue;
 
         std::optional<RenderTexture2D> activeRenderTarget = std::nullopt;
 

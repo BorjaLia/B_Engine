@@ -243,4 +243,6 @@ namespace Engine
     void ConsoleRenderer::BeginFrame() {}
     void ConsoleRenderer::FlushDebug(RenderLayer) {}
     Texture2D ConsoleRenderer::CreateWhitePixel() { return Texture2D{ 0, {1,1} }; }
+    Model ConsoleRenderer::LoadModel(const char* /*filepath*/){return Model();}
+    void ConsoleRenderer::UnloadModel(Model /*model*/){}
 }

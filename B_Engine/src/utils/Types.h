@@ -68,13 +68,61 @@ namespace Engine
 	enum class RenderLayer { World, UI };
 #pragma endregion
 
+#pragma region 3D Graphics
+	struct BoundingBox3D
+	{
+		Vector3f min;
+		Vector3f max;
+	};
+
+	/// Represents a single piece of geometry. 
+	/// Owns the raw CPU data (for physics/custom OpenGL) and the GPU IDs.
+	struct Mesh
+	{
+		unsigned int vaoId = 0;                  // OpenGL Vertex Array Object ID
+		std::vector<unsigned int> vboIds;        // OpenGL Vertex Buffer Object IDs
+		int vertexCount = 0;
+		int triangleCount = 0;
+
+		// Raw CPU Data
+		std::vector<float> vertices;
+		std::vector<float> normals;
+		std::vector<float> texcoords;
+		std::vector<unsigned short> indices;
+	};
+
+	/// A complete 3D model owned by the Engine, containing pure graphical data and bounds
+	struct Model
+	{
+		std::vector<Mesh> meshes;
+		BoundingBox3D bounds;
+	};
+
+	struct ModelRenderCommand
+	{
+		Model model;
+		Vector3f position;
+		Vector3f rotationAxis;
+		float rotationAngle = 0.0f;
+		Vector3f scale = { 1.0f, 1.0f, 1.0f };
+		Color tint;
+	};
+#pragma endregion
+
 #pragma region Shapes & Math
+	// 2D Shapes
 	struct CircleShape { float radius = 1.0f; };
 	struct RectangleShape { Vector2f size = { 1.0f, 1.0f }; };
 	struct LineShape { Vector2f start = { 0.0f, 0.0f }; Vector2f end = { 1.0f, 1.0f }; };
 	struct PolygonShape { std::vector<Vector2f> localVertices; };
 
 	using Shape = std::variant<CircleShape, RectangleShape, LineShape, PolygonShape>;
+	
+	// 3D Shapes
+	struct Line3DShape { Vector3f start = { 0.0f, 0.0f, 0.0f }; Vector3f end = { 0.0f, 0.0f, 1.0f }; };
+	struct Cube3DShape { Vector3f size = { 1.0f, 1.0f, 1.0f }; };
+
+	using Shape3D = std::variant<Line3DShape, Cube3DShape>;
 
 	struct Rect { Vector2f pos; Vector2f size; };
 
@@ -99,6 +147,14 @@ namespace Engine
 		float rotation = 0.0f;
 		Color color;
 	};
+
+	struct DebugRenderCommand3D
+	{
+		Shape3D shape;
+		Vector3f position;
+		Color color;
+	};
+
 #pragma endregion
 
 #pragma region Audio

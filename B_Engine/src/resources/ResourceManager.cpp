@@ -73,6 +73,23 @@ namespace Engine
         return f;
     }
 
+    Model ResourceManager::GetModel(const std::string& filepath)
+    {
+        auto it = models.find(filepath);
+        if (it != models.end()) return it->second;
+
+        std::string absolutePath = FileSystem::GetAbsolutePath(filepath);
+        Model mdl = renderer->LoadModel(absolutePath.c_str());
+
+        if (mdl.meshes.empty())
+        {
+            ENGINE_ERROR("ResourceManager: 3D Model '{}' failed to load.", filepath);
+        }
+
+        models[filepath] = mdl;
+        return mdl;
+    }
+
     AudioClip ResourceManager::GetAudioClip(const std::string& filepath)
     {
         if (!audio)
@@ -134,6 +151,12 @@ namespace Engine
             }
             audioClips.clear();
         }
+
+        for (auto& [path, mdl] : models)
+        {
+            renderer->UnloadModel(mdl);
+        }
+        models.clear();
 
         ENGINE_INFO("ResourceManager: All resources released.");
     }
