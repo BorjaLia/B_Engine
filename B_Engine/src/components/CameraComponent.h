@@ -47,11 +47,11 @@ namespace Engine
         void SetFarPlane(float farP) { farPlane = farP; }
         float GetFarPlane() const { return farPlane; }
 
-        void SetTarget(const Vector3f& newTarget) { target = newTarget; }
-        Vector3f GetTarget() const { return target; }
+        /// Calculates the current target based on the owner's Transform (Position + Forward).
+        Vector3f GetTarget() const;
 
         void SetUpVector(const Vector3f& newUp) { upVector = newUp; }
-        Vector3f GetUpVector() const { return upVector; }
+        Vector3f GetUpVector() const;
 
         // --- Render Target API ---
         void SetRenderTarget(const RenderTexture2D& target);
@@ -77,7 +77,6 @@ namespace Engine
         float nearPlane = 0.1f;
         float farPlane = 1000.0f;
 
-        Vector3f target = { 0.0f, 0.0f, 0.0f }; // Where the camera is looking
         Vector3f upVector = { 0.0f, 1.0f, 0.0f }; // The "up" direction for the camera
 
         std::optional<RenderTexture2D> renderTarget;

@@ -15,6 +15,8 @@
 #include "utils/StringHash.h" 
 #include "math/MathUtils.h"
 
+#include "../scripts/CameraLookScript.h"
+
 #include <sstream>
 #include <iomanip>
 
@@ -40,31 +42,31 @@ public:
 		if (owner) cam = owner->GetComponent<Engine::CameraComponent>();
 	}
 
-	void OnUpdate(float deltaTime) override
+	void OnUpdate(float /*deltaTime*/) override
 	{
-		if (!targetNode || !cam) return;
+		//if (!targetNode || !cam) return;
 
-		auto& mapper = Engine::Application::Get().GetInputManager();
+		//auto& mapper = Engine::Application::Get().GetInputManager();
 
-		float rotXInput = mapper.GetAxis(Engine::Hash::GetHash("Game_RotX"));
-		float rotYInput = mapper.GetAxis(Engine::Hash::GetHash("Game_RotY"));
+		//float rotXInput = mapper.GetAxis(Engine::Hash::GetHash("Game_RotX"));
+		//float rotYInput = mapper.GetAxis(Engine::Hash::GetHash("Game_RotY"));
 
-		float rotationSpeed = 2.0f;
-		currentYaw -= rotXInput * rotationSpeed * deltaTime;
-		height += rotYInput * deltaTime;
+		//float rotationSpeed = 2.0f;
+		//currentYaw -= rotXInput * rotationSpeed * deltaTime;
+		//height += rotYInput * deltaTime;
 
-		Engine::Vector3f targetPos = targetNode->transform.GetGlobalPosition();
+		//Engine::Vector3f targetPos = targetNode->transform.GetGlobalPosition();
 
-		Engine::Vector3f newCamPos;
-		newCamPos.x = targetPos.x + std::sin(currentYaw) * distance;
-		newCamPos.y = targetPos.y + height;
-		newCamPos.z = targetPos.z + std::cos(currentYaw) * distance;
+		//Engine::Vector3f newCamPos;
+		//newCamPos.x = targetPos.x + std::sin(currentYaw) * distance;
+		//newCamPos.y = targetPos.y + height;
+		//newCamPos.z = targetPos.z + std::cos(currentYaw) * distance;
 
-		owner->transform.SetPosition(newCamPos);
+		//owner->transform.SetPosition(newCamPos);
 
-		owner->transform.SetEulerAngles({ 0.0f, currentYaw + Engine::PI, 0.0f });
+		//owner->transform.SetEulerAngles({ 0.0f, currentYaw + Engine::PI, 0.0f });
 
-		cam->SetTarget(targetPos);
+		//cam->SetTarget(targetPos);
 	}
 };
 
@@ -79,9 +81,10 @@ void TestScene3D::Build(Engine::SceneBuilder& builder)
 	Engine::Node* playerNode = builder.CreateNode("Player3D");
 	playerNode->transform.SetPosition({ 0.0f, 0.0f, 0.0f });
 
-	playerNode->AddComponent<Engine::SpriteComponent>(texPlayer, Engine::Pivot::BottomCenter);
+	//playerNode->AddComponent<Engine::SpriteComponent>(texPlayer, Engine::Pivot::BottomCenter);
 
-	Engine::Node* camNode = builder.CreateNode("Camera3D");
+	Engine::Node* camNode = builder.CreateChildNode(playerNode,"Camera3D");
+
 	auto* cam = camNode->AddComponent<Engine::CameraComponent>();
 
 	playerNode->AddComponent<Engine::PlayerMovement3DComponent>(cam, 200.0f);
@@ -90,7 +93,8 @@ void TestScene3D::Build(Engine::SceneBuilder& builder)
 	cam->SetFOV(60.0f);
 	cam->SetUpVector({ 0.0f, 1.0f, 0.0f });
 
-	camNode->AddComponent<Engine::ScriptComponent>(new CameraFollow3DScript(playerNode, 250.0f, 100.0f));
+	//camNode->AddComponent<Engine::ScriptComponent>(new CameraFollow3DScript(playerNode, 250.0f, 100.0f));
+	camNode->AddComponent<Engine::ScriptComponent>(new CameraLookScript(0.25f));
 
 	// 3. ENTORNO 3D 
 	for (int i = 0; i < 40; ++i)

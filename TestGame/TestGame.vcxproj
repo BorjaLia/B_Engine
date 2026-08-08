@@ -158,6 +158,7 @@
     <ClCompile Include="src\scenes\GameplayScene.cpp" />
     <ClCompile Include="src\scenes\MainMenuScene.cpp" />
     <ClCompile Include="src\scenes\TestScene3D.cpp" />
+    <ClCompile Include="src\scripts\CameraLookScript.cpp" />
     <ClCompile Include="src\scripts\CoinScript.cpp" />
     <ClCompile Include="src\scripts\EnemyScript.cpp" />
     <ClCompile Include="src\scripts\FinishLineScript.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="src\scenes\GameplayScene.h" />
     <ClInclude Include="src\scenes\MainMenuScene.h" />
     <ClInclude Include="src\scenes\TestScene3D.h" />
+    <ClInclude Include="src\scripts\CameraLookScript.h" />
     <ClInclude Include="src\scripts\CoinScript.h" />
     <ClInclude Include="src\scripts\EnemyScript.h" />
     <ClInclude Include="src\scripts\FinishLineScript.h" />

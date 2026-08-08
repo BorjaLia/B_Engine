@@ -144,8 +144,21 @@ namespace Engine
     {
         if (isReplaying) return;
 
-        SetAbsoluteAxis(Hash::GetHash("Pointer_X"), e.GetX(), ActionCategory::Gameplay);
-        SetAbsoluteAxis(Hash::GetHash("Pointer_Y"), e.GetY(), ActionCategory::Gameplay);
+        Vector2f currentPos = { e.GetX(), e.GetY() };
+
+        if (isFirstMouseMove)
+        {
+            lastMousePos = currentPos;
+            isFirstMouseMove = false;
+        }
+
+        // Accumulate delta in case multiple events fire in a single frame
+        currentMouseDelta.x += (currentPos.x - lastMousePos.x);
+        currentMouseDelta.y += (currentPos.y - lastMousePos.y);
+        lastMousePos = currentPos;
+
+        SetAbsoluteAxis(Hash::GetHash("Pointer_X"), currentPos.x, ActionCategory::Gameplay);
+        SetAbsoluteAxis(Hash::GetHash("Pointer_Y"), currentPos.y, ActionCategory::Gameplay);
     }
 
     void InputMapper::OnMouseScrolled(MouseScrolledEvent& e)
@@ -186,6 +199,11 @@ namespace Engine
             if (isLivePressed && !wasLivePressed) pendingJustPressed.push_back(actionHash);
             if (!isLivePressed && wasLivePressed) pendingJustReleased.push_back(actionHash);
         }
+    }
+
+    void InputMapper::ClearVisualSnapshot()
+    {
+        currentMouseDelta = { 0.0f, 0.0f };
     }
 
     void InputMapper::ApplyPhysicalSnapshot()

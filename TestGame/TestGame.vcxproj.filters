@@ -81,6 +81,9 @@
     <ClCompile Include="src\entry\EntryPoint.cpp">
       <Filter>EntryPoint</Filter>
     </ClCompile>
+    <ClCompile Include="src\scripts\CameraLookScript.cpp">
+      <Filter>Entities\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PlatformerGame.h">
@@ -136,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="src\entry\EntryPoint.h">
       <Filter>EntryPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripts\CameraLookScript.h">
+      <Filter>Entities\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

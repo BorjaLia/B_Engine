@@ -52,6 +52,28 @@ namespace Engine
         zoom = newZoom;
     }
 
+    Vector3f CameraComponent::GetTarget() const
+    {
+        if (!owner)
+        {
+            return { 0.0f, 0.0f, -1.0f }; // Safe fallback if no owner exists
+        }
+
+        // Dynamically calculate the look-at point based on current Transform
+        Vector3f currentPos = owner->transform.GetGlobalPosition();
+        Vector3f forward = owner->transform.GetForward();
+
+        return currentPos + forward;
+    }
+
+    Vector3f CameraComponent::GetUpVector() const
+    {
+        // Ideally, if your Transform provides GetUp(), use: return owner->transform.GetUp();
+        // But allowing a manual override for things like camera shake/rolls is also useful.
+        if (owner->GetParent() != nullptr) return owner->GetParent()->transform.GetUp();
+        return upVector;
+    }
+
     void CameraComponent::SetRenderTarget(const RenderTexture2D& newTarget)
     {
         renderTarget = newTarget;
@@ -76,19 +98,12 @@ namespace Engine
     {
         if (!owner) return screenPos; // Fallback
 
-        // 1. Get the camera's position in the world
         Vector2f cameraPos = owner->transform.GetPosition();
-
-        // 2. Get the logic screen size
         Vector2i screenSize = Application::Get().GetRenderer()->GetLogicalResolution();
         Vector2f screenCenter = { screenSize.x / 2.0f, screenSize.y / 2.0f };
 
-        // 3. Calculate position considering the zoom and center
         Vector2f worldPos;
         worldPos.x = cameraPos.x + ((screenPos.x - screenCenter.x) / zoom);
-
-        // Warning with Y-Axis: If the world Y grows UPwards (math style)
-        // but screen Y grows DOWNwards (monitor style), the formula is inverted.
         worldPos.y = cameraPos.y + ((screenPos.y + screenCenter.y) / zoom);
 
         return worldPos;

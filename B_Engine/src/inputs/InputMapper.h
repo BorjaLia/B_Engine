@@ -6,6 +6,8 @@
 
 #include "../events/EventBus.h"
 #include "../events/InputEvents.h" 
+#include "math/Vector2.h"
+
 #include "KeyCodes.h"
 
 namespace Engine
@@ -51,6 +53,10 @@ namespace Engine
         bool IsActionPressed(uint32_t actionHash);
         bool IsActionJustPressed(uint32_t actionHash);
         bool IsActionJustReleased(uint32_t actionHash);
+
+        Vector2f GetMouseDelta() const { return currentMouseDelta; }
+
+        void ClearVisualSnapshot();
 #pragma endregion
 
     private:
@@ -77,9 +83,15 @@ namespace Engine
         uint32_t mouseMovedSubId = 0;
         uint32_t mouseScrolledSubId = 0;
 
+        // ReplayState
         uint32_t replayStateSubId = 0;
 
         bool isReplaying = false;
+
+        // Mouse Delta tracking
+        Vector2f currentMouseDelta = Vector2f(0.0f, 0.0f );
+        Vector2f lastMousePos = Vector2f(0.0f, 0.0f);
+        bool isFirstMouseMove = true; 
 
         void OnKeyPressed(KeyPressedEvent& e);
         void OnKeyReleased(KeyReleasedEvent& e);

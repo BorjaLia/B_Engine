@@ -58,6 +58,11 @@ namespace Engine
         {
             return { mapper.GetAxis(Hash::GetHash("Pointer_X")), mapper.GetAxis(Hash::GetHash("Pointer_Y")) };
         }
+
+        Vector2f GetMouseDelta()
+        {
+            return mapper.GetMouseDelta();
+        }
 #pragma endregion
 
         InputLogger& GetLogger() { return logger; }

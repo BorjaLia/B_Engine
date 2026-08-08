@@ -15,6 +15,8 @@ namespace Engine
 
     void InputManager::Update(EventBus& eventBus)
     {
+        mapper.ClearVisualSnapshot();
+
         if (!rawInput) return;
 
         // Read hardware (this will fill the pending queues inside the Mapper)
