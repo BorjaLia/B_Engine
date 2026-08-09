@@ -9,7 +9,7 @@ public:
 	CubeScript();
 	~CubeScript() override = default;
 
-	void OnUpdate(float deltaTime) override;
+	void OnFixedUpdate(float fixedDeltaTime) override;
 
 private:
 

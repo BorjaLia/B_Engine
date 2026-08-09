@@ -50,6 +50,32 @@ namespace Engine
         virtual void UnloadModel(Model model) override;
 
     private:
+
+        // --- Render Passes (Backend Specific Helpers) ---
+
+        /// Renders all opaque 3D models queued for this frame.
+        void RenderOpaqueModels3D();
+
+        /// Renders 2D sprites oriented towards the 3D camera.
+        /// @param queue The command queue to process.
+        void RenderBillboards3D(const std::vector<SpriteRenderCommand>& queue);
+
+        /// Renders flat 2D sprites (Orthographic).
+        /// @param queue The command queue to process.
+        /// @param isWorldSpace True if coordinates need Y-inversion for world space.
+        void RenderSprites2D(const std::vector<SpriteRenderCommand>& queue, bool isWorldSpace);
+
+        /// Renders primitive 3D debug shapes (Lines, Cubes, Paths).
+        void RenderDebugShapes3D();
+
+        /// Renders raw geometry wireframes for 3D models.
+        void RenderDebugWireframes3D();
+
+        /// Renders primitive 2D debug shapes.
+        /// @param queue The command queue to process.
+        /// @param isWorldSpace True if coordinates need Y-inversion for world space.
+        void RenderDebugShapes2D(const std::vector<DebugRenderCommand>& queue, bool isWorldSpace);
+
         Vector3f camPosition;
         Vector3f camTarget;
         Vector3f camUp;

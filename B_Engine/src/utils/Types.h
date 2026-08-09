@@ -26,6 +26,7 @@ namespace Engine
 		{
 			return "[R:" + std::to_string(r) + " G:" + std::to_string(g) + " B:" + std::to_string(b) + " A:" + std::to_string(a) + "]";
 		}
+
 	};
 
 	enum class Pivot

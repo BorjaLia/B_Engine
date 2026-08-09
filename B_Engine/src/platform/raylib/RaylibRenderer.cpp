@@ -164,50 +164,119 @@ namespace Engine
 
     void RaylibRenderer::Flush(RenderLayer layer)
     {
-        std::vector<SpriteRenderCommand>& queue = (layer == RenderLayer::World) ? worldQueue : uiQueue;
+        bool isWorld3D = (layer == RenderLayer::World && isCamera3DActive);
 
-        bool use3DBillboards = (layer == RenderLayer::World && isCamera3DActive);
-
-        ::Camera3D internalCam3D = { 0 };
-        if (use3DBillboards)
+        if (isWorld3D)
         {
+            // --- ENTIRE 3D PASS (Models + Billboards) ---
+            ::Camera3D internalCam3D = { 0 };
             internalCam3D.position = { camPosition.x, camPosition.y, camPosition.z };
             internalCam3D.target = { camTarget.x, camTarget.y, camTarget.z };
             internalCam3D.up = { camUp.x, camUp.y, camUp.z };
             internalCam3D.fovy = camFov;
             internalCam3D.projection = CAMERA_PERSPECTIVE;
+
+            ::BeginMode3D(internalCam3D);
+
+            RenderOpaqueModels3D();
+            RenderBillboards3D(worldQueue);
+
+            ::EndMode3D();
         }
+        else
+        {
+            // --- PURE 2D ORTHOGRAPHIC PASS (UI or 2D World) ---
+            const std::vector<SpriteRenderCommand>& queue = (layer == RenderLayer::World) ? worldQueue : uiQueue;
+            bool isWorldSpace = (layer == RenderLayer::World);
+
+            RenderSprites2D(queue, isWorldSpace);
+        }
+    }
+
+    void RaylibRenderer::FlushDebug(RenderLayer layer)
+    {
+        bool isWorld3D = (layer == RenderLayer::World && isCamera3DActive);
+
+        if (isWorld3D && (!debug3DQueue.empty() || !debugModelQueue.empty()))
+        {
+            ::Camera3D internalCam3D = { 0 };
+            internalCam3D.position = { camPosition.x, camPosition.y, camPosition.z };
+            internalCam3D.target = { camTarget.x, camTarget.y, camTarget.z };
+            internalCam3D.up = { camUp.x, camUp.y, camUp.z };
+            internalCam3D.fovy = camFov;
+            internalCam3D.projection = CAMERA_PERSPECTIVE;
+
+            ::BeginMode3D(internalCam3D);
+
+            RenderDebugShapes3D();
+            RenderDebugWireframes3D();
+
+            ::EndMode3D();
+        }
+
+        // 2D Debug Pass
+        const std::vector<DebugRenderCommand>& queue = (layer == RenderLayer::World) ? debugWorldQueue : debugUIQueue;
+        bool isWorldSpace = (layer == RenderLayer::World);
+
+        RenderDebugShapes2D(queue, isWorldSpace);
+    }
+
+#pragma region Render Passes Implementation
+
+    void RaylibRenderer::RenderOpaqueModels3D()
+    {
+        for (const auto& cmd : modelQueue)
+        {
+            ::Matrix rlMatrix = {
+                cmd.transformMatrix.m[0][0], cmd.transformMatrix.m[0][1], cmd.transformMatrix.m[0][2], cmd.transformMatrix.m[0][3],
+                cmd.transformMatrix.m[1][0], cmd.transformMatrix.m[1][1], cmd.transformMatrix.m[1][2], cmd.transformMatrix.m[1][3],
+                cmd.transformMatrix.m[2][0], cmd.transformMatrix.m[2][1], cmd.transformMatrix.m[2][2], cmd.transformMatrix.m[2][3],
+                cmd.transformMatrix.m[3][0], cmd.transformMatrix.m[3][1], cmd.transformMatrix.m[3][2], cmd.transformMatrix.m[3][3]
+            };
+
+            ::Color rlTint = ToRaylibColor(cmd.tint);
+
+            ::Material tempMat = ::LoadMaterialDefault();
+            tempMat.maps[MATERIAL_MAP_ALBEDO].color = rlTint;
+
+            for (const auto& engMesh : cmd.model->meshes)
+            {
+                ::Mesh rlMesh = { 0 };
+                rlMesh.vaoId = engMesh.vaoId;
+                rlMesh.vertexCount = engMesh.vertexCount;
+                rlMesh.triangleCount = engMesh.triangleCount;
+
+                ::DrawMesh(rlMesh, tempMat, rlMatrix);
+            }
+        }
+    }
+
+    void RaylibRenderer::RenderBillboards3D(const std::vector<SpriteRenderCommand>& queue)
+    {
+        ::Camera3D internalCam3D = { 0 };
+        internalCam3D.position = { camPosition.x, camPosition.y, camPosition.z };
+        internalCam3D.target = { camTarget.x, camTarget.y, camTarget.z };
+        internalCam3D.up = { camUp.x, camUp.y, camUp.z };
+        internalCam3D.fovy = camFov;
+        internalCam3D.projection = CAMERA_PERSPECTIVE;
 
         for (const auto& cmd : queue)
         {
-            // Reconstruct Raylib texture from our generic ID
-            ::Texture2D raylibTex = {
-                cmd.texture.id,
-                cmd.texture.size.x,
-                cmd.texture.size.y,
-                1,
-                7  // PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
-            };
+            ::Texture2D raylibTex = { cmd.texture.id, cmd.texture.size.x, cmd.texture.size.y, 1, 7 };
 
             ::Rectangle sourceRec;
-
             if (cmd.useSourceRect)
             {
-                // Snippet usage (Ideal for Text and Spritesheet animations)
-                // Raylib flips the image if width/height is negative
                 sourceRec = {
-                    cmd.sourceRect.pos.x,
-                    cmd.sourceRect.pos.y,
+                    cmd.sourceRect.pos.x, cmd.sourceRect.pos.y,
                     cmd.flipX ? -cmd.sourceRect.size.x : cmd.sourceRect.size.x,
                     cmd.flipY ? -cmd.sourceRect.size.y : cmd.sourceRect.size.y
                 };
             }
             else
             {
-                // Use the entire original texture
                 sourceRec = {
-                    0.0f,
-                    0.0f,
+                    0.0f, 0.0f,
                     cmd.flipX ? -static_cast<float>(cmd.texture.size.x) : static_cast<float>(cmd.texture.size.x),
                     cmd.flipY ? -static_cast<float>(cmd.texture.size.y) : static_cast<float>(cmd.texture.size.y)
                 };
@@ -219,162 +288,167 @@ namespace Engine
             float destWidth = baseWidth * cmd.scale.x;
             float destHeight = baseHeight * cmd.scale.y;
 
-            ::Color raylibTint = { cmd.tint.r, cmd.tint.g, cmd.tint.b, cmd.tint.a };
+            ::Color raylibTint = ToRaylibColor(cmd.tint);
+            ::Vector3 pos3D = { cmd.position.x, cmd.position.y, cmd.position.z };
+            ::Vector2 size2D = { destWidth, destHeight };
 
-            if (use3DBillboards)
+            Engine::Vector2f pivotMult = Engine::GetPivotMultiplier(cmd.pivot);
+            ::Vector2 origin = { destWidth * pivotMult.x, destHeight * pivotMult.y };
+            ::Vector3 upDir = { 0.0f, 1.0f, 0.0f }; // Standard Y-up
+
+            ::DrawBillboardPro(internalCam3D, raylibTex, sourceRec, pos3D, upDir, size2D, origin, -cmd.rotation, raylibTint);
+        }
+    }
+
+    void RaylibRenderer::RenderSprites2D(const std::vector<SpriteRenderCommand>& queue, bool isWorldSpace)
+    {
+        for (const auto& cmd : queue)
+        {
+            ::Texture2D raylibTex = { cmd.texture.id, cmd.texture.size.x, cmd.texture.size.y, 1, 7 };
+
+            ::Rectangle sourceRec;
+            if (cmd.useSourceRect)
             {
-                // --- 3D BILLBOARDING PATH ---
-                ::Vector3 pos3D = { cmd.position.x, cmd.position.y, cmd.position.z };
-                ::Vector2 size2D = { destWidth, destHeight };
-
-                Engine::Vector2f pivotMult = Engine::GetPivotMultiplier(cmd.pivot);
-                ::Vector2 origin = { destWidth * pivotMult.x, destHeight * pivotMult.y };
-                ::Vector3 upDir = { 0.0f, 1.0f, 0.0f }; // Standard Y-up
-
-                ::DrawBillboardPro(internalCam3D, raylibTex, sourceRec, pos3D, upDir, size2D, origin, -cmd.rotation, raylibTint);
+                sourceRec = {
+                    cmd.sourceRect.pos.x, cmd.sourceRect.pos.y,
+                    cmd.flipX ? -cmd.sourceRect.size.x : cmd.sourceRect.size.x,
+                    cmd.flipY ? -cmd.sourceRect.size.y : cmd.sourceRect.size.y
+                };
             }
             else
             {
-                // --- 2D ORTHOGRAPHIC PATH ---
-                float finalY = (layer == RenderLayer::World) ? -cmd.position.y : cmd.position.y;
-                ::Rectangle destRec = { cmd.position.x, finalY, destWidth, destHeight };
-                Engine::Vector2f pivotMult = Engine::GetPivotMultiplier(cmd.pivot);
-                ::Vector2 origin = { destWidth * pivotMult.x, destHeight * pivotMult.y };
+                sourceRec = {
+                    0.0f, 0.0f,
+                    cmd.flipX ? -static_cast<float>(cmd.texture.size.x) : static_cast<float>(cmd.texture.size.x),
+                    cmd.flipY ? -static_cast<float>(cmd.texture.size.y) : static_cast<float>(cmd.texture.size.y)
+                };
+            }
 
-                ::DrawTexturePro(raylibTex, sourceRec, destRec, origin, -cmd.rotation, raylibTint);
+            float baseWidth = cmd.useSourceRect ? cmd.sourceRect.size.x : static_cast<float>(cmd.texture.size.x);
+            float baseHeight = cmd.useSourceRect ? cmd.sourceRect.size.y : static_cast<float>(cmd.texture.size.y);
+
+            float destWidth = baseWidth * cmd.scale.x;
+            float destHeight = baseHeight * cmd.scale.y;
+
+            ::Color raylibTint = ToRaylibColor(cmd.tint);
+
+            float finalY = isWorldSpace ? -cmd.position.y : cmd.position.y;
+            ::Rectangle destRec = { cmd.position.x, finalY, destWidth, destHeight };
+
+            Engine::Vector2f pivotMult = Engine::GetPivotMultiplier(cmd.pivot);
+            ::Vector2 origin = { destWidth * pivotMult.x, destHeight * pivotMult.y };
+
+            ::DrawTexturePro(raylibTex, sourceRec, destRec, origin, -cmd.rotation, raylibTint);
+        }
+    }
+
+    void RaylibRenderer::RenderDebugShapes3D()
+    {
+        for (const auto& cmd : debug3DQueue)
+        {
+            ::Color raylibColor = ToRaylibColor(cmd.color);
+
+            Engine::Matrix4x4 rotMat = Engine::Matrix4x4::Rotation(cmd.rotation);
+            Engine::Vector3f right(rotMat.m[0][0], rotMat.m[1][0], rotMat.m[2][0]);
+            Engine::Vector3f up(rotMat.m[0][1], rotMat.m[1][1], rotMat.m[2][1]);
+            Engine::Vector3f forward(rotMat.m[0][2], rotMat.m[1][2], rotMat.m[2][2]);
+
+            auto TransformPoint = [&](const Engine::Vector3f& p) -> ::Vector3
+                {
+                    return {
+                        cmd.position.x + (right.x * p.x) + (up.x * p.y) + (forward.x * p.z),
+                        cmd.position.y + (right.y * p.x) + (up.y * p.y) + (forward.y * p.z),
+                        cmd.position.z + (right.z * p.x) + (up.z * p.y) + (forward.z * p.z)
+                    };
+                };
+
+            std::visit([&](auto&& shape)
+                {
+                    using T = std::decay_t<decltype(shape)>;
+                    if constexpr (std::is_same_v<T, Line3DShape>)
+                    {
+                        ::DrawLine3D(TransformPoint(shape.start), TransformPoint(shape.end), raylibColor);
+                    }
+                    else if constexpr (std::is_same_v<T, Cube3DShape>)
+                    {
+                        float hw = shape.size.x * 0.5f;
+                        float hh = shape.size.y * 0.5f;
+                        float hd = shape.size.z * 0.5f;
+
+                        ::Vector3 corners[8] = {
+                            TransformPoint({-hw, -hh, -hd}), TransformPoint({ hw, -hh, -hd}),
+                            TransformPoint({ hw,  hh, -hd}), TransformPoint({-hw,  hh, -hd}),
+                            TransformPoint({-hw, -hh,  hd}), TransformPoint({ hw, -hh,  hd}),
+                            TransformPoint({ hw,  hh,  hd}), TransformPoint({-hw,  hh,  hd})
+                        };
+
+                        for (int i = 0; i < 4; ++i)
+                        {
+                            ::DrawLine3D(corners[i], corners[(i + 1) % 4], raylibColor);
+                            ::DrawLine3D(corners[i + 4], corners[((i + 1) % 4) + 4], raylibColor);
+                            ::DrawLine3D(corners[i], corners[i + 4], raylibColor);
+                        }
+                    }
+                    else if constexpr (std::is_same_v<T, Path3DShape>)
+                    {
+                        size_t count = shape.localVertices.size();
+                        if (count > 1)
+                        {
+                            for (size_t i = 0; i < count - 1; ++i)
+                            {
+                                ::DrawLine3D(TransformPoint(shape.localVertices[i]), TransformPoint(shape.localVertices[i + 1]), raylibColor);
+                            }
+                            if (shape.closed && count > 2)
+                            {
+                                ::DrawLine3D(TransformPoint(shape.localVertices[count - 1]), TransformPoint(shape.localVertices[0]), raylibColor);
+                            }
+                        }
+                    }
+                }, cmd.shape);
+        }
+    }
+
+    void RaylibRenderer::RenderDebugWireframes3D()
+    {
+        for (const auto& cmd : debugModelQueue)
+        {
+            ::Color raylibColor = ToRaylibColor(cmd.color);
+
+            auto TransformVertex = [&](const Engine::Vector3f& p) -> ::Vector3
+                {
+                    return {
+                        p.x * cmd.transformMatrix.m[0][0] + p.y * cmd.transformMatrix.m[0][1] + p.z * cmd.transformMatrix.m[0][2] + cmd.transformMatrix.m[0][3],
+                        p.x * cmd.transformMatrix.m[1][0] + p.y * cmd.transformMatrix.m[1][1] + p.z * cmd.transformMatrix.m[1][2] + cmd.transformMatrix.m[1][3],
+                        p.x * cmd.transformMatrix.m[2][0] + p.y * cmd.transformMatrix.m[2][1] + p.z * cmd.transformMatrix.m[2][2] + cmd.transformMatrix.m[2][3]
+                    };
+                };
+
+            for (const auto& mesh : cmd.model->meshes)
+            {
+                for (size_t i = 0; i < mesh.indices.size(); i += 3)
+                {
+                    int idx1 = mesh.indices[i] * 3;
+                    int idx2 = mesh.indices[i + 1] * 3;
+                    int idx3 = mesh.indices[i + 2] * 3;
+
+                    Engine::Vector3f v1(mesh.vertices[idx1], mesh.vertices[idx1 + 1], mesh.vertices[idx1 + 2]);
+                    Engine::Vector3f v2(mesh.vertices[idx2], mesh.vertices[idx2 + 1], mesh.vertices[idx2 + 2]);
+                    Engine::Vector3f v3(mesh.vertices[idx3], mesh.vertices[idx3 + 1], mesh.vertices[idx3 + 2]);
+
+                    ::Vector3 p1 = TransformVertex(v1);
+                    ::Vector3 p2 = TransformVertex(v2);
+                    ::Vector3 p3 = TransformVertex(v3);
+
+                    ::DrawLine3D(p1, p2, raylibColor);
+                    ::DrawLine3D(p2, p3, raylibColor);
+                    ::DrawLine3D(p3, p1, raylibColor);
+                }
             }
         }
     }
 
-    void RaylibRenderer::FlushDebug(RenderLayer layer)
+    void RaylibRenderer::RenderDebugShapes2D(const std::vector<DebugRenderCommand>& queue, bool isWorldSpace)
     {
-        // 1. Process 3D Debug Shapes
-        if (layer == RenderLayer::World && isCamera3DActive && !debug3DQueue.empty())
-        {
-            ::Camera3D internalCam3D = { 0 };
-            internalCam3D.position = { camPosition.x, camPosition.y, camPosition.z };
-            internalCam3D.target = { camTarget.x, camTarget.y, camTarget.z };
-            internalCam3D.up = { camUp.x, camUp.y, camUp.z };
-            internalCam3D.fovy = camFov;
-            internalCam3D.projection = CAMERA_PERSPECTIVE;
-
-            ::BeginMode3D(internalCam3D);
-            for (const auto& cmd : debug3DQueue)
-            {
-                ::Color raylibColor = ToRaylibColor(cmd.color);
-
-                // Build a rotation matrix to transform local vertices globally
-                Engine::Matrix4x4 rotMat = Engine::Matrix4x4::Rotation(cmd.rotation);
-
-                // Extract local directional axes from the rotation matrix
-                Engine::Vector3f right(rotMat.m[0][0], rotMat.m[1][0], rotMat.m[2][0]);
-                Engine::Vector3f up(rotMat.m[0][1], rotMat.m[1][1], rotMat.m[2][1]);
-                Engine::Vector3f forward(rotMat.m[0][2], rotMat.m[1][2], rotMat.m[2][2]);
-
-                // Helper lambda to rotate and translate a point
-                auto TransformPoint = [&](const Engine::Vector3f& p) -> ::Vector3
-                    {
-                        return {
-                            cmd.position.x + (right.x * p.x) + (up.x * p.y) + (forward.x * p.z),
-                            cmd.position.y + (right.y * p.x) + (up.y * p.y) + (forward.y * p.z),
-                            cmd.position.z + (right.z * p.x) + (up.z * p.y) + (forward.z * p.z)
-                        };
-                    };
-
-                std::visit([&](auto&& shape)
-                    {
-                        using T = std::decay_t<decltype(shape)>;
-                        using T = std::decay_t<decltype(shape)>;
-                        if constexpr (std::is_same_v<T, Line3DShape>)
-                        {
-                            ::DrawLine3D(TransformPoint(shape.start), TransformPoint(shape.end), raylibColor);
-                        }
-                        else if constexpr (std::is_same_v<T, Cube3DShape>)
-                        {
-                            // Manual rotated cube calculation!
-                            float hw = shape.size.x * 0.5f;
-                            float hh = shape.size.y * 0.5f;
-                            float hd = shape.size.z * 0.5f;
-
-                            ::Vector3 corners[8] = {
-                                TransformPoint({-hw, -hh, -hd}), TransformPoint({ hw, -hh, -hd}),
-                                TransformPoint({ hw,  hh, -hd}), TransformPoint({-hw,  hh, -hd}),
-                                TransformPoint({-hw, -hh,  hd}), TransformPoint({ hw, -hh,  hd}),
-                                TransformPoint({ hw,  hh,  hd}), TransformPoint({-hw,  hh,  hd})
-                            };
-
-                            // Draw lines between corners (Front, Back, and Connecting edges)
-                            for (int i = 0; i < 4; ++i)
-                            {
-                                ::DrawLine3D(corners[i], corners[(i + 1) % 4], raylibColor); // Front face
-                                ::DrawLine3D(corners[i + 4], corners[((i + 1) % 4) + 4], raylibColor); // Back face
-                                ::DrawLine3D(corners[i], corners[i + 4], raylibColor); // Connectors
-                            }
-                        }
-                        else if constexpr (std::is_same_v<T, Path3DShape>)
-                        {
-                            size_t count = shape.localVertices.size();
-                            if (count > 1)
-                            {
-                                for (size_t i = 0; i < count - 1; ++i)
-                                {
-                                    ::DrawLine3D(TransformPoint(shape.localVertices[i]), TransformPoint(shape.localVertices[i + 1]), raylibColor);
-                                }
-                                if (shape.closed && count > 2)
-                                {
-                                    ::DrawLine3D(TransformPoint(shape.localVertices[count - 1]), TransformPoint(shape.localVertices[0]), raylibColor);
-                                }
-                            }
-                        }
-                    }, cmd.shape);
-            }
-            for (const auto& cmd : debugModelQueue)
-            {
-                ::Color raylibColor = ToRaylibColor(cmd.color);
-
-                // Helper lambda to apply 4x4 Transformation Matrix to a local vertex
-                auto TransformVertex = [&](const Engine::Vector3f& p) -> ::Vector3
-                    {
-                        return {
-                            p.x * cmd.transformMatrix.m[0][0] + p.y * cmd.transformMatrix.m[0][1] + p.z * cmd.transformMatrix.m[0][2] + cmd.transformMatrix.m[0][3],
-                            p.x * cmd.transformMatrix.m[1][0] + p.y * cmd.transformMatrix.m[1][1] + p.z * cmd.transformMatrix.m[1][2] + cmd.transformMatrix.m[1][3],
-                            p.x * cmd.transformMatrix.m[2][0] + p.y * cmd.transformMatrix.m[2][1] + p.z * cmd.transformMatrix.m[2][2] + cmd.transformMatrix.m[2][3]
-                        };
-                    };
-
-                // Loop through all meshes in the model
-                for (const auto& mesh : cmd.model->meshes)
-                {
-                    // Draw lines for every triangle in the CPU mesh array
-                    for (size_t i = 0; i < mesh.indices.size(); i += 3)
-                    {
-                        // Get the index in the vertex array (each vertex is 3 floats: x,y,z)
-                        int idx1 = mesh.indices[i] * 3;
-                        int idx2 = mesh.indices[i + 1] * 3;
-                        int idx3 = mesh.indices[i + 2] * 3;
-
-                        Engine::Vector3f v1(mesh.vertices[idx1], mesh.vertices[idx1 + 1], mesh.vertices[idx1 + 2]);
-                        Engine::Vector3f v2(mesh.vertices[idx2], mesh.vertices[idx2 + 1], mesh.vertices[idx2 + 2]);
-                        Engine::Vector3f v3(mesh.vertices[idx3], mesh.vertices[idx3 + 1], mesh.vertices[idx3 + 2]);
-
-                        // Transform points to global space
-                        ::Vector3 p1 = TransformVertex(v1);
-                        ::Vector3 p2 = TransformVertex(v2);
-                        ::Vector3 p3 = TransformVertex(v3);
-
-                        // Draw the 3 edges of the triangle
-                        ::DrawLine3D(p1, p2, raylibColor);
-                        ::DrawLine3D(p2, p3, raylibColor);
-                        ::DrawLine3D(p3, p1, raylibColor);
-                    }
-                }
-            }
-            ::EndMode3D();
-        }
-
-        // 2. Process 2D Debug Shapes
-        std::vector<DebugRenderCommand>& queue = (layer == RenderLayer::World) ? debugWorldQueue : debugUIQueue;
-
         for (const auto& cmd : queue)
         {
             ::Color raylibColor = ToRaylibColor(cmd.color);
@@ -403,7 +477,7 @@ namespace Engine
                             float ry = corners[i].x * s + corners[i].y * c;
 
                             corners[i].x = cmd.position.x + rx;
-                            corners[i].y = -(cmd.position.y + ry); // Y inverted for Raylib
+                            corners[i].y = isWorldSpace ? -(cmd.position.y + ry) : (cmd.position.y + ry);
                         }
 
                         for (int i = 0; i < 4; ++i)
@@ -413,17 +487,19 @@ namespace Engine
                     }
                     else if constexpr (std::is_same_v<T, CircleShape>)
                     {
+                        float finalY = isWorldSpace ? -cmd.position.y : cmd.position.y;
                         ::DrawCircleLines(
                             static_cast<int>(cmd.position.x),
-                            static_cast<int>(-cmd.position.y),
+                            static_cast<int>(finalY),
                             shape.radius,
                             raylibColor
                         );
                     }
                     else if constexpr (std::is_same_v<T, LineShape>)
                     {
-                        ::Vector2 start = { cmd.position.x + shape.start.x, -(cmd.position.y + shape.start.y) };
-                        ::Vector2 end = { cmd.position.x + shape.end.x, -(cmd.position.y + shape.end.y) };
+                        float multY = isWorldSpace ? -1.0f : 1.0f;
+                        ::Vector2 start = { cmd.position.x + shape.start.x, multY * (cmd.position.y + shape.start.y) };
+                        ::Vector2 end = { cmd.position.x + shape.end.x, multY * (cmd.position.y + shape.end.y) };
                         ::DrawLineV(start, end, raylibColor);
                     }
                     else if constexpr (std::is_same_v<T, PolygonShape>)
@@ -431,16 +507,17 @@ namespace Engine
                         size_t vertexCount = shape.localVertices.size();
                         if (vertexCount > 1)
                         {
+                            float multY = isWorldSpace ? -1.0f : 1.0f;
                             for (size_t i = 0; i < vertexCount; ++i)
                             {
                                 size_t next = (i + 1) % vertexCount;
                                 ::Vector2 start = {
                                     cmd.position.x + shape.localVertices[i].x,
-                                    -(cmd.position.y + shape.localVertices[i].y)
+                                    multY * (cmd.position.y + shape.localVertices[i].y)
                                 };
                                 ::Vector2 end = {
                                     cmd.position.x + shape.localVertices[next].x,
-                                    -(cmd.position.y + shape.localVertices[next].y)
+                                    multY * (cmd.position.y + shape.localVertices[next].y)
                                 };
                                 ::DrawLineV(start, end, raylibColor);
                             }
@@ -449,6 +526,7 @@ namespace Engine
                 }, cmd.shape);
         }
     }
+#pragma endregion
 
 #pragma region Resource Loading implementations
 

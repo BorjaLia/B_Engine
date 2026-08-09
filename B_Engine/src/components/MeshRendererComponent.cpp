@@ -115,18 +115,50 @@ namespace Engine
         Cube3DShape boundsCube{ boundsSize };
         renderer->SubmitDebugShape3D(boundsCube, boundsPos, globalEuler, debugColor);
 
-        // 3. Forward Pointer Line
-        float pointerLength = scale.Magnitude();
-        Vector3f endPos = {
-            forward.x * pointerLength,
-            forward.y * pointerLength,
-            forward.z * pointerLength
-        };
+        // Direction Lines
+        {
+            float pointerLength = scale.Magnitude();
+            Vector3f endPos = {
+                right.x * pointerLength,
+                right.y * pointerLength,
+                right.z * pointerLength
+            };
 
-        Line3DShape pointerLine{ {0.0f, 0.0f, 0.0f}, endPos };
-        Color pointerColor = { 0, 255, 255, 255 }; // Cyan
+            Line3DShape pointerLine{ {0.0f, 0.0f, 0.0f}, endPos };
+            Color pointerColor = { 255, 0, 0, 255 };
 
-        // Zero rotation because 'endPos' already has the global forward transformation baked in!
-        renderer->SubmitDebugShape3D(pointerLine, pivotPos, { 0.0f, 0.0f, 0.0f }, pointerColor);
+            // Zero rotation because 'endPos' already has the global right transformation baked in!
+            renderer->SubmitDebugShape3D(pointerLine, pivotPos, { 0.0f, 0.0f, 0.0f }, pointerColor);
+        }
+
+        {
+            float pointerLength = scale.Magnitude();
+            Vector3f endPos = {
+                up.x * pointerLength,
+                up.y * pointerLength,
+                up.z * pointerLength
+            };
+
+            Line3DShape pointerLine{ {0.0f, 0.0f, 0.0f}, endPos };
+            Color pointerColor = { 0, 255, 0, 255 };
+
+            // Zero rotation because 'endPos' already has the global up transformation baked in!
+            renderer->SubmitDebugShape3D(pointerLine, pivotPos, { 0.0f, 0.0f, 0.0f }, pointerColor);
+        }
+
+        {
+            float pointerLength = scale.Magnitude();
+            Vector3f endPos = {
+                forward.x * pointerLength,
+                forward.y * pointerLength,
+                forward.z * pointerLength
+            };
+
+            Line3DShape pointerLine{ {0.0f, 0.0f, 0.0f}, endPos };
+            Color pointerColor = { 0, 0, 255, 255 };
+
+            // Zero rotation because 'endPos' already has the global forward transformation baked in!
+            renderer->SubmitDebugShape3D(pointerLine, pivotPos, { 0.0f, 0.0f, 0.0f }, pointerColor);
+        }
     }
 }

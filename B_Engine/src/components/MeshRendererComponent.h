@@ -20,7 +20,7 @@ namespace Engine
 		// Local offsets
 		Vector3f modelOffset = { 0.0f, 0.0f, 0.0f };
 
-		bool drawWireframe = false; // Flag to render only the wireframe using debug tools
+		bool drawWireframe = true; // Flag to render only the wireframe using debug tools
 
 		/// @param model The Opaque Model Handle obtained from the ResourceManager
 		MeshRendererComponent(const Model& model, Color tint = { 255, 255, 255, 255 });
