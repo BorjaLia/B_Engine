@@ -7,6 +7,7 @@
 #include "../utils/Types.h"
 #include "../math/Vector2.h"
 #include "../math/Vector3.h"
+#include "../math/Matrix4x4.h"
 #include "../resources/Font.h"
 #include "debug/Debug.h"
 
@@ -102,9 +103,16 @@ namespace Engine
         virtual void Flush(RenderLayer layer) = 0;
 
         /// Queues a 3D Model for rendering.
-        virtual void SubmitModel(const Model& model, const Vector3f& position, const Vector3f& rotationAxis = { 0.0f, 1.0f, 0.0f }, float rotationAngle = 0.0f, const Vector3f& scale = { 1.0f, 1.0f, 1.0f }, const Color& tint = { 255, 255, 255, 255 })
+        virtual void SubmitModel(const Model* model, const Matrix4x4& transformMatrix, const Color& tint = { 255, 255, 255, 255 })
         {
-            modelQueue.push_back({ model, position, rotationAxis, rotationAngle, scale, tint });
+            modelQueue.push_back({ model, transformMatrix, tint });
+        }
+
+        /// Queues a debug wireframe of a full 3D model for rendering.
+        virtual void SubmitDebugModelWireframe(const Model* model, const Matrix4x4& transformMatrix, const Color& color)
+        {
+            if (!debugRenderEnabled) return;
+            debugModelQueue.push_back({ model, transformMatrix, color });
         }
 
         /// Queues a debug wireframe 2D shape for rendering.
@@ -119,10 +127,10 @@ namespace Engine
         }
 
         /// Queues a debug wireframe 3D shape for rendering.
-        virtual void SubmitDebugShape3D(const Shape3D& shape, const Vector3f& position, const Color& color)
+        virtual void SubmitDebugShape3D(const Shape3D& shape, const Vector3f& position, const Vector3f& rotation, const Color& color)
         {
             if (!debugRenderEnabled) return;
-            debug3DQueue.push_back({ shape, position, color });
+            debug3DQueue.push_back({ shape, position,rotation, color });
         }
 
         virtual void FlushDebug(RenderLayer layer) = 0;
@@ -161,6 +169,7 @@ namespace Engine
             debugUIQueue.clear();
             modelQueue.clear();
             debug3DQueue.clear();
+            debugModelQueue.clear();
         }
 
         void CalculateLetterbox();
@@ -177,6 +186,7 @@ namespace Engine
         std::vector<DebugRenderCommand> debugWorldQueue;
         std::vector<DebugRenderCommand> debugUIQueue;
         std::vector<DebugRenderCommand3D> debug3DQueue;
+        std::vector<DebugModelCommand> debugModelQueue;
 
         std::optional<RenderTexture2D> activeRenderTarget = std::nullopt;
 

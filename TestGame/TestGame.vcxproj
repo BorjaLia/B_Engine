@@ -160,6 +160,7 @@
     <ClCompile Include="src\scenes\TestScene3D.cpp" />
     <ClCompile Include="src\scripts\CameraLookScript.cpp" />
     <ClCompile Include="src\scripts\CoinScript.cpp" />
+    <ClCompile Include="src\scripts\CubeScript.cpp" />
     <ClCompile Include="src\scripts\EnemyScript.cpp" />
     <ClCompile Include="src\scripts\FinishLineScript.cpp" />
     <ClCompile Include="src\scripts\GameManager.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="src\scenes\TestScene3D.h" />
     <ClInclude Include="src\scripts\CameraLookScript.h" />
     <ClInclude Include="src\scripts\CoinScript.h" />
+    <ClInclude Include="src\scripts\CubeScript.h" />
     <ClInclude Include="src\scripts\EnemyScript.h" />
     <ClInclude Include="src\scripts\FinishLineScript.h" />
     <ClInclude Include="src\scripts\GameManager.h" />

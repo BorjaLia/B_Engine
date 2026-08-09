@@ -1,5 +1,8 @@
 #include "RaylibRenderer.h"
 
+#include "math/Matrix4x4.h"
+#include "utils/Types.h"
+
 #include <raylib.h> // The only place where Raylib rendering API exists
 
 namespace Engine
@@ -260,22 +263,111 @@ namespace Engine
             {
                 ::Color raylibColor = ToRaylibColor(cmd.color);
 
+                // Build a rotation matrix to transform local vertices globally
+                Engine::Matrix4x4 rotMat = Engine::Matrix4x4::Rotation(cmd.rotation);
+
+                // Extract local directional axes from the rotation matrix
+                Engine::Vector3f right(rotMat.m[0][0], rotMat.m[1][0], rotMat.m[2][0]);
+                Engine::Vector3f up(rotMat.m[0][1], rotMat.m[1][1], rotMat.m[2][1]);
+                Engine::Vector3f forward(rotMat.m[0][2], rotMat.m[1][2], rotMat.m[2][2]);
+
+                // Helper lambda to rotate and translate a point
+                auto TransformPoint = [&](const Engine::Vector3f& p) -> ::Vector3
+                    {
+                        return {
+                            cmd.position.x + (right.x * p.x) + (up.x * p.y) + (forward.x * p.z),
+                            cmd.position.y + (right.y * p.x) + (up.y * p.y) + (forward.y * p.z),
+                            cmd.position.z + (right.z * p.x) + (up.z * p.y) + (forward.z * p.z)
+                        };
+                    };
+
                 std::visit([&](auto&& shape)
                     {
                         using T = std::decay_t<decltype(shape)>;
+                        using T = std::decay_t<decltype(shape)>;
                         if constexpr (std::is_same_v<T, Line3DShape>)
                         {
-                            // Positions are treated as relative to the command's position origin
-                            ::Vector3 start = { cmd.position.x + shape.start.x, cmd.position.y + shape.start.y, cmd.position.z + shape.start.z };
-                            ::Vector3 end = { cmd.position.x + shape.end.x, cmd.position.y + shape.end.y, cmd.position.z + shape.end.z };
-                            ::DrawLine3D(start, end, raylibColor);
+                            ::DrawLine3D(TransformPoint(shape.start), TransformPoint(shape.end), raylibColor);
                         }
                         else if constexpr (std::is_same_v<T, Cube3DShape>)
                         {
-                            ::Vector3 pos = { cmd.position.x, cmd.position.y, cmd.position.z };
-                            ::DrawCubeWires(pos, shape.size.x, shape.size.y, shape.size.z, raylibColor);
+                            // Manual rotated cube calculation!
+                            float hw = shape.size.x * 0.5f;
+                            float hh = shape.size.y * 0.5f;
+                            float hd = shape.size.z * 0.5f;
+
+                            ::Vector3 corners[8] = {
+                                TransformPoint({-hw, -hh, -hd}), TransformPoint({ hw, -hh, -hd}),
+                                TransformPoint({ hw,  hh, -hd}), TransformPoint({-hw,  hh, -hd}),
+                                TransformPoint({-hw, -hh,  hd}), TransformPoint({ hw, -hh,  hd}),
+                                TransformPoint({ hw,  hh,  hd}), TransformPoint({-hw,  hh,  hd})
+                            };
+
+                            // Draw lines between corners (Front, Back, and Connecting edges)
+                            for (int i = 0; i < 4; ++i)
+                            {
+                                ::DrawLine3D(corners[i], corners[(i + 1) % 4], raylibColor); // Front face
+                                ::DrawLine3D(corners[i + 4], corners[((i + 1) % 4) + 4], raylibColor); // Back face
+                                ::DrawLine3D(corners[i], corners[i + 4], raylibColor); // Connectors
+                            }
+                        }
+                        else if constexpr (std::is_same_v<T, Path3DShape>)
+                        {
+                            size_t count = shape.localVertices.size();
+                            if (count > 1)
+                            {
+                                for (size_t i = 0; i < count - 1; ++i)
+                                {
+                                    ::DrawLine3D(TransformPoint(shape.localVertices[i]), TransformPoint(shape.localVertices[i + 1]), raylibColor);
+                                }
+                                if (shape.closed && count > 2)
+                                {
+                                    ::DrawLine3D(TransformPoint(shape.localVertices[count - 1]), TransformPoint(shape.localVertices[0]), raylibColor);
+                                }
+                            }
                         }
                     }, cmd.shape);
+            }
+            for (const auto& cmd : debugModelQueue)
+            {
+                ::Color raylibColor = ToRaylibColor(cmd.color);
+
+                // Helper lambda to apply 4x4 Transformation Matrix to a local vertex
+                auto TransformVertex = [&](const Engine::Vector3f& p) -> ::Vector3
+                    {
+                        return {
+                            p.x * cmd.transformMatrix.m[0][0] + p.y * cmd.transformMatrix.m[0][1] + p.z * cmd.transformMatrix.m[0][2] + cmd.transformMatrix.m[0][3],
+                            p.x * cmd.transformMatrix.m[1][0] + p.y * cmd.transformMatrix.m[1][1] + p.z * cmd.transformMatrix.m[1][2] + cmd.transformMatrix.m[1][3],
+                            p.x * cmd.transformMatrix.m[2][0] + p.y * cmd.transformMatrix.m[2][1] + p.z * cmd.transformMatrix.m[2][2] + cmd.transformMatrix.m[2][3]
+                        };
+                    };
+
+                // Loop through all meshes in the model
+                for (const auto& mesh : cmd.model->meshes)
+                {
+                    // Draw lines for every triangle in the CPU mesh array
+                    for (size_t i = 0; i < mesh.indices.size(); i += 3)
+                    {
+                        // Get the index in the vertex array (each vertex is 3 floats: x,y,z)
+                        int idx1 = mesh.indices[i] * 3;
+                        int idx2 = mesh.indices[i + 1] * 3;
+                        int idx3 = mesh.indices[i + 2] * 3;
+
+                        Engine::Vector3f v1(mesh.vertices[idx1], mesh.vertices[idx1 + 1], mesh.vertices[idx1 + 2]);
+                        Engine::Vector3f v2(mesh.vertices[idx2], mesh.vertices[idx2 + 1], mesh.vertices[idx2 + 2]);
+                        Engine::Vector3f v3(mesh.vertices[idx3], mesh.vertices[idx3 + 1], mesh.vertices[idx3 + 2]);
+
+                        // Transform points to global space
+                        ::Vector3 p1 = TransformVertex(v1);
+                        ::Vector3 p2 = TransformVertex(v2);
+                        ::Vector3 p3 = TransformVertex(v3);
+
+                        // Draw the 3 edges of the triangle
+                        ::DrawLine3D(p1, p2, raylibColor);
+                        ::DrawLine3D(p2, p3, raylibColor);
+                        ::DrawLine3D(p3, p1, raylibColor);
+                    }
+                }
             }
             ::EndMode3D();
         }

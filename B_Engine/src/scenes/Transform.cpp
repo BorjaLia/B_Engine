@@ -102,11 +102,38 @@ namespace Engine
 
     Vector3f Transform::GetGlobalPosition() const
     {
+        if (isDirty) UpdateTransform();
         return Vector3f(globalMatrix.m[0][3], globalMatrix.m[1][3], globalMatrix.m[2][3]);
+    }
+
+
+    Vector3f Transform::GetGlobalEulerAngles() const
+    {
+        if (isDirty) UpdateTransform();
+
+        float sy = sqrt(globalMatrix.m[0][0] * globalMatrix.m[0][0] + globalMatrix.m[1][0] * globalMatrix.m[1][0]);
+        bool singular = sy < 1e-6;
+
+        float x, y, z;
+        if (!singular)
+        {
+            x = atan2(globalMatrix.m[2][1], globalMatrix.m[2][2]);
+            y = atan2(-globalMatrix.m[2][0], sy);
+            z = atan2(globalMatrix.m[1][0], globalMatrix.m[0][0]);
+        }
+        else
+        {
+            x = atan2(-globalMatrix.m[1][2], globalMatrix.m[1][1]);
+            y = atan2(-globalMatrix.m[2][0], sy);
+            z = 0;
+        }
+
+        return Vector3f(x, y, z);
     }
 
     Vector3f Transform::GetRight() const
     {
+        if (isDirty) UpdateTransform();
         // X-Axis of the rotation matrix (Column 0)
         Vector3f right(globalMatrix.m[0][0], globalMatrix.m[1][0], globalMatrix.m[2][0]);
         return right.Normalized();
@@ -114,6 +141,7 @@ namespace Engine
 
     Vector3f Transform::GetUp() const
     {
+        if (isDirty) UpdateTransform();
         // Y-Axis of the rotation matrix (Column 1)
         Vector3f up(globalMatrix.m[0][1], globalMatrix.m[1][1], globalMatrix.m[2][1]);
         return up.Normalized();
@@ -121,6 +149,7 @@ namespace Engine
 
     Vector3f Transform::GetForward() const
     {
+        if (isDirty) UpdateTransform();
         // Z-Axis of the rotation matrix (Column 2)
         // Depending on Handedness (Right/Left), you might need to invert this to -Z.
         Vector3f forward(globalMatrix.m[0][2], globalMatrix.m[1][2], globalMatrix.m[2][2]);
@@ -128,7 +157,7 @@ namespace Engine
     }
 #pragma endregion
 
-    void Transform::UpdateTransform()
+    void Transform::UpdateTransform() const
     {
         if (!isDirty) return;
 
@@ -158,6 +187,7 @@ namespace Engine
 
     const Matrix4x4& Transform::GetGlobalMatrix() const
     {
+        if (isDirty) UpdateTransform();
         return globalMatrix;
     }
 }

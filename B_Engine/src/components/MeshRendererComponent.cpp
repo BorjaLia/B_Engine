@@ -12,72 +12,121 @@ namespace Engine
 	{
 	}
 
-	void MeshRendererComponent::Draw(RendererBase* renderer)
-	{
-		if (owner == nullptr || renderer == nullptr) return;
-		if (model.meshes.empty()) return; // Do not draw invalid/unloaded models
+    void MeshRendererComponent::Draw(RendererBase* renderer)
+    {
+        if (owner == nullptr || renderer == nullptr) return;
+        if (model.meshes.empty()) return; // Do not draw invalid/unloaded models
 
-		Vector3f position = owner->transform.GetGlobalPosition();
-		Vector3f scale = owner->transform.GetScale();
+        Matrix4x4 finalMat = owner->transform.GetGlobalMatrix();
 
-		position.x += modelOffset.x;
-		position.y += modelOffset.y;
-		position.z += modelOffset.z;
+        // Apply the local model offset directly into the cached transformation matrix
+        // This uses the directional vectors to keep the offset local relative to the object's rotation.
+        Vector3f right = owner->transform.GetRight();
+        Vector3f up = owner->transform.GetUp();
+        Vector3f forward = owner->transform.GetForward();
 
-		Vector3f euler = owner->transform.GetEulerAngles();
-		Vector3f rotationAxis = { 0.0f, 1.0f, 0.0f };
-		float rotationAngle = euler.y * RAD2DEG;
+        Vector3f rotatedOffset = {
+            (right.x * modelOffset.x) + (up.x * modelOffset.y) + (forward.x * modelOffset.z),
+            (right.y * modelOffset.x) + (up.y * modelOffset.y) + (forward.y * modelOffset.z),
+            (right.z * modelOffset.x) + (up.z * modelOffset.y) + (forward.z * modelOffset.z)
+        };
 
-		renderer->SubmitModel(model, position, rotationAxis, rotationAngle, scale, tint);
-	}
+        // Add the rotated offset to the translation column of the matrix
+        finalMat.m[0][3] += rotatedOffset.x;
+        finalMat.m[1][3] += rotatedOffset.y;
+        finalMat.m[2][3] += rotatedOffset.z;
 
-	void MeshRendererComponent::DebugDraw(RendererBase* renderer)
-	{
-		if (owner == nullptr || renderer == nullptr) return;
-		if (model.meshes.empty()) return; // No model, no bounds
+        // If a stylized wireframe is needed later, it will be handled by a Material property.
+        renderer->SubmitModel(&model, finalMat, tint);
+    }
 
-		Vector3f globalPos = owner->transform.GetGlobalPosition();
-		Vector3f scale = owner->transform.GetScale();
+    void MeshRendererComponent::DebugDraw(RendererBase* renderer)
+    {
+        if (owner == nullptr || renderer == nullptr) return;
+        if (model.meshes.empty()) return; // No model, no bounds
 
-		Vector3f boundsSize = {
-			(model.bounds.max.x - model.bounds.min.x) * scale.x,
-			(model.bounds.max.y - model.bounds.min.y) * scale.y,
-			(model.bounds.max.z - model.bounds.min.z) * scale.z
-		};
+        Vector3f globalPos = owner->transform.GetGlobalPosition();
+        Vector3f scale = owner->transform.GetScale();
 
-		Vector3f boundsCenterOffset = {
-			(model.bounds.max.x + model.bounds.min.x) * 0.5f * scale.x,
-			(model.bounds.max.y + model.bounds.min.y) * 0.5f * scale.y,
-			(model.bounds.max.z + model.bounds.min.z) * 0.5f * scale.z
-		};
+        // Use the new GetGlobalEulerAngles method we added!
+        Vector3f globalEuler = owner->transform.GetGlobalEulerAngles();
 
-		Vector3f finalPos = {
-			globalPos.x + modelOffset.x + boundsCenterOffset.x,
-			globalPos.y + modelOffset.y + boundsCenterOffset.y,
-			globalPos.z + modelOffset.z + boundsCenterOffset.z
-		};
+        Vector3f right = owner->transform.GetRight();
+        Vector3f up = owner->transform.GetUp();
+        Vector3f forward = owner->transform.GetForward();
 
-		Cube3DShape boundsCube{ boundsSize };
-		renderer->SubmitDebugShape3D(boundsCube, finalPos, debugColor);
+        // --- Calculate the exact pivot position (with rotation offsets) ---
+        Vector3f rotatedModelOffset = {
+            (right.x * modelOffset.x) + (up.x * modelOffset.y) + (forward.x * modelOffset.z),
+            (right.y * modelOffset.x) + (up.y * modelOffset.y) + (forward.y * modelOffset.z),
+            (right.z * modelOffset.x) + (up.z * modelOffset.y) + (forward.z * modelOffset.z)
+        };
 
-		float pointerLength = 2.0f;
-		Vector3f forward = owner->transform.GetForward();
+        Vector3f pivotPos = {
+            globalPos.x + rotatedModelOffset.x,
+            globalPos.y + rotatedModelOffset.y,
+            globalPos.z + rotatedModelOffset.z
+        };
 
-		Vector3f endPos = {
-			forward.x * pointerLength,
-			forward.y * pointerLength,
-			forward.z * pointerLength
-		};
+        // 1. Submit Full Mesh Wireframe (If enabled for debugging)
+        if (drawWireframe)
+        {
+            Matrix4x4 finalMat = owner->transform.GetGlobalMatrix();
+            // Override the translation with our offset-adjusted pivot
+            finalMat.m[0][3] = pivotPos.x;
+            finalMat.m[1][3] = pivotPos.y;
+            finalMat.m[2][3] = pivotPos.z;
 
-		Vector3f pivotPos = {
-			globalPos.x + modelOffset.x,
-			globalPos.y + modelOffset.y,
-			globalPos.z + modelOffset.z
-		};
+            // Use the debug color so it matches our bounding boxes visually
+            renderer->SubmitDebugModelWireframe(&model, finalMat, debugColor);
+        }
 
-		Line3DShape pointerLine{ {0.0f, 0.0f, 0.0f}, endPos };
-		Color pointerColor = { 0, 255, 255, 255 }; // Cyan
+        // 2. Calculate and submit Bounding Box Cube
+        Vector3f boundsSize = {
+            (model.bounds.max.x - model.bounds.min.x) * scale.x,
+            (model.bounds.max.y - model.bounds.min.y) * scale.y,
+            (model.bounds.max.z - model.bounds.min.z) * scale.z
+        };
 
-		renderer->SubmitDebugShape3D(pointerLine, pivotPos, pointerColor);
-	}
+        Vector3f localBoundsCenterOffset = {
+            (model.bounds.max.x + model.bounds.min.x) * 0.5f * scale.x,
+            (model.bounds.max.y + model.bounds.min.y) * 0.5f * scale.y,
+            (model.bounds.max.z + model.bounds.min.z) * 0.5f * scale.z
+        };
+
+        Vector3f totalLocalOffset = {
+            modelOffset.x + localBoundsCenterOffset.x,
+            modelOffset.y + localBoundsCenterOffset.y,
+            modelOffset.z + localBoundsCenterOffset.z
+        };
+
+        Vector3f rotatedBoundsOffset = {
+            (right.x * totalLocalOffset.x) + (up.x * totalLocalOffset.y) + (forward.x * totalLocalOffset.z),
+            (right.y * totalLocalOffset.x) + (up.y * totalLocalOffset.y) + (forward.y * totalLocalOffset.z),
+            (right.z * totalLocalOffset.x) + (up.z * totalLocalOffset.y) + (forward.z * totalLocalOffset.z)
+        };
+
+        Vector3f boundsPos = {
+            globalPos.x + rotatedBoundsOffset.x,
+            globalPos.y + rotatedBoundsOffset.y,
+            globalPos.z + rotatedBoundsOffset.z
+        };
+
+        Cube3DShape boundsCube{ boundsSize };
+        renderer->SubmitDebugShape3D(boundsCube, boundsPos, globalEuler, debugColor);
+
+        // 3. Forward Pointer Line
+        float pointerLength = scale.Magnitude();
+        Vector3f endPos = {
+            forward.x * pointerLength,
+            forward.y * pointerLength,
+            forward.z * pointerLength
+        };
+
+        Line3DShape pointerLine{ {0.0f, 0.0f, 0.0f}, endPos };
+        Color pointerColor = { 0, 255, 255, 255 }; // Cyan
+
+        // Zero rotation because 'endPos' already has the global forward transformation baked in!
+        renderer->SubmitDebugShape3D(pointerLine, pivotPos, { 0.0f, 0.0f, 0.0f }, pointerColor);
+    }
 }

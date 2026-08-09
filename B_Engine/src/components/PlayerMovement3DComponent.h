@@ -25,8 +25,11 @@ namespace Engine
         Vector3f GetCurrentVelocity() const { return currentVelocity; }
 
     private:
+        bool isRunning;
+
         float walkSpeed;
         float runMult;
+
         CameraComponent* mainCamera = nullptr;
 
         Vector2f currentInput;

@@ -41,6 +41,7 @@ namespace Engine
         float    GetRotation2D() const;
         
         Vector3f GetGlobalPosition() const;
+        Vector3f GetGlobalEulerAngles() const;
 
         /// Returns the normalized forward vector (Z-axis) in global space.
         Vector3f GetForward() const;
@@ -51,7 +52,7 @@ namespace Engine
 #pragma endregion
 
         /// Recalculates the internal matrices if the transform has been modified.
-        void UpdateTransform();
+        void UpdateTransform() const;
 
         /// Retrieves the final calculated hierarchy matrix.
         const Matrix4x4& GetGlobalMatrix() const;
@@ -66,10 +67,10 @@ namespace Engine
         Vector3f localRotation; // Euler angles in Radians (Pitch, Yaw, Roll)
         Vector3f localScale;
 
-        Matrix4x4 localMatrix;
-        Matrix4x4 globalMatrix;
+        mutable Matrix4x4 localMatrix;
+        mutable Matrix4x4 globalMatrix;
 
-        bool isDirty; // Optimization flag
+        mutable bool isDirty; // Optimization flag
 
         void SetChildrenDirty();
     };

@@ -84,6 +84,9 @@
     <ClCompile Include="src\scripts\CameraLookScript.cpp">
       <Filter>Entities\Player</Filter>
     </ClCompile>
+    <ClCompile Include="src\scripts\CubeScript.cpp">
+      <Filter>Entities\Environment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PlatformerGame.h">
@@ -142,6 +145,9 @@
     </ClInclude>
     <ClInclude Include="src\scripts\CameraLookScript.h">
       <Filter>Entities\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scripts\CubeScript.h">
+      <Filter>Entities\Environment</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

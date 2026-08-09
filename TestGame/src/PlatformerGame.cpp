@@ -53,6 +53,10 @@ void PlatformerGame::SetupInputs()
     input.BindAxis(Engine::Hash::GetHash("Game_RotY"), Engine::Key::Down, -1.0f);
     input.BindAxis(Engine::Hash::GetHash("Game_RotX"), Engine::Key::E, 1.0f);
     input.BindAxis(Engine::Hash::GetHash("Game_RotY"), Engine::Key::Q, -1.0f);
+
+    //Cube
+    input.BindAction(Engine::Hash::GetHash("Game_CubeRotDir"), Engine::Key::R);
+    input.BindAction(Engine::Hash::GetHash("Game_CubeRot"), Engine::Key::T);
 }
 
 void PlatformerGame::RegisterScenes()

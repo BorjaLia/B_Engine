@@ -5,6 +5,7 @@
 #include <string>
 #include "../math/Vector2.h"
 #include "../math/Vector3.h"
+#include "../math/Matrix4x4.h"
 
 namespace Engine
 {
@@ -97,16 +98,6 @@ namespace Engine
 		std::vector<Mesh> meshes;
 		BoundingBox3D bounds;
 	};
-
-	struct ModelRenderCommand
-	{
-		Model model;
-		Vector3f position;
-		Vector3f rotationAxis;
-		float rotationAngle = 0.0f;
-		Vector3f scale = { 1.0f, 1.0f, 1.0f };
-		Color tint;
-	};
 #pragma endregion
 
 #pragma region Shapes & Math
@@ -121,8 +112,9 @@ namespace Engine
 	// 3D Shapes
 	struct Line3DShape { Vector3f start = { 0.0f, 0.0f, 0.0f }; Vector3f end = { 0.0f, 0.0f, 1.0f }; };
 	struct Cube3DShape { Vector3f size = { 1.0f, 1.0f, 1.0f }; };
+	struct Path3DShape { std::vector<Vector3f> localVertices; bool closed = false; };
 
-	using Shape3D = std::variant<Line3DShape, Cube3DShape>;
+	using Shape3D = std::variant<Line3DShape, Cube3DShape, Path3DShape>;
 
 	struct Rect { Vector2f pos; Vector2f size; };
 
@@ -152,6 +144,23 @@ namespace Engine
 	{
 		Shape3D shape;
 		Vector3f position;
+		Vector3f rotation;
+		Color color;
+	};
+
+	/// Command for rendering an opaque 3D model.
+	struct ModelRenderCommand
+	{
+		const Model* model;           // Pointer to avoid deep copies!
+		Matrix4x4 transformMatrix;    // By value (64 bytes snapshot)
+		Color tint;
+	};
+
+	/// Command for rendering a debug wireframe of a model.
+	struct DebugModelCommand
+	{
+		const Model* model;           // Pointer to raw CPU geometry
+		Matrix4x4 transformMatrix;    // By value (64 bytes snapshot)
 		Color color;
 	};
 

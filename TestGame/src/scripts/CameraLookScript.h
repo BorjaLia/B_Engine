@@ -15,7 +15,7 @@ public:
 	~CameraLookScript() override = default;
 
 	void OnStart() override;
-	void OnUpdate(float fixeDeltaTime) override;
+	void OnUpdate(float deltaTime) override;
 
 	void SetSensitivity(float newSensitivity) { sensitivity = newSensitivity; }
 	float GetSensitivity() const { return sensitivity; }

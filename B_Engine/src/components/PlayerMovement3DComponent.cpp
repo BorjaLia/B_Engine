@@ -18,7 +18,7 @@ namespace Engine
 
         auto& mapper = Application::Get().GetInputManager();
 
-        bool isRunning = mapper.IsActionPressed(Hash::GetHash("Game_Run"));
+        isRunning = mapper.IsActionPressed(Hash::GetHash("Game_Run"));
 
         // Get Input Axes
         float moveX = mapper.GetAxis(Hash::GetHash("Game_MoveX"));
@@ -26,11 +26,7 @@ namespace Engine
 
         float vertical = 0.0f;
 
-        if (mapper.IsActionPressed(Hash::GetHash("Game_Jump")))
-        {
-              vertical++;
-        }
-
+        if (mapper.IsActionPressed(Hash::GetHash("Game_Jump"))) vertical++;
         if(mapper.IsActionPressed(Hash::GetHash("Game_Crouch"))) vertical--;
 
         currentInput = { moveX, moveZ };

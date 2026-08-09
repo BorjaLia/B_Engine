@@ -16,6 +16,7 @@
 #include "math/MathUtils.h"
 
 #include "../scripts/CameraLookScript.h"
+#include "../scripts/CubeScript.h"
 
 #include <sstream>
 #include <iomanip>
@@ -115,7 +116,9 @@ void TestScene3D::Build(Engine::SceneBuilder& builder)
 	Engine::Node* cubeNode = builder.CreateNode("MyCube");
 	cubeNode->AddComponent<Engine::MeshRendererComponent>(myCubeModel);
 
-	cubeNode->transform.SetScale(Engine::Vector3f(10.0f, 10.0f, 10.0f));
+	cubeNode->AddComponent<Engine::ScriptComponent>(new CubeScript());
+
+	cubeNode->transform.SetScale(Engine::Vector3f(100.0f, 100.0f, 100.0f));
 
 	// 4. UI DE DEBUG
 	Engine::Font* font = rm.GetFont("res/fonts/ReemKufiFunRegular.ttf", 24);
