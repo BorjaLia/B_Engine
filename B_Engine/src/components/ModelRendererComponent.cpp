@@ -1,4 +1,4 @@
-#include "MeshRendererComponent.h"
+#include "ModelRendererComponent.h"
 
 #include "../scenes/Node.h"
 #include "../scenes/Transform.h" 
@@ -7,12 +7,13 @@
 
 namespace Engine
 {
-	MeshRendererComponent::MeshRendererComponent(const Model& model, Color tint)
+
+	ModelRendererComponent::ModelRendererComponent(const Model& model, Color tint)
 		: model(model), tint(tint)
 	{
 	}
 
-    void MeshRendererComponent::Draw(RendererBase* renderer)
+    void ModelRendererComponent::Draw(RendererBase* renderer)
     {
         if (owner == nullptr || renderer == nullptr) return;
         if (model.meshes.empty()) return; // Do not draw invalid/unloaded models
@@ -40,7 +41,7 @@ namespace Engine
         renderer->SubmitModel(&model, finalMat, tint);
     }
 
-    void MeshRendererComponent::DebugDraw(RendererBase* renderer)
+    void ModelRendererComponent::DebugDraw(RendererBase* renderer)
     {
         if (owner == nullptr || renderer == nullptr) return;
         if (model.meshes.empty()) return; // No model, no bounds

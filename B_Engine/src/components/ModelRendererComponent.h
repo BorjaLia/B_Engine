@@ -10,7 +10,7 @@ namespace Engine
 
 	/// @brief Renders a 3D model at the entity's transform position.
 	/// @ingroup Components
-	class MeshRendererComponent : public Component
+	class ModelRendererComponent : public Component
 	{
 	public:
 		Model model;
@@ -23,8 +23,8 @@ namespace Engine
 		bool drawWireframe = true; // Flag to render only the wireframe using debug tools
 
 		/// @param model The Opaque Model Handle obtained from the ResourceManager
-		MeshRendererComponent(const Model& model, Color tint = { 255, 255, 255, 255 });
-		~MeshRendererComponent() override = default;
+		ModelRendererComponent(const Model& model, Color tint = { 255, 255, 255, 255 });
+		~ModelRendererComponent() override = default;
 
 		void Draw(RendererBase* renderer) override;
 		void DebugDraw(RendererBase* renderer) override;

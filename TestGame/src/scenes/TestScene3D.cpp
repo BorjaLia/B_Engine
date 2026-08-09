@@ -7,12 +7,13 @@
 #include "components/CameraComponent.h"
 #include "components/SpriteComponent.h"
 #include "components/ScriptComponent.h"
-#include "components/MeshRendererComponent.h"
+#include "components/ModelRendererComponent.h"
 #include "components/TextComponent.h"
 #include "components/UIAnchorComponent.h"
 #include "components/PlayerMovement3DComponent.h"
 
 #include "utils/StringHash.h" 
+#include "random/Random.h"
 #include "math/MathUtils.h"
 
 #include "../scripts/CameraLookScript.h"
@@ -75,6 +76,7 @@ void TestScene3D::Build(Engine::SceneBuilder& builder)
 {
 	auto& app = Engine::Application::Get();
 	auto& rm = *app.GetResourceManager();
+	Engine::Random random = Engine::Random();
 
 	Engine::Texture2D texPlayer = rm.GetTexture("res/sprites/enemy.png");
 	Engine::Texture2D texTree = rm.GetTexture("res/sprites/box.png");
@@ -84,7 +86,7 @@ void TestScene3D::Build(Engine::SceneBuilder& builder)
 
 	//playerNode->AddComponent<Engine::SpriteComponent>(texPlayer, Engine::Pivot::BottomCenter);
 
-	Engine::Node* camNode = builder.CreateChildNode(playerNode,"Camera3D");
+	Engine::Node* camNode = builder.CreateChildNode(playerNode, "Camera3D");
 
 	auto* cam = camNode->AddComponent<Engine::CameraComponent>();
 
@@ -102,8 +104,10 @@ void TestScene3D::Build(Engine::SceneBuilder& builder)
 	{
 		Engine::Node* treeNode = builder.CreateNode("Tree_" + std::to_string(i));
 
-		float randX = (rand() % 2000) - 1000.0f;
-		float randZ = (rand() % 2000) - 1000.0f;
+		float minRad = 100;
+
+		float randX = ((random.GetFloat(minRad, 1000)) * (random.GetChance(0.5f) ? 1.0f : -1.0f));
+		float randZ = ((random.GetFloat(minRad, 1000)) * (random.GetChance(0.5f) ? 1.0f : -1.0f));
 
 		treeNode->transform.SetPosition({ randX, 0.0f, randZ });
 		treeNode->AddComponent<Engine::SpriteComponent>(texTree, Engine::Pivot::BottomCenter);
@@ -114,7 +118,7 @@ void TestScene3D::Build(Engine::SceneBuilder& builder)
 
 	// 2. Crear el Nodo y el Componente
 	Engine::Node* cubeNode = builder.CreateNode("MyCube");
-	cubeNode->AddComponent<Engine::MeshRendererComponent>(myCubeModel);
+	cubeNode->AddComponent<Engine::ModelRendererComponent>(myCubeModel);
 
 	cubeNode->AddComponent<Engine::ScriptComponent>(new CubeScript());
 

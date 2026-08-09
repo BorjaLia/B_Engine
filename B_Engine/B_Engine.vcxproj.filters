@@ -219,7 +219,7 @@
     <ClCompile Include="src\components\PlayerMovement3DComponent.cpp">
       <Filter>SceneGraph\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\MeshRendererComponent.cpp">
+    <ClCompile Include="src\components\ModelRendererComponent.cpp">
       <Filter>SceneGraph\Components</Filter>
     </ClCompile>
   </ItemGroup>
@@ -449,7 +449,7 @@
     <ClInclude Include="src\components\PlayerMovement3DComponent.h">
       <Filter>SceneGraph\Components</Filter>
     </ClInclude>
-    <ClInclude Include="src\components\MeshRendererComponent.h">
+    <ClInclude Include="src\components\ModelRendererComponent.h">
       <Filter>SceneGraph\Components</Filter>
     </ClInclude>
   </ItemGroup>
