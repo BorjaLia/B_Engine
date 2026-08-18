@@ -114,7 +114,7 @@ void TestScene3D::Build(Engine::SceneBuilder& builder)
 	}
 
 	// 1. Cargar el modelo a través de nuestro nuevo ResourceManager
-	Engine::Model myCubeModel = rm.GetModel("res/models/cube.obj");
+	Engine::Model myCubeModel = rm.GetModel("res/models/teapot.obj");
 
 	// 2. Crear el Nodo y el Componente
 	Engine::Node* cubeNode = builder.CreateNode("MyCube");
